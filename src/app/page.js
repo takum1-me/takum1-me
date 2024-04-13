@@ -1,9 +1,12 @@
 export default function Home() {
   return (
     <main>
-      <div>
-        <h1>Hello, World!</h1>
-      </div>
+      <div>accounts</div>
+      <ul>
+        <li>twitter</li>
+        <li>instagram</li>
+        <li>github</li>
+      </ul>
     </main>
   );
 }
