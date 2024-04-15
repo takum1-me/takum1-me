@@ -14,9 +14,9 @@ export default function Home() {
 
       <div>accounts</div>
       <ul>
-        <li>twitter</li>
-        <li>instagram</li>
-        <li>github</li>
+        <li><a href='https://twitter.com/takum1_me'>twitter</a></li>
+        <li><a href='https://www.instagram.com/taku_mi_k/'>instagram</a></li>
+        <li><a href='https://github.com/takum1-me'>github</a></li>
       </ul>
     </main>
   );
