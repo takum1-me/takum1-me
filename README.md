@@ -1,6 +1,6 @@
 # takum1
 ## Profile
-- College Of INformation science, Univ. of Tsukuba
+- College Of INformation Science, Univ. of Tsukuba
 - 全学学類・専門学群・総合学域群代表者会議 議長
 
 ## Certifications
