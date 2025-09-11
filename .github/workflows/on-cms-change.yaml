@@ -1,0 +1,27 @@
+name: Deploy on Webhook from CMS
+
+# When CF Worker supports Deploy Hook, we don't need this workaround.
+# see https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/#compatibility-matrix
+
+# このワークフローは、microCMSの内容が更新された際に出るWebhookを受け取ってリビルド＆デプロイを行うものです
+
+on:
+  repository_dispatch:
+    types: [update]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
+        env:
+          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

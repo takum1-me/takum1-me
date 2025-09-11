@@ -1,16 +1,51 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CoffeeBean from "../assets/coffee-bean.svg";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Takumi Kan">
+  <div class="card" id="bizcard">
+    <div class="left">
+      <h1 class="name">takum1</h1>
+      <p class="affiliation">Undergraduate / Brewer</p>
+      <p class="hobby">Coffee / Programming / Design</p>
+      <div class="x">
+        <img src="/src/assets/qrcode_x.png" alt="X QR" class="qr" />
+        <span class="handle">@takum1_me</span>
+      </div>
+    </div>
+    <div class="right">
+      <CoffeeBean class="bean" stroke="#a0522d" />
+    </div>
+  </div>
+
+  <style>
+    :root { --card-bg: #fff; --card-fg: #111827; --muted: #6b7280; --accent: #0ea5e9; }
+    .card { display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; box-shadow: 0 6px 24px rgba(0,0,0,.06); cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; max-width: 720px; margin: 24px auto; }
+    .card:hover { box-shadow: 0 12px 36px rgba(0,0,0,.10); }
+    .left { display: flex; flex-direction: column; gap: 6px; }
+    .name { font-size: 28px; margin: 0; }
+    .affiliation { margin: 0; color: var(--muted); }
+    .hobby { margin: 6px 0 0; color: var(--muted); }
+    .x { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .qr { width: 64px; height: 64px; object-fit: cover; }
+    .handle { font-weight: 600; }
+    .right { display: flex; align-items: center; justify-content: center; }
+    .bean { width: 100px; height: 100px; display: block; }
+    @media (max-width: 600px) { .card { grid-template-columns: 1fr 100px; } .bean { width: 72px; height: 72px; } }
+    /* Fullscreen */
+    .card.fullscreen { position: fixed; inset: 0; z-index: 50; border-radius: 0; margin: 0; max-width: none; height: 100dvh; display: grid; grid-template-columns: 1fr 220px; align-items: center; padding: 24px; }
+    .card.fullscreen .right { justify-content: flex-end; }
+    .card.fullscreen .bean { width: 120px; height: 120px; }
+    @media (max-width: 768px) { .card.fullscreen { grid-template-columns: 1fr; grid-template-rows: auto 1fr; } }
+  </style>
+
+  <script>
+    const el = document.getElementById("bizcard");
+    if (el) {
+      el.addEventListener("click", () => {
+        el.classList.toggle("fullscreen");
+      });
+    }
+  </script>
+</BaseLayout>

@@ -1,0 +1,113 @@
+---
+import { getAllBlog, getBlogById } from "../../lib/microcms";
+import Layout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const blogs = await getAllBlog();
+  return blogs.contents.map((blog: { slug: string }) => ({
+    params: { slug: blog.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const blog = await getBlogById(slug);
+
+const { publishedAt, updatedAt, title, content, thumbnail } = blog;
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tokyo",
+  });
+};
+---
+
+<Layout title={title}>
+  <main>
+    <div class="article-container">
+      <div class="title-date">
+        <h1 class="article-title">{title}</h1>
+        <p class="published-date">{formatDate(publishedAt)}</p>
+      </div>
+      {thumbnail && <img src={thumbnail.url} alt={title} />}
+      <div class="article-content" set:html={content} />
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+  }
+  .article-container {
+    width: 90%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 0 1rem;
+    @media (min-width: 768px) {
+      max-width: 40%;
+      padding: 0 2rem;
+    }
+  }
+  h1 {
+    color: #006367;
+    font-family: Serif;
+  }
+  .article-content {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #006367;
+      font-family: Serif;
+    }
+    .published-date {
+      color: #006367;
+    }
+    /* content内の画像にスタイルを適用 */
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      display: block;
+      margin: 1rem 0;
+    }
+  }
+  /* サムネイル画像のレスポンシブ対応 */
+  img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* ▼▼▼ ここから変更 ▼▼▼ */
+  .title-date {
+    display: flex;
+    /* Flexboxを有効にする */
+    justify-content: space-between; /* 両端に配置する */
+    align-items: flex-end;
+    /* 下端で揃える */
+    gap: 1rem; /* タイトルと日付の間に最低限の隙間を設ける */
+    margin-bottom: 1rem;
+  }
+
+  .title-date h1 {
+    margin: 0; /* h1のデフォルトマージンをリセット */
+    margin-bottom: 0;
+    /* 元のmargin-bottomを削除 */
+  }
+
+  .title-date p {
+    /* position: absolute;
+     を削除 */
+    margin: 0;
+    color: #64a19e;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    /* 日付が改行しないようにする */
+    flex-shrink: 0; /* コンテナが狭くなっても日付部分が縮まないようにする */
+    margin-bottom: 0.4rem;
+  }
+</style>

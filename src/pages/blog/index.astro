@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAllBlog } from "../../lib/microcms";
+const blogs = await getAllBlog();
+
+
+---
+
+<BaseLayout title="Blog">
+  <h1>Blog</h1>
+  {
+    blogs === null && (
+      <p>
+        記事の取得に失敗しました。環境変数やネットワークを確認してください。
+      </p>
+    )
+  }
+  {blogs && blogs.totalCount === 0 && <p>投稿はまだありません。</p>}
+  {blogs && blogs.totalCount > 0 && (
+    <ul>
+      {blogs.contents.map((blog) => (
+        <li>
+          <a href={`/blog/${blog.slug}`}>{blog.title}</a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
