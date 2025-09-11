@@ -1,32 +1,16 @@
-## Takumi Kan Portfolio (Astro)
+## Hi there 👋
 
-Personal site built with Astro. Pages: Home, About, Blog, Works.
+<!--
+**takum1-me/takum1-me** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
-### Setup
+Here are some ideas to get you started:
 
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Set environment variables (create a `.env` in project root):
-
-```bash
-PUBLIC_MICROCMS_SERVICE_DOMAIN=your-service-domain
-MICROCMS_API_KEY=your-api-key
-```
-
-3. Run dev server:
-
-```bash
-npm run dev
-```
-
-Open `http://localhost:4321`.
-
-### Blog data (microCMS)
-
-- Endpoint: `blog`
-- Fields used: `id`, `title`, `body`, `publishedAt`
-- Detail route: `/blog/[id]`
+- 🔭 I’m currently working on ...
+- 🌱 I’m currently learning ...
+- 👯 I’m looking to collaborate on ...
+- 🤔 I’m looking for help with ...
+- 💬 Ask me about ...
+- 📫 How to reach me: ...
+- 😄 Pronouns: ...
+- ⚡ Fun fact: ...
+-->
