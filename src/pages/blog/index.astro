@@ -2,7 +2,15 @@
 import Layout from "../../layouts/Layout.astro";
 import { getAllBlog } from "../../lib/microcms";
 import HoverIndicator from "../../components/HoverIndicator";
-const blogs = await getAllBlog();
+
+let blogs;
+try {
+  blogs = await getAllBlog();
+} catch (error) {
+  console.error("Failed to fetch blogs:", error);
+  // 環境変数が設定されていない場合は空のデータを返す
+  blogs = { contents: [], totalCount: 0, offset: 0, limit: 0 };
+}
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("ja-JP", {

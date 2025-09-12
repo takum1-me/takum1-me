@@ -9,12 +9,17 @@ const latest = await getLatestBlogs(5);
 <Layout title="takum1.me">
   <section class="hero">
     <div class="hero-inner">
-      <div class="hero-copy">
-        <h1 class="site-title">takum1</h1>
-        <p class="site-sub">Undergraduate / Brewer — Coffee, Programming, Design</p>
-      </div>
-      <div class="hero-art">
-        <CoffeeBean class="bean" stroke="#111827" />
+      <div class="business-card">
+        <div class="card-content">
+          <h1 class="site-title">takum1</h1>
+          <div class="site-sub">
+            <div class="sub-line">Undergraduate / Brewer</div>
+            <div class="sub-line">Coffee, Programming, Design</div>
+          </div>
+        </div>
+        <div class="card-decoration">
+          <CoffeeBean class="bean" stroke="#D4AF37" />
+        </div>
       </div>
     </div>
   </section>
@@ -47,11 +52,69 @@ const latest = await getLatestBlogs(5);
   <style>
     :root { --max-width: 960px; --gap: 16px; --ink: #111827; --muted: #6b7280; }
     .hero { padding: 40px 0 16px; border-bottom: 1px solid #e5e7eb; }
-    .hero-inner { display: grid; grid-template-columns: 1fr 160px; align-items: center; gap: 24px; }
-    .site-title { font-size: 40px; margin: 0; letter-spacing: 0.02em; }
-    .site-sub { margin: 8px 0 0; color: var(--muted); }
-    .hero-art { display: flex; justify-content: flex-end; }
-    .bean { width: 120px; height: 120px; }
+    .hero-inner { display: flex; justify-content: center; align-items: center; }
+    
+    .business-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+      border-radius: 0.25rem;
+      padding: 2rem 2.5rem;
+      box-shadow: 
+        0 0.5rem 1.5rem rgba(15, 23, 42, 0.4),
+        0 0.25rem 0.5rem rgba(0, 0, 0, 0.2),
+        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      width: 18.2rem;
+      height: 11rem;
+      transform: rotate(-2deg);
+      transition: transform 0.3s ease;
+    }
+    
+    .business-card:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+    
+    .card-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .site-title { 
+      font-size: 2.5rem; 
+      margin: 0; 
+      letter-spacing: 0.02em; 
+      color: white;
+      font-weight: 700;
+      text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+    }
+    
+    .site-sub { 
+      margin: 0.75rem 0 0; 
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    
+    .sub-line {
+      margin-bottom: 0.25rem;
+    }
+    
+    .sub-line:last-child {
+      margin-bottom: 0;
+    }
+    
+    .card-decoration {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      z-index: 3;
+    }
+    
+    .bean { 
+      width: 3rem; 
+      height: 3rem; 
+      filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.3));
+    }
 
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 24px; }
     .about, .latest { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
@@ -65,9 +128,26 @@ const latest = await getLatestBlogs(5);
     .more:hover { text-decoration: underline; text-underline-offset: 3px; }
 
     @media (max-width: 768px) {
-      .hero-inner { grid-template-columns: 1fr; }
-      .hero-art { justify-content: flex-start; }
-      .bean { width: 96px; height: 96px; }
+      .business-card {
+        padding: 1.5rem 2rem;
+        width: 15rem;
+        height: 9rem;
+        transform: rotate(-1deg);
+      }
+      
+      .site-title {
+        font-size: 2rem;
+      }
+      
+      .site-sub {
+        font-size: 0.875rem;
+      }
+      
+      .bean {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+      
       .grid { grid-template-columns: 1fr; }
     }
   </style>

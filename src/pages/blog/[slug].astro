@@ -4,10 +4,16 @@ import Layout from "../../layouts/Layout.astro";
 import BlogToc from "../../components/BlogToc.tsx";
 
 export async function getStaticPaths() {
-  const blogs = await getAllBlog();
-  return blogs.contents.map((blog: { slug: string }) => ({
-    params: { slug: blog.slug },
-  }));
+  try {
+    const blogs = await getAllBlog();
+    return blogs.contents.map((blog: { slug: string }) => ({
+      params: { slug: blog.slug },
+    }));
+  } catch (error) {
+    console.error("Failed to fetch blogs:", error);
+    // 環境変数が設定されていない場合は空の配列を返す
+    return [];
+  }
 }
 
 const { slug } = Astro.params;
