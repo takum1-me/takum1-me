@@ -35,7 +35,7 @@ export async function getBlogById(slug: string): Promise<Blog> {
   // slugを使ってフィルタリングするクエリに変更
   const res = await fetchWithAuth(`blog?filters=slug[equals]${slug}`);
   const data = await res.json();
-  
+
   // フィルタリングの結果は配列で返ってくるので、最初の1件を返す
   return data.contents[0];
 }
