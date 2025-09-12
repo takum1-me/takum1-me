@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import type { JSX } from "react";
 import "./blog-toc.css";
 
 interface TocItem {
@@ -70,12 +71,12 @@ export default function BlogToc() {
             }
           } else {
             // スクロール方向に応じた判定
-            let activeHeading = null;
+            let activeHeading: TocItem | null = null;
 
             if (scrollDirection === "down") {
               // 下にスクロール：下30%より上で下30%に一番近い見出し
               const bottom30Percent = scrollTop + windowHeight * 0.7;
-              let closestHeading = null;
+              let closestHeading: TocItem | null = null;
               let minDistance = Infinity;
 
               items.forEach((item) => {
@@ -95,7 +96,7 @@ export default function BlogToc() {
             } else {
               // 上にスクロール：上30%より下で上30%に一番近い見出し
               const top30Percent = scrollTop + windowHeight * 0.3;
-              let closestHeading = null;
+              let closestHeading: TocItem | null = null;
               let minDistance = Infinity;
 
               items.forEach((item) => {
@@ -115,6 +116,7 @@ export default function BlogToc() {
             }
 
             if (activeHeading) {
+              const heading = activeHeading as TocItem;
               // まず全てのアクティブ状態をクリア
               const tocLinks = document.querySelectorAll(".toc a");
               tocLinks.forEach((link) => {
@@ -122,12 +124,12 @@ export default function BlogToc() {
               });
 
               // H2がアクティブな場合、親のH1もアクティブ状態を維持
-              if (activeHeading.level === 2) {
+              if (heading.level === 2) {
                 // このH2の親のH1を見つける
                 const currentIndex = items.findIndex(
-                  (item) => item.id === activeHeading.id,
+                  (item) => item.id === heading.id,
                 );
-                let parentH1 = null;
+                let parentH1: TocItem | null = null;
 
                 // 現在のH2より前のH1を探す
                 for (let i = currentIndex - 1; i >= 0; i--) {
@@ -150,12 +152,12 @@ export default function BlogToc() {
 
               // 現在の見出しをアクティブにする
               const currentLink = document.querySelector(
-                `.toc a[href="#${activeHeading.id}"]`,
+                `.toc a[href="#${heading.id}"]`,
               );
               if (currentLink) {
                 currentLink.classList.add("is-active-link");
               }
-              setActiveId(activeHeading.id);
+              setActiveId(heading.id);
             }
           }
 
@@ -200,12 +202,10 @@ export default function BlogToc() {
   // H1とH2を階層構造に整理
   const renderTocItems = () => {
     const result: JSX.Element[] = [];
-    let currentH1Index = -1;
 
     tocItems.forEach((item, index) => {
       if (item.level === 1) {
         // H1の場合
-        currentH1Index = index;
         result.push(
           <li key={item.id} className="toc-h1">
             <a

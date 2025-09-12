@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const blog = await getBlogById(slug);
 
-const { publishedAt, updatedAt, title, content, thumbnail } = blog;
+const { publishedAt, title, content, thumbnail } = blog;
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("ja-JP", {
     year: "numeric",
