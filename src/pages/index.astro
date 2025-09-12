@@ -1,51 +1,74 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
+import { getLatestBlogs } from "../lib/microcms";
+
+const latest = await getLatestBlogs(5);
 ---
 
-<BaseLayout title="Takumi Kan">
-  <div class="card" id="bizcard">
-    <div class="left">
-      <h1 class="name">takum1</h1>
-      <p class="affiliation">Undergraduate / Brewer</p>
-      <p class="hobby">Coffee / Programming / Design</p>
-      <div class="x">
-        <img src="/src/assets/qrcode_x.png" alt="X QR" class="qr" />
-        <span class="handle">@takum1_me</span>
+<Layout title="takum1.me">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1 class="site-title">takum1</h1>
+        <p class="site-sub">Undergraduate / Brewer — Coffee, Programming, Design</p>
+      </div>
+      <div class="hero-art">
+        <CoffeeBean class="bean" stroke="#111827" />
       </div>
     </div>
-    <div class="right">
-      <CoffeeBean class="bean" stroke="#a0522d" />
+  </section>
+
+  <section class="grid">
+    <div class="about">
+      <h2>About</h2>
+      <p>
+        コーヒーとプログラミング、そしてデザインが好きな大学生です。実験的なプロダクトづくりと良い抽出を日々探求しています。
+      </p>
+      <a class="more" href="/about">詳しく見る →</a>
     </div>
+
+    <div class="latest">
+      <h2>Latest Posts</h2>
+      <ul class="posts">
+        {latest.map((b) => (
+          <li>
+            <a href={`/blog/${b.slug}`} class="post">
+              <span class="post-title">{b.title}</span>
+              <span class="post-date">{new Date(b.publishedAt).toLocaleDateString("ja-JP")}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="more" href="/blog">もっと見る →</a>
   </div>
+  </section>
 
   <style>
-    :root { --card-bg: #fff; --card-fg: #111827; --muted: #6b7280; --accent: #0ea5e9; }
-    .card { display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; box-shadow: 0 6px 24px rgba(0,0,0,.06); cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; max-width: 720px; margin: 24px auto; }
-    .card:hover { box-shadow: 0 12px 36px rgba(0,0,0,.10); }
-    .left { display: flex; flex-direction: column; gap: 6px; }
-    .name { font-size: 28px; margin: 0; }
-    .affiliation { margin: 0; color: var(--muted); }
-    .hobby { margin: 6px 0 0; color: var(--muted); }
-    .x { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-    .qr { width: 64px; height: 64px; object-fit: cover; }
-    .handle { font-weight: 600; }
-    .right { display: flex; align-items: center; justify-content: center; }
-    .bean { width: 100px; height: 100px; display: block; }
-    @media (max-width: 600px) { .card { grid-template-columns: 1fr 100px; } .bean { width: 72px; height: 72px; } }
-    /* Fullscreen */
-    .card.fullscreen { position: fixed; inset: 0; z-index: 50; border-radius: 0; margin: 0; max-width: none; height: 100dvh; display: grid; grid-template-columns: 1fr 220px; align-items: center; padding: 24px; }
-    .card.fullscreen .right { justify-content: flex-end; }
-    .card.fullscreen .bean { width: 120px; height: 120px; }
-    @media (max-width: 768px) { .card.fullscreen { grid-template-columns: 1fr; grid-template-rows: auto 1fr; } }
-  </style>
+    :root { --max-width: 960px; --gap: 16px; --ink: #111827; --muted: #6b7280; }
+    .hero { padding: 40px 0 16px; border-bottom: 1px solid #e5e7eb; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 160px; align-items: center; gap: 24px; }
+    .site-title { font-size: 40px; margin: 0; letter-spacing: 0.02em; }
+    .site-sub { margin: 8px 0 0; color: var(--muted); }
+    .hero-art { display: flex; justify-content: flex-end; }
+    .bean { width: 120px; height: 120px; }
 
-  <script>
-    const el = document.getElementById("bizcard");
-    if (el) {
-      el.addEventListener("click", () => {
-        el.classList.toggle("fullscreen");
-      });
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 24px; }
+    .about, .latest { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
+    h2 { margin: 0 0 12px; font-size: 18px; letter-spacing: 0.02em; }
+    .posts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .post { display: flex; justify-content: space-between; align-items: baseline; text-decoration: none; color: var(--ink); padding: 8px 0; border-bottom: 1px dashed #e5e7eb; }
+    .post:last-child { border-bottom: none; }
+    .post-title { font-weight: 700; }
+    .post-date { color: var(--muted); font-size: 12px; }
+    .more { display: inline-block; margin-top: 10px; font-weight: 700; text-decoration: none; color: var(--ink); }
+    .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-art { justify-content: flex-start; }
+      .bean { width: 96px; height: 96px; }
+      .grid { grid-template-columns: 1fr; }
     }
-  </script>
-</BaseLayout>
+  </style>
+</Layout>

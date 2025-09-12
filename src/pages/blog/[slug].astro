@@ -1,6 +1,7 @@
 ---
 import { getAllBlog, getBlogById } from "../../lib/microcms";
-import Layout from "../../layouts/BaseLayout.astro";
+import Layout from "../../layouts/Layout.astro";
+import BlogToc from "../../components/BlogToc.tsx";
 
 export async function getStaticPaths() {
   const blogs = await getAllBlog();
@@ -25,13 +26,17 @@ const formatDate = (dateString: string) => {
 
 <Layout title={title}>
   <main>
-    <div class="article-container">
-      <div class="title-date">
-        <h1 class="article-title">{title}</h1>
-        <p class="published-date">{formatDate(publishedAt)}</p>
+    <div class="page">
+      <div class="article-container">
+        <div class="title-date">
+          <h1 class="article-title">{title}</h1>
+          <p class="published-date">{formatDate(publishedAt)}</p>
+        </div>
+        {thumbnail && <img src={thumbnail.url} alt={title} />}
+        <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
+        <div class="article-content" set:html={content} />
       </div>
-      {thumbnail && <img src={thumbnail.url} alt={title} />}
-      <div class="article-content" set:html={content} />
+      <BlogToc client:only="react" />
     </div>
   </main>
 </Layout>
@@ -39,19 +44,19 @@ const formatDate = (dateString: string) => {
 <style>
   main {
   }
+  .page { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: start; }
+  @media (max-width: 1024px) { .page { grid-template-columns: 1fr; } }
   .article-container {
-    width: 90%;
+    width: 100%;
     max-width: none;
     margin: 0 auto;
     padding: 0 1rem;
-    @media (min-width: 768px) {
-      max-width: 40%;
-      padding: 0 2rem;
-    }
+  }
+  @media (min-width: 768px) {
+    .article-container { max-width: 760px; padding: 0 2rem; }
   }
   h1 {
     color: #006367;
-    font-family: Serif;
   }
   .article-content {
     h1,
@@ -60,8 +65,7 @@ const formatDate = (dateString: string) => {
     h4,
     h5,
     h6 {
-      color: #006367;
-      font-family: Serif;
+
     }
     .published-date {
       color: #006367;
@@ -80,6 +84,19 @@ const formatDate = (dateString: string) => {
     width: 100%;
     height: auto;
     max-width: 100%;
+  }
+
+  .back {
+    margin: 0.5rem 0 1rem;
+  }
+  .back a {
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .back a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   /* ▼▼▼ ここから変更 ▼▼▼ */

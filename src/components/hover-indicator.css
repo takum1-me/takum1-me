@@ -1,0 +1,80 @@
+/* HoverIndicator component styles */
+.hover-indicator-nav {
+  position: relative;
+  display: flex;
+  border-radius: 1.5rem;
+  padding: 0.5rem;
+  backdrop-filter: blur(0.375rem);
+}
+
+.hover-indicator-nav.with-background {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.hover-indicator-nav.no-background {
+  background: none;
+  box-shadow: none;
+}
+
+.indicator {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: calc(100% - 1rem);
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.35) 60%, rgba(255,255,255,0.2) 100%), rgba(17,24,39,0.06);
+  border: 0.0625rem solid rgba(17,24,39,0.08);
+  border-radius: 1rem;
+  transition: transform .4s cubic-bezier(.16,.84,.44,1), width .4s cubic-bezier(.16,.84,.44,1), opacity .3s ease;
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none;
+  backdrop-filter: blur(0.625rem) saturate(140%);
+  box-shadow: inset 0 0.0625rem 0 rgba(255,255,255,0.4), 0 0.375rem 1.125rem rgba(0,0,0,0.08);
+  z-index: 0;
+}
+
+.indicator.visible { 
+  opacity: 1; 
+}
+
+.indicator-button {
+  position: relative;
+  background: none;
+  border: none;
+  color: #111827;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: .02em;
+  font-size: 0.875rem;
+  border-radius: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+/* ブログページ用の大きなサイズ - デバッグ用 */
+.hover-indicator-nav.with-background .indicator-button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+}
+
+@media (max-width: 47.9375rem) {
+  .hover-indicator-nav.with-background .indicator-button {
+    font-size: 2.5rem;
+    padding: 1.5rem 2rem;
+  }
+}
+
+.indicator-button:hover {
+  color: #0f172a;
+}
+
+.indicator-button:focus {
+  outline: none;
+  color: #0f172a;
+}

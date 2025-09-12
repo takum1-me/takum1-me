@@ -1,0 +1,129 @@
+.toc {
+  position: sticky;
+  top: 90px;
+  align-self: start;
+  width: 280px;
+  border: none;
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px) saturate(140%);
+}
+
+.toc-title {
+  font-weight: 800;
+  font-size: 14px;
+  color: #111827;
+  letter-spacing: .02em;
+  margin-bottom: 8px;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* H1 行: 丸マーカー（光る玉）をH1の左横に配置 */
+.toc > .toc-list > li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.toc > .toc-list > li::before {
+  content: "";
+  position: absolute;
+  left: 9px; /* H1の左横に配置 */
+  top: 0.5em; /* H1テキストのベースラインに合わせる */
+  width: 8px;
+  height: 8px;
+  background: rgba(17,24,39,0.2);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  transition: background .2s ease, box-shadow .2s ease;
+}
+
+/* H1 アクティブ（丸を発光） */
+.toc > .toc-list > li > a.is-active-link {
+  color: #111827;
+  font-weight: 800;
+}
+
+.toc > .toc-list > li > a.is-active-link::before {
+  content: "";
+  position: absolute;
+  left: 9px; /* H1の左横に配置 */
+  top: 0.5em; /* H1テキストのベースラインに合わせる */
+  width: 8px;
+  height: 8px;
+  background: #111827;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(17,24,39,0.08), 0 4px 14px rgba(0,0,0,0.12);
+}
+
+
+/* H1リンク（常時ボールド） */
+.toc > .toc-list > li > a {
+  font-weight: 700;
+  color: #6b7280;
+  font-size: 15px;
+  text-decoration: none;
+  transition: color .18s ease;
+}
+
+/* H2 リスト（入れ子 ul） */
+.toc .toc-list li .toc-h2-list {
+  list-style: none;
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 2px solid #e5e7eb;
+  margin-left: 8px;
+}
+
+.toc .toc-list li .toc-h2-list li {
+  position: relative;
+  padding-left: 0;
+}
+
+.toc .toc-list li .toc-h2-list li::before {
+  display: none; /* H2には丸マーカーを表示しない */
+}
+
+.toc .toc-list li .toc-h2-list a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.5;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  padding-left: 12px;
+  position: relative;
+}
+
+.toc .toc-list li .toc-h2-list a::before {
+  display: none;
+}
+
+.toc .toc-list li .toc-h2-list a.is-active-link {
+  color: #111827;
+  font-weight: 700;
+}
+
+.toc .toc-list li .toc-h2-list a.is-active-link::before {
+  display: none;
+}
+
+
+@media (max-width: 1024px) {
+  .toc { display: none; }
+}

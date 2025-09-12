@@ -6,7 +6,12 @@ export interface Blog {
   publishedAt: string;
   revisedAt: string;
   title: string;
-  excerpt: string;
+  summary: string;
+  excerpt: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
   category: "Programming" | "Coffee" | "Design" | "DailyLife";
   tag: string[];
   thumbnail: {
@@ -38,4 +43,10 @@ export async function getBlogById(slug: string): Promise<Blog> {
 
   // フィルタリングの結果は配列で返ってくるので、最初の1件を返す
   return data.contents[0];
+}
+
+export async function getLatestBlogs(limit: number = 5): Promise<Blog[]> {
+  const res = await fetchWithAuth(`blog?orders=-publishedAt&limit=${limit}`);
+  const data: BlogResponse = await res.json();
+  return data.contents;
 }
