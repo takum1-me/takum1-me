@@ -10,6 +10,7 @@
     "typecheck": "astro check",
     "cf-typegen": "wrangler types",
     "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "lint": "eslint ."
   },
   "dependencies": {

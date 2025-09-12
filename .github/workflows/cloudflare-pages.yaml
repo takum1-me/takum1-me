@@ -25,7 +25,7 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           PREVIEW_URL=$(echo '${{ steps.deploy.outputs.url }}' | sed 's/https:\/\///')
           PREVIEW_URL_ESCAPED=$(echo $PREVIEW_URL | sed -e 's/&/%26/g')
-          
+
           curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" \
