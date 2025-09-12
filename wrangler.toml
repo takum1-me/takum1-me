@@ -1,0 +1,14 @@
+name = "takum1-me"
+main = "workers-site/index.js"
+compatibility_date = "2024-09-23"
+
+[site]
+bucket = "dist"
+
+[[routes]]
+pattern = "takum1.me/*"
+zone_name = "takum1.me"
+
+# 開発用の設定
+[env.development]
+name = "takum1-me-dev"
