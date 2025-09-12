@@ -23,19 +23,15 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # yamllint disable-line rule:truthy
-          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL || '' }}
-          # yamllint disable-line rule:truthy
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || '' }}
+          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
 
       - name: Deploy to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
         with:
-          # yamllint disable-line rule:truthy
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '' }} # <-- あなたのアカウントID
-          # yamllint disable-line rule:truthy
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN || '' }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} # <-- あなたのアカウントID
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           projectName: takum1-me # <-- あなたのプロジェクト名
           directory: dist
           branch: ${{ github.head_ref }}
