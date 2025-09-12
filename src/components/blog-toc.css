@@ -6,7 +6,7 @@
   border: none;
   border-radius: 16px;
   padding: 12px;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(6px) saturate(140%);
 }
 
@@ -14,7 +14,7 @@
   font-weight: 800;
   font-size: 14px;
   color: #111827;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   margin-bottom: 8px;
 }
 
@@ -40,10 +40,12 @@
   top: 0.5em; /* H1テキストのベースラインに合わせる */
   width: 8px;
   height: 8px;
-  background: rgba(17,24,39,0.2);
+  background: rgba(17, 24, 39, 0.2);
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  transition: background .2s ease, box-shadow .2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* H1 アクティブ（丸を発光） */
@@ -62,9 +64,10 @@
   background: #111827;
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 0 4px rgba(17,24,39,0.08), 0 4px 14px rgba(0,0,0,0.12);
+  box-shadow:
+    0 0 0 4px rgba(17, 24, 39, 0.08),
+    0 4px 14px rgba(0, 0, 0, 0.12);
 }
-
 
 /* H1リンク（常時ボールド） */
 .toc > .toc-list > li > a {
@@ -72,7 +75,7 @@
   color: #6b7280;
   font-size: 15px;
   text-decoration: none;
-  transition: color .18s ease;
+  transition: color 0.18s ease;
 }
 
 /* H2 リスト（入れ子 ul） */
@@ -123,7 +126,8 @@
   display: none;
 }
 
-
 @media (max-width: 1024px) {
-  .toc { display: none; }
+  .toc {
+    display: none;
+  }
 }
