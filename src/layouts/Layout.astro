@@ -71,7 +71,7 @@ const jsonldStringfy = JSON.stringify({
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/png" href="/YN-icon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <title>{metadata.title}</title>
     <meta name="description" content={metadata.description} />
     <meta property="og:title" content={metadata.og.title} />
@@ -80,7 +80,7 @@ const jsonldStringfy = JSON.stringify({
     <meta name="twitter:card" content={metadata.og.twitter.card} />
     <meta property="twitter:site" content={metadata.og.twitter.site} />
     <meta property="twitter:creator" content={metadata.og.twitter.creator} />
-    <script type="application/ld+json" set:html={jsonldStringfy} />
+    <script type="application/ld+json" is:inline set:html={jsonldStringfy} />
     <meta name="generator" content={Astro.generator} />
     <title>{metadata.title}</title>
     <meta name="description" content={description} />

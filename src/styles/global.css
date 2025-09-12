@@ -10,7 +10,9 @@ body {
 }
 
 body {
-  font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial, sans-serif;
+  font-family:
+    "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
+    sans-serif;
   color: #1f2937;
   background: #fff;
 }
@@ -35,4 +37,3 @@ footer {
 a {
   color: inherit;
 }
-

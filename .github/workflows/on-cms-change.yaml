@@ -18,8 +18,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL }}
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL || '' }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || '' }}
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:

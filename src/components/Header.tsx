@@ -44,7 +44,10 @@ export default function Header() {
   }, []);
 
   return (
-    <div className={`header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`} role="banner">
+    <div
+      className={`header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`}
+      role="banner"
+    >
       <div className="container">
         <div className="nav" ref={navRef}>
           <div className="brand">
@@ -69,5 +72,3 @@ export default function Header() {
     </div>
   );
 }
-
-

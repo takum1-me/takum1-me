@@ -1,0 +1,11 @@
+name = "takum1-me"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+# プレビュー環境の設定
+[env.preview]
+name = "takum1-me-preview"
+
+# 本番環境の設定
+[env.production]
+name = "takum1-me"
