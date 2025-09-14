@@ -156,25 +156,25 @@ const formatDate = (dateString: string) => {
 
   @media (max-width: 768px) {
     .blog-container {
-      max-width: calc(85vw - 4rem); /* 右に15%の余白 */
+      max-width: calc(100vw - 2rem); /* 左マージンを小さくして右に伸ばす */
       margin-left: 2rem;
-      margin-right: 2rem;
+      margin-right: 0; /* 右マージンを削除 */
     }
   }
 
   @media (max-width: 480px) {
     .blog-container {
-      max-width: calc(85vw - 3rem); /* 右に15%の余白 */
+      max-width: calc(100vw - 1.5rem); /* 左マージンを小さくして右に伸ばす */
       margin-left: 1.5rem;
-      margin-right: 1.5rem;
+      margin-right: 0; /* 右マージンを削除 */
     }
   }
 
   @media (max-width: 320px) {
     .blog-container {
-      max-width: calc(90vw - 2rem); /* 右に10%の余白 */
+      max-width: calc(100vw - 1rem); /* 左マージンを小さくして右に伸ばす */
       margin-left: 1rem;
-      margin-right: 1rem;
+      margin-right: 0; /* 右マージンを削除 */
     }
   }
 

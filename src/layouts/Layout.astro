@@ -156,7 +156,7 @@ const jsonldStringfy = JSON.stringify({
     @media (min-width: 1400px) {
       main {
         max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
-        margin-left: 8.25rem; /* PageTitleの右端に合わせる */
+        margin-left: 6rem; /* PageTitleの右端に合わせる */
         margin-right: 2.5vw; /* より右に伸ばす */
       }
     }
@@ -173,36 +173,36 @@ const jsonldStringfy = JSON.stringify({
     /* モバイルサイズ */
     @media (max-width: 768px) {
       main {
-        max-width: calc(85vw - 4rem); /* 右に15%の余白 */
-        margin-left: 2rem;
-        margin-right: 2rem;
+        max-width: calc(100vw - 2.5rem); /* 少し左に調整 */
+        margin-left: 2.5rem;
+        margin-right: 0; /* 右マージンを削除 */
       }
     }
 
     /* 小さなモバイルサイズ */
     @media (max-width: 480px) {
       main {
-        max-width: calc(85vw - 3rem); /* 右に15%の余白 */
-        margin-left: 1.5rem;
-        margin-right: 1.5rem;
+        max-width: calc(100vw - 2rem); /* 少し左に調整 */
+        margin-left: 1rem;
+        margin-right: 0; /* 右マージンを削除 */
       }
     }
 
     /* 非常に小さなモバイルサイズ */
     @media (max-width: 320px) {
       main {
-        max-width: calc(90vw - 2rem); /* 右に10%の余白 */
+        max-width: calc(100vw - 1.5rem); /* 少し左に調整 */
         margin-left: 1rem;
-        margin-right: 1rem;
+        margin-right: 0; /* 右マージンを削除 */
       }
     }
 
     footer {
-      border-top: 1px solid #e5e7eb;
       padding: 16px 0;
       color: #6b7280;
       font-size: 14px;
     }
+    
 
     a {
       color: inherit;
@@ -211,6 +211,8 @@ const jsonldStringfy = JSON.stringify({
     .main-content {
       padding-top: 5rem; /* ヘッダーの高さ分のマージンを追加 */
       margin-right:0rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0;
     }
     
     @media (max-width: 768px) {

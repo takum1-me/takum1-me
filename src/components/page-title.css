@@ -1,6 +1,6 @@
 .page-title {
     position: fixed;
-    top: 6.5rem;
+    top: 6.8rem;
     left: 2rem;
     font-size: 6rem;
     font-weight: 700;
@@ -17,6 +17,7 @@
     --footer-height: 100vh;
     --scroll-translate-y: 0px;
     --scroll-skew-y: 0deg;
+    --page-height-90: 93vh;
 }
 
 .page-title::after {
@@ -24,7 +25,7 @@
     position: fixed;
     right: calc(2rem + 5rem);
     bottom: 0;
-    height: var(--footer-height, 200vh);
+    height: var(--page-height-90, 93vh);
     width: 1rem;
     background: #8b7355;
     opacity: 0.5;
@@ -38,7 +39,7 @@
     position: fixed;
     right: calc(2rem + 6.25rem);
     bottom: 0;
-    height: var(--footer-height, 200vh);
+    height: var(--page-height-90, 93vh);
     width: 1rem;
     background: #8b7355;
     opacity: 0.3;

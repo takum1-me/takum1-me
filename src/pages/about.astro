@@ -6,7 +6,7 @@ import "../components/page-title.css";
 
 <Layout title="About">
     <div class="about-container">
-        <PageTitle title="ABOUT" client:load />
+        <PageTitle title="ABOUT" pageType="about" client:load />
         <div class="content-grid">
             <section class="card interests-card">
                 <div class="card-header">
@@ -377,9 +377,9 @@ import "../components/page-title.css";
 
     @media (max-width: 768px) {
         .about-container {
-            max-width: calc(85vw - 4rem); /* 右に15%の余白 */
+            max-width: calc(100vw - 2rem); /* 左マージンを小さくして右に伸ばす */
             margin-left: 2rem;
-            margin-right: 2rem;
+            margin-right: 0; /* 右マージンを削除 */
         }
         
         .content-grid {
@@ -412,7 +412,6 @@ import "../components/page-title.css";
     }
 
     .sns-section {
-        margin-top: 4rem;
         text-align: center;
         padding: 3rem 2rem;
         /* background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); */

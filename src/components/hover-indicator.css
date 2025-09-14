@@ -16,7 +16,7 @@
 .button-container {
   position: relative;
   display: inline-block;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.25rem 0.25rem 0;
   margin: 0.125rem 0;
 }
 
@@ -25,11 +25,12 @@
   width: 100%;
   margin: 0.0625rem 0;
   position: relative;
+  padding: 0.25rem 0.25rem 0.25rem 0;
 }
 
 .hover-indicator-nav.with-background {
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.25rem;
 }
 
 .hover-indicator-nav.no-background {
