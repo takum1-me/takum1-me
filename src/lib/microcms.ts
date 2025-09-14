@@ -40,12 +40,14 @@ export async function getBlogById(slug: string): Promise<Blog | null> {
   try {
     // slugを使ってフィルタリングするクエリに変更
     const res = await fetchWithAuth(`blog?filters=slug[equals]${slug}`);
-    
+
     if (!res.ok) {
-      console.error(`Failed to fetch blog with slug: ${slug}, status: ${res.status}`);
+      console.error(
+        `Failed to fetch blog with slug: ${slug}, status: ${res.status}`,
+      );
       return null;
     }
-    
+
     const data = await res.json();
 
     // フィルタリングの結果は配列で返ってくるので、最初の1件を返す

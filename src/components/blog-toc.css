@@ -13,7 +13,7 @@
   z-index: 100;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(calc(100vh + 50vh - 50%));
-  transition: 
+  transition:
     transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 0;
@@ -22,7 +22,7 @@
 .toc.animate-in {
   transform: translateY(-50%);
   opacity: 1;
-  transition: 
+  transition:
     transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.8s ease-in;
 }
@@ -30,7 +30,7 @@
 .toc.animate-out {
   transform: translateY(calc(100vh + 50vh - 50%));
   opacity: 0;
-  transition: 
+  transition:
     transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.8s ease-out;
 }
@@ -67,7 +67,9 @@
   background: rgba(17, 24, 39, 0.2);
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .toc > .toc-list > li > a.is-active-link {
@@ -190,7 +192,7 @@
   z-index: 99;
   transform: translateY(calc(100vh + 100px));
   opacity: 0;
-  transition: 
+  transition:
     transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -198,7 +200,7 @@
 .toc-toggle-button.animate-in {
   transform: translateY(0);
   opacity: 1;
-  transition: 
+  transition:
     transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.8s ease-in;
 }
@@ -206,7 +208,7 @@
 .toc-toggle-button.animate-out {
   transform: translateY(calc(100vh + 100px));
   opacity: 0;
-  transition: 
+  transition:
     transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.4s ease-out;
 }

@@ -67,15 +67,15 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .nav {
     padding: 0.4rem 1rem;
   }
-  
+
   .brand a {
     font-size: 1rem;
   }
-  
+
   .header-links .indicator-button {
     font-size: 1.1rem;
     padding: 0.5rem;
@@ -89,19 +89,19 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .nav {
     padding: 0.35rem 0.875rem;
   }
-  
+
   .brand a {
     font-size: 0.9rem;
   }
-  
+
   .header-links {
     gap: 0.5rem;
   }
-  
+
   .header-links .indicator-button {
     font-size: 1rem;
     padding: 0.45rem;
@@ -115,19 +115,19 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .nav {
     padding: 0.3rem 0.75rem;
   }
-  
+
   .brand a {
     font-size: 0.85rem;
   }
-  
+
   .header-links {
     gap: 0.4rem;
   }
-  
+
   .header-links .indicator-button {
     font-size: 0.9rem;
     padding: 0.4rem;
@@ -141,19 +141,19 @@
     max-width: 100%;
     width: 100%;
   }
-  
+
   .nav {
     padding: 0.25rem 0.5rem;
   }
-  
+
   .brand a {
     font-size: 0.8rem;
   }
-  
+
   .header-links {
     gap: 0.3rem;
   }
-  
+
   .header-links .indicator-button {
     font-size: 0.85rem;
     padding: 0.35rem;

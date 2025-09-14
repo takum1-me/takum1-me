@@ -20,7 +20,7 @@ export default function Header() {
     const y = window.scrollY;
     const goingUp = y < lastYRef.current;
     setIsAtTop(y <= 0);
-    
+
     const shouldShow = y <= 0 || goingUp || hoverRef.current;
     setVisible(shouldShow);
     lastYRef.current = y;
@@ -29,7 +29,7 @@ export default function Header() {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const nearTop = e.clientY <= HOVER_THRESHOLD;
     hoverRef.current = nearTop;
-    
+
     if (nearTop) {
       setVisible(true);
     } else {
@@ -50,7 +50,7 @@ export default function Header() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("mousemove", handleMouseMove);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);

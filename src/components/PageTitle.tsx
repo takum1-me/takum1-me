@@ -1,12 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface PageTitleProps {
   title: string;
   className?: string;
-  pageType?: 'blog' | 'about' | 'default';
+  pageType?: "blog" | "about" | "default";
 }
 
-const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType = 'default' }) => {
+const PageTitle: React.FC<PageTitleProps> = ({
+  title,
+  className = "",
+  pageType = "default",
+}) => {
   const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -16,56 +20,61 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType =
 
       try {
         // ブログページのページネーション要素を取得
-        const paginationContainer = document.querySelector('.pagination-container');
-        
+        const paginationContainer = document.querySelector(
+          ".pagination-container",
+        );
+
         if (paginationContainer) {
           // ページネーションの下端位置を取得
           const paginationRect = paginationContainer.getBoundingClientRect();
           const scrollY = window.scrollY || window.pageYOffset || 0;
           const paginationBottom = paginationRect.bottom + scrollY;
-          
+
           // デバッグログ（開発時のみ）
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Pagination Bottom:', paginationBottom);
-            console.log('Calculated Bar Height:', paginationBottom);
+          if (process.env.NODE_ENV === "development") {
+            console.log("Pagination Bottom:", paginationBottom);
+            console.log("Calculated Bar Height:", paginationBottom);
           }
-          
+
           return Math.max(100, paginationBottom);
         } else {
           // ページネーションが見つからない場合はmain-contentを取得
-          const mainContent = document.querySelector('.main-content');
-          
+          const mainContent = document.querySelector(".main-content");
+
           if (mainContent) {
             // main-contentの下端位置を取得
             const mainRect = mainContent.getBoundingClientRect();
             const scrollY = window.scrollY || window.pageYOffset || 0;
             const mainBottom = mainRect.bottom + scrollY;
-            
+
             // デバッグログ（開発時のみ）
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Main Content Bottom:', mainBottom);
-              console.log('Calculated Bar Height:', mainBottom);
+            if (process.env.NODE_ENV === "development") {
+              console.log("Main Content Bottom:", mainBottom);
+              console.log("Calculated Bar Height:", mainBottom);
             }
-            
+
             return Math.max(100, mainBottom);
           } else {
             // どちらも見つからない場合はページの高さの93%をフォールバック
-            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1000;
+            const viewportHeight =
+              window.innerHeight ||
+              document.documentElement.clientHeight ||
+              1000;
             const documentHeight = Math.max(
               document.body?.scrollHeight || 0,
               document.body?.offsetHeight || 0,
               document.documentElement?.scrollHeight || 0,
               document.documentElement?.offsetHeight || 0,
-              viewportHeight
+              viewportHeight,
             );
-            
+
             const pageHeight = Math.max(documentHeight, viewportHeight);
             return Math.max(100, pageHeight * 0.93);
           }
         }
       } catch (error) {
         // エラーが発生した場合はフォールバック値を使用
-        console.warn('PageTitle calculation error:', error);
+        console.warn("PageTitle calculation error:", error);
         return Math.max(100, window.innerHeight * 0.93); // ビューポートの93%
       }
     };
@@ -75,23 +84,23 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType =
 
       try {
         const scrollY = window.scrollY || window.pageYOffset || 0;
-        
+
         // スクロール量に応じて上に上がっていくアニメーション
         const translateY = scrollY; // スクロール分だけ上に移動
         const skewY = 0; // 傾斜をなくして上下反転を防ぐ
-        
+
         // 棒の高さを計算
         const barHeight = calculateBarHeight();
-        
+
         // CSS変数を使用して疑似要素も制御
         const element = titleRef.current;
-        element.style.setProperty('--scroll-translate-y', `${translateY}px`);
-        element.style.setProperty('--scroll-skew-y', `${skewY}deg`);
-        element.style.setProperty('--footer-height', `${barHeight}px`);
-        element.style.setProperty('--page-height-90', `${barHeight}px`);
+        element.style.setProperty("--scroll-translate-y", `${translateY}px`);
+        element.style.setProperty("--scroll-skew-y", `${skewY}deg`);
+        element.style.setProperty("--footer-height", `${barHeight}px`);
+        element.style.setProperty("--page-height-90", `${barHeight}px`);
         element.style.transform = `rotate(180deg) translateY(${translateY}px)`;
       } catch (error) {
-        console.warn('PageTitle scroll handler error:', error);
+        console.warn("PageTitle scroll handler error:", error);
       }
     };
 
@@ -103,18 +112,18 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType =
           try {
             handleScroll();
           } catch (error) {
-            console.warn('PageTitle delayed init error:', error);
+            console.warn("PageTitle delayed init error:", error);
           }
         }, delay);
       };
-      
+
       // 即座に実行
       try {
         handleScroll();
       } catch (error) {
-        console.warn('PageTitle immediate init error:', error);
+        console.warn("PageTitle immediate init error:", error);
       }
-      
+
       // 複数のタイミングで実行（ビルド環境での遅延対応）
       delayedInit(50);
       delayedInit(100);
@@ -125,39 +134,41 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType =
 
     // イベントリスナーを追加（より安全な方法）
     const addEventListeners = () => {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      window.addEventListener('resize', handleScroll, { passive: true });
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      window.addEventListener("resize", handleScroll, { passive: true });
       // 画面サイズ変更時の追加イベント
-      window.addEventListener('orientationchange', handleScroll, { passive: true });
+      window.addEventListener("orientationchange", handleScroll, {
+        passive: true,
+      });
     };
 
     const removeEventListeners = () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-      window.removeEventListener('orientationchange', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("orientationchange", handleScroll);
     };
 
     // イベントリスナーを追加
     addEventListeners();
-    
+
     // 初期化（複数のタイミングで実行）
     const runInitialize = () => {
       initialize();
     };
-    
+
     // 即座に実行
     runInitialize();
-    
+
     // 複数のタイミングで実行
-    if (document.readyState === 'complete') {
+    if (document.readyState === "complete") {
       runInitialize();
     } else {
-      window.addEventListener('load', runInitialize);
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runInitialize);
+      window.addEventListener("load", runInitialize);
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", runInitialize);
       }
     }
-    
+
     // 追加の初期化タイミング
     setTimeout(runInitialize, 50);
     setTimeout(runInitialize, 100);
@@ -166,8 +177,8 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, className = '', pageType =
     // クリーンアップ
     return () => {
       removeEventListeners();
-      window.removeEventListener('load', runInitialize);
-      document.removeEventListener('DOMContentLoaded', runInitialize);
+      window.removeEventListener("load", runInitialize);
+      document.removeEventListener("DOMContentLoaded", runInitialize);
     };
   }, [pageType]);
 

@@ -20,7 +20,9 @@ export default function BlogToc() {
 
   // TOC項目の生成
   const generateTocItems = useCallback(() => {
-    const headings = document.querySelectorAll(".article-content h1, .article-content h2");
+    const headings = document.querySelectorAll(
+      ".article-content h1, .article-content h2",
+    );
     const items: TocItem[] = [];
 
     headings.forEach((heading, index) => {
@@ -43,81 +45,94 @@ export default function BlogToc() {
   }, []);
 
   // アクティブリンクの更新
-  const updateActiveLinks = useCallback((items: TocItem[], activeHeading: TocItem) => {
-    // まず全てのアクティブ状態をクリア
-    const tocLinks = document.querySelectorAll(".toc a");
-    tocLinks.forEach((link) => {
-      link.classList.remove("is-active-link");
-    });
+  const updateActiveLinks = useCallback(
+    (items: TocItem[], activeHeading: TocItem) => {
+      // まず全てのアクティブ状態をクリア
+      const tocLinks = document.querySelectorAll(".toc a");
+      tocLinks.forEach((link) => {
+        link.classList.remove("is-active-link");
+      });
 
-    // H2がアクティブな場合、親のH1もアクティブ状態を維持
-    if (activeHeading.level === 2) {
-      // このH2の親のH1を見つける
-      const currentIndex = items.findIndex(item => item.id === activeHeading.id);
-      let parentH1: TocItem | null = null;
+      // H2がアクティブな場合、親のH1もアクティブ状態を維持
+      if (activeHeading.level === 2) {
+        // このH2の親のH1を見つける
+        const currentIndex = items.findIndex(
+          (item) => item.id === activeHeading.id,
+        );
+        let parentH1: TocItem | null = null;
 
-      // 現在のH2より前のH1を探す
-      for (let i = currentIndex - 1; i >= 0; i--) {
-        if (items[i].level === 1) {
-          parentH1 = items[i];
-          break;
+        // 現在のH2より前のH1を探す
+        for (let i = currentIndex - 1; i >= 0; i--) {
+          if (items[i].level === 1) {
+            parentH1 = items[i];
+            break;
+          }
+        }
+
+        // 親のH1をアクティブにする
+        if (parentH1) {
+          const parentLink = document.querySelector(
+            `.toc a[href="#${parentH1.id}"]`,
+          );
+          if (parentLink) {
+            parentLink.classList.add("is-active-link");
+          }
         }
       }
 
-      // 親のH1をアクティブにする
-      if (parentH1) {
-        const parentLink = document.querySelector(`.toc a[href="#${parentH1.id}"]`);
-        if (parentLink) {
-          parentLink.classList.add("is-active-link");
-        }
+      // 現在の見出しをアクティブにする
+      const currentLink = document.querySelector(
+        `.toc a[href="#${activeHeading.id}"]`,
+      );
+      if (currentLink) {
+        currentLink.classList.add("is-active-link");
       }
-    }
-
-    // 現在の見出しをアクティブにする
-    const currentLink = document.querySelector(`.toc a[href="#${activeHeading.id}"]`);
-    if (currentLink) {
-      currentLink.classList.add("is-active-link");
-    }
-  }, []);
+    },
+    [],
+  );
 
   // アクティブな見出しの更新
-  const updateActiveHeading = useCallback((items: TocItem[]) => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
+  const updateActiveHeading = useCallback(
+    (items: TocItem[]) => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
-    // ページ下部の判定
-    if (scrollTop + windowHeight >= documentHeight - 100) {
-      const lastH2 = items.filter(item => item.level === 2).pop();
-      if (lastH2) {
-        setActiveId(lastH2.id);
-        // H2がアクティブな場合、親のH1もアクティブ状態を維持
-        updateActiveLinks(items, lastH2);
+      // ページ下部の判定
+      if (scrollTop + windowHeight >= documentHeight - 100) {
+        const lastH2 = items.filter((item) => item.level === 2).pop();
+        if (lastH2) {
+          setActiveId(lastH2.id);
+          // H2がアクティブな場合、親のH1もアクティブ状態を維持
+          updateActiveLinks(items, lastH2);
+        }
+        return;
       }
-      return;
-    }
 
-    // スクロール方向に応じた判定
-    let activeHeading: TocItem | null = null;
-    const viewportCenter = scrollTop + windowHeight * 0.5;
-    let minDistance = Infinity;
+      // スクロール方向に応じた判定
+      let activeHeading: TocItem | null = null;
+      const viewportCenter = scrollTop + windowHeight * 0.5;
+      let minDistance = Infinity;
 
-    items.forEach(item => {
-      const rect = item.element.getBoundingClientRect();
-      const headingTop = scrollTop + rect.top;
-      const distance = Math.abs(headingTop - viewportCenter);
+      items.forEach((item) => {
+        const rect = item.element.getBoundingClientRect();
+        const headingTop = scrollTop + rect.top;
+        const distance = Math.abs(headingTop - viewportCenter);
 
-      if (distance < minDistance) {
-        minDistance = distance;
-        activeHeading = item;
+        if (distance < minDistance) {
+          minDistance = distance;
+          activeHeading = item;
+        }
+      });
+
+      if (activeHeading) {
+        setActiveId((activeHeading as TocItem).id);
+        updateActiveLinks(items, activeHeading as TocItem);
       }
-    });
-
-    if (activeHeading) {
-      setActiveId((activeHeading as TocItem).id);
-      updateActiveLinks(items, activeHeading as TocItem);
-    }
-  }, [updateActiveLinks]);
+    },
+    [updateActiveLinks],
+  );
 
   // スクロール処理
   const handleScroll = useCallback(() => {
@@ -127,13 +142,13 @@ export default function BlogToc() {
     const shouldShow = scrollY > SCROLL_TRIGGER;
 
     if (shouldShow !== isTocVisible) {
-      tocRef.current.classList.toggle('animate-in', shouldShow);
-      tocRef.current.classList.toggle('animate-out', !shouldShow);
+      tocRef.current.classList.toggle("animate-in", shouldShow);
+      tocRef.current.classList.toggle("animate-out", !shouldShow);
       setIsTocVisible(shouldShow);
 
       if (buttonRef.current) {
-        buttonRef.current.classList.toggle('animate-in', !shouldShow);
-        buttonRef.current.classList.toggle('animate-out', shouldShow);
+        buttonRef.current.classList.toggle("animate-in", !shouldShow);
+        buttonRef.current.classList.toggle("animate-out", shouldShow);
       }
     }
 
@@ -146,7 +161,9 @@ export default function BlogToc() {
     if (!element) return;
 
     const header = document.querySelector<HTMLElement>(".header-wrap .nav");
-    const offset = header ? Math.ceil(header.getBoundingClientRect().height + 20) : 100;
+    const offset = header
+      ? Math.ceil(header.getBoundingClientRect().height + 20)
+      : 100;
 
     window.scrollTo({
       top: element.offsetTop - offset,
@@ -159,47 +176,52 @@ export default function BlogToc() {
     if (!tocRef.current || !buttonRef.current) return;
 
     if (isTocVisible) {
-      tocRef.current.classList.remove('animate-in');
-      tocRef.current.classList.add('animate-out');
+      tocRef.current.classList.remove("animate-in");
+      tocRef.current.classList.add("animate-out");
       setIsTocVisible(false);
-      
+
       setTimeout(() => {
-        buttonRef.current?.classList.remove('animate-out');
-        buttonRef.current?.classList.add('animate-in');
+        buttonRef.current?.classList.remove("animate-out");
+        buttonRef.current?.classList.add("animate-in");
       }, ANIMATION_DELAY);
     } else {
-      buttonRef.current.classList.remove('animate-in');
-      buttonRef.current.classList.add('animate-out');
-      
+      buttonRef.current.classList.remove("animate-in");
+      buttonRef.current.classList.add("animate-out");
+
       setTimeout(() => {
-        tocRef.current?.classList.remove('animate-out');
-        tocRef.current?.classList.add('animate-in');
+        tocRef.current?.classList.remove("animate-out");
+        tocRef.current?.classList.add("animate-in");
         setIsTocVisible(true);
       }, 400);
     }
   }, [isTocVisible]);
 
   // H2項目の取得
-  const getH2Items = useCallback((h1Index: number) => {
-    const nextH1Index = tocItems.findIndex(
-      (item, index) => index > h1Index && item.level === 1
-    );
-    const endIndex = nextH1Index === -1 ? tocItems.length : nextH1Index;
-    
-    return tocItems.slice(h1Index + 1, endIndex).filter(item => item.level === 2);
-  }, [tocItems]);
+  const getH2Items = useCallback(
+    (h1Index: number) => {
+      const nextH1Index = tocItems.findIndex(
+        (item, index) => index > h1Index && item.level === 1,
+      );
+      const endIndex = nextH1Index === -1 ? tocItems.length : nextH1Index;
+
+      return tocItems
+        .slice(h1Index + 1, endIndex)
+        .filter((item) => item.level === 2);
+    },
+    [tocItems],
+  );
 
   useEffect(() => {
     generateTocItems();
-    
+
     const throttledScroll = () => {
       requestAnimationFrame(handleScroll);
     };
 
-    window.addEventListener('scroll', throttledScroll, { passive: true });
-    
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+
     return () => {
-      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener("scroll", throttledScroll);
     };
   }, [generateTocItems, handleScroll]);
 
@@ -210,7 +232,7 @@ export default function BlogToc() {
       <aside className="toc" ref={tocRef} aria-label="目次">
         <ul className="toc-list">
           {tocItems
-            .filter(item => item.level === 1)
+            .filter((item) => item.level === 1)
             .map((item, index) => (
               <li key={item.id} className="toc-h1">
                 <a
@@ -231,7 +253,9 @@ export default function BlogToc() {
                         <li key={h2Item.id} className="toc-h2">
                           <a
                             href={`#${h2Item.id}`}
-                            className={activeId === h2Item.id ? "is-active-link" : ""}
+                            className={
+                              activeId === h2Item.id ? "is-active-link" : ""
+                            }
                             onClick={(e) => {
                               e.preventDefault();
                               handleClick(h2Item);
@@ -248,8 +272,8 @@ export default function BlogToc() {
             ))}
         </ul>
       </aside>
-      
-      <button 
+
+      <button
         ref={buttonRef}
         className="toc-toggle-button"
         onClick={handleToggleClick}

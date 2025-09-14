@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import './sidebar.css';
+import { useState, useEffect, useCallback } from "react";
+import "./sidebar.css";
 
 const SCROLL_THRESHOLD = 50;
 
@@ -11,16 +11,16 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
   if (!isVisible) return null;
 
   const navItems = [
-    { href: '/about', label: 'About' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/works', label: 'Works' },
+    { href: "/about", label: "About" },
+    { href: "/blog", label: "Blog" },
+    { href: "/works", label: "Works" },
   ];
 
   return (
@@ -28,11 +28,7 @@ const Sidebar = () => {
       <div className="sidebar-content">
         <nav className="sidebar-nav">
           {navItems.map(({ href, label }) => (
-            <a 
-              key={href}
-              href={href} 
-              className="sidebar-link"
-            >
+            <a key={href} href={href} className="sidebar-link">
               {label}
             </a>
           ))}
