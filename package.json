@@ -17,6 +17,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.5",
     "@astrojs/ts-plugin": "^1.10.4",
+    "gsap": "^3.13.0",
     "typescript": "^5.9.2"
   },
   "devDependencies": {

@@ -14,7 +14,11 @@ export function fetchWithAuth(path: string) {
   const headers = {
     "X-MICROCMS-API-KEY": apiKey,
   };
+  
   return fetch(url, {
     headers,
+  }).catch((error) => {
+    console.error(`Network error fetching ${path}:`, error);
+    throw error;
   });
 }

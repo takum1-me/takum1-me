@@ -1,9 +1,51 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PageTitle from "../components/PageTitle";
+import "../components/page-title.css";
 ---
 
 <Layout title="Works">
-    <h1>Works</h1>
-    <p>制作物の一覧をここに掲載します。</p>
+    <div class="works-page">
+        <PageTitle title="WORKS" client:load />
+        
+    </div>
 </Layout>
+
+<style>
+    .works-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-left: 10rem;
+        padding: 2rem 1rem;
+        position: relative;
+    }
+
+    /* タブレットサイズ */
+    @media (max-width: 1024px) {
+        .works-page {
+            margin-left: 8rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .works-page {
+            margin-left: 5rem;
+        }
+    }
+
+    /* 小さなモバイルサイズ */
+    @media (max-width: 480px) {
+        .works-page {
+            margin-left: 3.5rem;
+        }
+    }
+
+    /* 非常に小さなモバイルサイズ */
+    @media (max-width: 320px) {
+        .works-page {
+            margin-left: 2.5rem;
+        }
+    }
+
+</style>
 

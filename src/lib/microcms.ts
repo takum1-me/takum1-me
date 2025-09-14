@@ -36,13 +36,29 @@ export async function getAllBlog(): Promise<BlogResponse> {
   return data;
 }
 
-export async function getBlogById(slug: string): Promise<Blog> {
-  // slugを使ってフィルタリングするクエリに変更
-  const res = await fetchWithAuth(`blog?filters=slug[equals]${slug}`);
-  const data = await res.json();
+export async function getBlogById(slug: string): Promise<Blog | null> {
+  try {
+    // slugを使ってフィルタリングするクエリに変更
+    const res = await fetchWithAuth(`blog?filters=slug[equals]${slug}`);
+    
+    if (!res.ok) {
+      console.error(`Failed to fetch blog with slug: ${slug}, status: ${res.status}`);
+      return null;
+    }
+    
+    const data = await res.json();
 
-  // フィルタリングの結果は配列で返ってくるので、最初の1件を返す
-  return data.contents[0];
+    // フィルタリングの結果は配列で返ってくるので、最初の1件を返す
+    if (!data.contents || data.contents.length === 0) {
+      console.error(`No blog found with slug: ${slug}`);
+      return null;
+    }
+
+    return data.contents[0];
+  } catch (error) {
+    console.error(`Error fetching blog with slug ${slug}:`, error);
+    return null;
+  }
 }
 
 export async function getLatestBlogs(limit: number = 5): Promise<Blog[]> {

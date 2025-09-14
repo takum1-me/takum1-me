@@ -19,6 +19,11 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const blog = await getBlogById(slug);
 
+// ブログが見つからない場合は404を返す
+if (!blog) {
+  return Astro.redirect("/404");
+}
+
 const { publishedAt, title, content, thumbnail } = blog;
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("ja-JP", {
@@ -31,32 +36,89 @@ const formatDate = (dateString: string) => {
 ---
 
 <Layout title={title}>
-  <main>
-    <div class="page">
-      <div class="article-container">
-        <div class="title-date">
-          <h1 class="article-title">{title}</h1>
-          <p class="published-date">{formatDate(publishedAt)}</p>
+  <main class="blog-main">
+    <div class="blog-container">
+      <div class="page">
+        <div class="article-container">
+          <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
+          <div class="title-date">
+            <h1 class="article-title">{title}</h1>
+            <p class="published-date">{formatDate(publishedAt)}</p>
+          </div>
+          {thumbnail && <img src={thumbnail.url} alt={title} />}
+          <div class="article-content" set:html={content} />
         </div>
-        {thumbnail && <img src={thumbnail.url} alt={title} />}
-        <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
-        <div class="article-content" set:html={content} />
       </div>
-      <BlogToc client:only="react" />
+      <div class="toc-container">
+        <BlogToc client:only="react" />
+      </div>
     </div>
   </main>
 </Layout>
 
 <style>
-  main {
+  .blog-main {
+    min-height: 100vh;
   }
-  .page { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: start; }
-  @media (max-width: 1024px) { .page { grid-template-columns: 1fr; } }
+  
+  .blog-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    max-width: 100vw; /* 画面全幅を使用 */
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .page { 
+    flex: 0 0 75%; /* 画面の75%を記事に割り当て */
+    min-width: 0;
+  }
+  
+  .toc-container {
+    flex: 0 0 25%; /* 画面の25%をTOCに割り当て */
+    position: relative;
+  }
+  
   .article-container {
     width: 100%;
     max-width: none;
     margin: 0 auto;
     padding: 0 1rem;
+  }
+  
+  @media (max-width: 1024px) { 
+    .blog-container { 
+      flex-direction: column; 
+      gap: 20px;
+      max-width: 100vw; /* 小さい画面では全幅使用 */
+      padding: 0 20px;
+    }
+    
+    .page {
+      flex: none;
+      max-width: none;
+    }
+    
+    .toc-container {
+      flex: none;
+      display: none; /* 小さい画面ではTOCを非表示 */
+    }
+  }
+  
+  /* 中サイズ画面での調整 */
+  @media (min-width: 1025px) and (max-width: 1400px) {
+    .blog-container {
+      max-width: 100vw; /* 画面全幅を使用 */
+    }
+    
+    .page {
+      flex: 0 0 75%; /* 75%を維持 */
+    }
+    
+    .toc-container {
+      flex: 0 0 25%; /* 25%を維持 */
+    }
   }
   @media (min-width: 768px) {
     .article-container { max-width: 760px; padding: 0 2rem; }

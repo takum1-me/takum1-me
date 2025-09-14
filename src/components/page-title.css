@@ -1,0 +1,98 @@
+.page-title {
+    position: fixed;
+    top: 6.5rem;
+    left: 2rem;
+    font-size: 6rem;
+    font-weight: 700;
+    color: #8b7355;
+    opacity: 0.7;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: 0.1em;
+    z-index: 100;
+    pointer-events: none;
+    will-change: auto;
+}
+
+.page-title::after {
+    content: '';
+    position: fixed;
+    right: calc(2rem + 5rem);
+    bottom: 0;
+    height: var(--footer-height, 200vh);
+    width: 1rem;
+    background: #8b7355;
+    opacity: 0.5;
+    /* 上側は斜め、下側は平ら - clip-pathのみで実現 */
+    clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
+    will-change: auto;
+}
+
+.page-title::before {
+    content: '';
+    position: fixed;
+    right: calc(2rem + 6.25rem);
+    bottom: 0;
+    height: var(--footer-height, 200vh);
+    width: 1rem;
+    background: #8b7355;
+    opacity: 0.3;
+    /* 上側は斜め、下側は平ら - clip-pathのみで実現 */
+    clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
+    will-change: auto;
+}
+
+/* タブレットサイズ */
+@media (max-width: 1024px) {
+    .page-title {
+        font-size: 5rem;
+        top: 6rem;
+        left: 1.5rem;
+    }
+
+    .page-title::after {
+        right: calc(1.5rem + 4rem);
+        width: 0.8rem;
+    }
+
+    .page-title::before {
+        right: calc(1.5rem + 5rem);
+        width: 0.8rem;
+    }
+}
+
+/* モバイルサイズ */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 4rem;
+        top: 5.5rem;
+        left: 1rem;
+    }
+
+    .page-title::after {
+        display: none;
+    }
+
+    .page-title::before {
+        display: none;
+    }
+}
+
+/* 小さなモバイルサイズ */
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 3rem;
+        top: 5rem;
+        left: 0.75rem;
+    }
+}
+
+/* 非常に小さなモバイルサイズ */
+@media (max-width: 320px) {
+    .page-title {
+        font-size: 2.5rem;
+        top: 4.5rem;
+        left: 0.5rem;
+    }
+}

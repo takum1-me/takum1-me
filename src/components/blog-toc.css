@@ -1,13 +1,38 @@
 .toc {
-  position: sticky;
-  top: 90px;
-  align-self: start;
-  width: 280px;
-  border: none;
+  position: fixed;
+  top: 50vh;
+  right: max(20px, 8vw);
+  width: min(280px, 18vw);
   border-radius: 16px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.85);
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(6px) saturate(140%);
+  -webkit-backdrop-filter: blur(6px) saturate(140%);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(calc(100vh + 50vh - 50%));
+  transition: 
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0;
+}
+
+.toc.animate-in {
+  transform: translateY(-50%);
+  opacity: 1;
+  transition: 
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.8s ease-in;
+}
+
+.toc.animate-out {
+  transform: translateY(calc(100vh + 50vh - 50%));
+  opacity: 0;
+  transition: 
+    transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.8s ease-out;
 }
 
 .toc-title {
@@ -27,7 +52,6 @@
   gap: 6px;
 }
 
-/* H1 行: 丸マーカー（光る玉）をH1の左横に配置 */
 .toc > .toc-list > li {
   position: relative;
   padding-left: 22px;
@@ -36,19 +60,16 @@
 .toc > .toc-list > li::before {
   content: "";
   position: absolute;
-  left: 9px; /* H1の左横に配置 */
-  top: 0.5em; /* H1テキストのベースラインに合わせる */
+  left: 9px;
+  top: 0.5em;
   width: 8px;
   height: 8px;
   background: rgba(17, 24, 39, 0.2);
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* H1 アクティブ（丸を発光） */
 .toc > .toc-list > li > a.is-active-link {
   color: #111827;
   font-weight: 800;
@@ -57,8 +78,8 @@
 .toc > .toc-list > li > a.is-active-link::before {
   content: "";
   position: absolute;
-  left: 9px; /* H1の左横に配置 */
-  top: 0.5em; /* H1テキストのベースラインに合わせる */
+  left: 9px;
+  top: 0.5em;
   width: 8px;
   height: 8px;
   background: #111827;
@@ -69,7 +90,6 @@
     0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-/* H1リンク（常時ボールド） */
 .toc > .toc-list > li > a {
   font-weight: 700;
   color: #6b7280;
@@ -78,16 +98,14 @@
   transition: color 0.18s ease;
 }
 
-/* H2 リスト（入れ子 ul） */
 .toc .toc-list li .toc-h2-list {
   list-style: none;
-  margin: 8px 0 0 0;
+  margin: 8px 0 0 8px;
   padding-left: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   border-left: 2px solid #e5e7eb;
-  margin-left: 8px;
 }
 
 .toc .toc-list li .toc-h2-list li {
@@ -96,7 +114,7 @@
 }
 
 .toc .toc-list li .toc-h2-list li::before {
-  display: none; /* H2には丸マーカーを表示しない */
+  display: none;
 }
 
 .toc .toc-list li .toc-h2-list a {
@@ -122,12 +140,82 @@
   font-weight: 700;
 }
 
-.toc .toc-list li .toc-h2-list a.is-active-link::before {
-  display: none;
-}
-
 @media (max-width: 1024px) {
   .toc {
     display: none;
   }
+}
+
+@media (min-width: 1101px) and (max-width: 1200px) {
+  .toc {
+    width: min(240px, 18vw);
+  }
+}
+
+@media (min-width: 1201px) and (max-width: 1399px) {
+  .toc {
+    width: min(260px, 18vw);
+  }
+}
+
+@media (min-width: 1400px) {
+  .toc {
+    width: min(280px, 18vw);
+  }
+}
+
+@media (min-width: 1600px) {
+  .toc {
+    width: min(300px, 18vw);
+  }
+}
+
+.toc-toggle-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px) saturate(140%);
+  -webkit-backdrop-filter: blur(6px) saturate(140%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+  transform: translateY(calc(100vh + 100px));
+  opacity: 0;
+  transition: 
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.toc-toggle-button.animate-in {
+  transform: translateY(0);
+  opacity: 1;
+  transition: 
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.8s ease-in;
+}
+
+.toc-toggle-button.animate-out {
+  transform: translateY(calc(100vh + 100px));
+  opacity: 0;
+  transition: 
+    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.4s ease-out;
+}
+
+.toc-toggle-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.toc-toggle-button:active {
+  transform: scale(0.95);
 }

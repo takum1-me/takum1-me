@@ -1,13 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
+import { getRandomColoredCoffeeWords } from "../data/coffee-words";
 import { getLatestBlogs } from "../lib/microcms";
 
 const latest = await getLatestBlogs(5);
+const coffeeWords = getRandomColoredCoffeeWords(20);
 ---
 
 <Layout title="takum1.me">
   <section class="hero">
+    <div class="coffee-words">
+      <div class="word-stream">
+        {coffeeWords.map((item, index) => (
+          <span style={`color: ${item.color}`}>{item.word}</span>
+        ))}
+      </div>
+    </div>
     <div class="hero-inner">
       <div class="business-card">
         <div class="card-content">
@@ -49,24 +58,109 @@ const latest = await getLatestBlogs(5);
   </div>
   </section>
 
+
   <style>
     :root { --max-width: 960px; --gap: 16px; --ink: #111827; --muted: #6b7280; }
-    .hero { padding: 40px 0 16px; border-bottom: 1px solid #e5e7eb; }
-    .hero-inner { display: flex; justify-content: center; align-items: center; }
+    
+    html,body {
+      background: #faf8f5; /* クリーム色の背景 */
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    
+    .hero { 
+      padding: 2rem 0; 
+      border-bottom: none; 
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-inner { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .coffee-words {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+    
+    .word-stream {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+    
+    .word-stream span {
+      font-size: 2rem;
+      font-weight: 700;
+      white-space: nowrap;
+      animation: slideFromRight 15s infinite linear;
+      animation-delay: calc(var(--i) * -1.5s);
+      position: absolute;
+      top: var(--random-top);
+      right: 0;
+      transform: translateY(-50%) rotate(-15deg);
+      letter-spacing: 0.1em;
+    }
+    
+    .word-stream span {
+      --random-top: calc(var(--i) * 5% + 10%);
+    }
+    
+    @keyframes slideFromRight {
+      0% {
+        transform: translateY(-50%) translateX(50vw) rotate(-15deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-50%) translateX(-100vw) rotate(-15deg);
+        opacity: 0;
+      }
+    }
     
     .business-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-      border-radius: 0.25rem;
+      background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.9) 0%, 
+        rgba(30, 41, 59, 0.8) 50%, 
+        rgba(51, 65, 85, 0.9) 100%);
+      border-radius: 0.2rem;
       padding: 2rem 2.5rem;
       box-shadow: 
-        0 0.5rem 1.5rem rgba(15, 23, 42, 0.4),
-        0 0.25rem 0.5rem rgba(0, 0, 0, 0.2),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.1);
+        0 1rem 2rem rgba(0, 0, 0, 0.3),
+        0 0.5rem 1rem rgba(0, 0, 0, 0.2),
+        inset 0 0.125rem 0 rgba(255, 255, 255, 0.1),
+        0 0 0 0.125rem rgba(255, 255, 255, 0.1);
       position: relative;
-      width: 18.2rem;
-      height: 11rem;
-      transform: rotate(-2deg);
+      width: 24rem;
+      height: 14.5rem;
+      transform: rotate(-1deg);
       transition: transform 0.3s ease;
+      backdrop-filter: blur(0.5rem);
     }
     
     .business-card:hover {
@@ -79,7 +173,7 @@ const latest = await getLatestBlogs(5);
     }
     
     .site-title { 
-      font-size: 2.5rem; 
+      font-size: 3.5rem; 
       margin: 0; 
       letter-spacing: 0.02em; 
       color: white;
@@ -88,9 +182,9 @@ const latest = await getLatestBlogs(5);
     }
     
     .site-sub { 
-      margin: 0.75rem 0 0; 
+      margin: 1rem 0 0; 
       color: rgba(255, 255, 255, 0.9);
-      font-size: 1rem;
+      font-size: 1.25rem;
       line-height: 1.4;
     }
     
@@ -111,44 +205,121 @@ const latest = await getLatestBlogs(5);
     }
     
     .bean { 
-      width: 3rem; 
-      height: 3rem; 
+      width: 4rem; 
+      height: 4rem; 
       filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.3));
     }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 24px; }
-    .about, .latest { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
-    h2 { margin: 0 0 12px; font-size: 18px; letter-spacing: 0.02em; }
-    .posts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-    .post { display: flex; justify-content: space-between; align-items: baseline; text-decoration: none; color: var(--ink); padding: 8px 0; border-bottom: 1px dashed #e5e7eb; }
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 2rem; 
+      padding: 2rem 0; 
+      max-width: 75rem;
+      margin: 0 auto;
+      margin-left: 10rem;
+      background: transparent;
+    }
+    .about, .latest { 
+      background: rgba(255, 255, 255, 0.1);
+      border: 0.125rem solid rgba(255, 255, 255, 0.2); 
+      border-radius: 1rem; 
+      padding: 1.5rem;
+      backdrop-filter: blur(0.5rem);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+    }
+    h2 { 
+      margin: 0 0 0.75rem; 
+      font-size: 1.125rem; 
+      letter-spacing: 0.02em; 
+      color: white;
+    }
+    .posts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .post { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: baseline; 
+      text-decoration: none; 
+      color: rgba(255, 255, 255, 0.9); 
+      padding: 0.5rem 0; 
+      border-bottom: 0.0625rem dashed rgba(255, 255, 255, 0.3); 
+    }
     .post:last-child { border-bottom: none; }
     .post-title { font-weight: 700; }
-    .post-date { color: var(--muted); font-size: 12px; }
-    .more { display: inline-block; margin-top: 10px; font-weight: 700; text-decoration: none; color: var(--ink); }
-    .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .post-date { color: rgba(255, 255, 255, 0.6); font-size: 0.75rem; }
+    .more { 
+      display: inline-block; 
+      margin-top: 0.625rem; 
+      font-weight: 700; 
+      text-decoration: none; 
+      color: rgba(255, 255, 255, 0.9); 
+    }
+    .more:hover { text-decoration: underline; text-underline-offset: 0.1875rem; }
+    
+    p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
 
     @media (max-width: 768px) {
       .business-card {
         padding: 1.5rem 2rem;
-        width: 15rem;
-        height: 9rem;
+        width: 20rem;
+        height: 12rem;
         transform: rotate(-1deg);
       }
       
       .site-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
       }
       
       .site-sub {
-        font-size: 0.875rem;
+        font-size: 1rem;
       }
       
       .bean {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 3rem;
+        height: 3rem;
       }
       
-      .grid { grid-template-columns: 1fr; }
+      .grid { 
+        grid-template-columns: 1fr;
+        margin-left: 5rem;
+      }
     }
+
+    /* タブレットサイズ */
+    @media (max-width: 1024px) {
+      .grid {
+        margin-left: 8rem;
+      }
+    }
+
+    /* 小さなモバイルサイズ */
+    @media (max-width: 480px) {
+      .grid {
+        margin-left: 3.5rem;
+      }
+    }
+
+    /* 非常に小さなモバイルサイズ */
+    @media (max-width: 320px) {
+      .grid {
+        margin-left: 2.5rem;
+      }
+    }
+
   </style>
+  
+  <script>
+    // コーヒー用語の位置をランダムに設定
+    document.addEventListener('DOMContentLoaded', () => {
+      const spans = document.querySelectorAll('.word-stream span');
+      spans.forEach((span, index) => {
+        const randomTop = Math.random() * 80 + 10; // 10%〜90%の範囲
+        (span as HTMLElement).style.setProperty('--i', index.toString());
+        (span as HTMLElement).style.setProperty('--random-top', `${randomTop}%`);
+      });
+    });
+  </script>
 </Layout>

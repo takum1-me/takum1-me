@@ -4,6 +4,7 @@ export interface Props {
   pageTitle?: string;
   title?: string;
   description?: string;
+  hideHeader?: boolean;
   og?: {
     type?: string;
     title?: string;
@@ -26,7 +27,7 @@ export interface Props {
 }
 
 const SITE_TITLE = "takum1.me";
-const { pageTitle, title, description, og, jsonld } = Astro.props;
+const { pageTitle, title, description, hideHeader = false, og, jsonld } = Astro.props;
 
 const metadata = {
   title: title ?? (pageTitle ? `${pageTitle} - ${SITE_TITLE}` : SITE_TITLE),
@@ -87,8 +88,8 @@ const jsonldStringfy = JSON.stringify({
     <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
-    <ReactHeader client:only="react" />
-    <main>
+    {!hideHeader && <ReactHeader client:only="react" />}
+    <main class="main-content">
       <div class="container">
         <slot />
       </div>
@@ -99,4 +100,25 @@ const jsonldStringfy = JSON.stringify({
       </div>
     </footer>
   </body>
+  
+  <style>
+    html, body {
+      background: #faf8f5; /* クリーム色の背景 */
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      overflow-y: visible;
+    }
+    
+    .main-content {
+      padding-top: 5rem; /* ヘッダーの高さ分のマージンを追加 */
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        padding-top: 4.5rem; /* モバイルでは少し小さく */
+      }
+    }
+  </style>
 </html>
