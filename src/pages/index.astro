@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
+import Button from "../components/Button";
+import "../components/button.css";
 ---
 
 <Layout title="takum1.me">
@@ -17,8 +19,8 @@ import CoffeeBean from "../assets/coffee-bean.svg";
             <p>コーヒーとプログラミング、そしてデザインが好きな大学生です。実験的なプロダクトづくりと良い抽出を日々探求しています。</p>
           </div>
           <div class="hero-cta">
-            <a href="/about" class="cta-button">About Me</a>
-            <a href="/blog" class="cta-button secondary">Latest Posts</a>
+            <Button href="/about" variant="primary">About Me</Button>
+            <Button href="/blog" variant="secondary">Latest Posts</Button>
           </div>
         </div>
         <div class="hero-visual">

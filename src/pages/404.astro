@@ -1,10 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button";
+import PageContainer from "../components/PageContainer";
+import "../components/button.css";
+import "../components/page-container.css";
 ---
 
 <Layout title="ページが見つかりません">
   <main>
-    <div class="error-container">
+    <PageContainer variant="error">
       <div class="error-content">
         <h1 class="error-title">404</h1>
         <h2 class="error-subtitle">ページが見つかりません</h2>
@@ -12,51 +16,15 @@ import Layout from "../layouts/Layout.astro";
           お探しのページは存在しないか、移動または削除された可能性があります。
         </p>
         <div class="error-actions">
-          <a href="/" class="btn btn-primary">ホームに戻る</a>
-          <a href="/blog" class="btn btn-secondary">ブログ一覧を見る</a>
+          <Button href="/" className="button-error-primary">ホームに戻る</Button>
+          <Button href="/blog" className="button-error-secondary">ブログ一覧を見る</Button>
         </div>
       </div>
-    </div>
+    </PageContainer>
   </main>
 </Layout>
 
 <style>
-  .error-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-    padding: 2rem 1rem;
-    margin-left: 10rem;
-  }
-
-  /* タブレットサイズ */
-  @media (max-width: 1024px) {
-    .error-container {
-      margin-left: 8rem;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .error-container {
-      margin-left: 5rem;
-    }
-  }
-
-  /* 小さなモバイルサイズ */
-  @media (max-width: 480px) {
-    .error-container {
-      margin-left: 3.5rem;
-    }
-  }
-
-  /* 非常に小さなモバイルサイズ */
-  @media (max-width: 320px) {
-    .error-container {
-      margin-left: 2.5rem;
-    }
-  }
-
   .error-content {
     text-align: center;
     max-width: 500px;
@@ -91,39 +59,6 @@ import Layout from "../layouts/Layout.astro";
     flex-wrap: wrap;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-  }
-
-  .btn-primary {
-    background-color: #006367;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background-color: #004d51;
-    transform: translateY(-1px);
-  }
-
-  .btn-secondary {
-    background-color: transparent;
-    color: #006367;
-    border-color: #006367;
-  }
-
-  .btn-secondary:hover {
-    background-color: #006367;
-    color: white;
-    transform: translateY(-1px);
-  }
-
-
   @media (max-width: 640px) {
     .error-title {
       font-size: 4rem;
@@ -132,11 +67,6 @@ import Layout from "../layouts/Layout.astro";
     .error-actions {
       flex-direction: column;
       align-items: center;
-    }
-    
-    .btn {
-      width: 100%;
-      max-width: 200px;
     }
   }
 </style>

@@ -2,6 +2,8 @@
 import { getAllBlog, getBlogById } from "../../lib/microcms";
 import Layout from "../../layouts/Layout.astro";
 import BlogToc from "../../components/BlogToc.tsx";
+import PageContainer from "../../components/PageContainer";
+import "../../components/page-container.css";
 
 export async function getStaticPaths() {
   try {
@@ -36,22 +38,24 @@ const formatDate = (dateString: string) => {
 
 <Layout title={title}>
   <main class="blog-main">
-    <div class="blog-container">
-      <div class="page">
-        <div class="article-container">
-          <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
-          <div class="title-date">
-            <h1 class="article-title">{title}</h1>
-            <p class="published-date">{formatDate(publishedAt)}</p>
+    <PageContainer variant="blog">
+      <div class="blog-container">
+        <div class="page">
+          <div class="article-container">
+            <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
+            <div class="title-date">
+              <h1 class="article-title">{title}</h1>
+              <p class="published-date">{formatDate(publishedAt)}</p>
+            </div>
+            {thumbnail && <img src={thumbnail.url} alt={title} />}
+            <div class="article-content" set:html={content} />
           </div>
-          {thumbnail && <img src={thumbnail.url} alt={title} />}
-          <div class="article-content" set:html={content} />
+        </div>
+        <div class="toc-container">
+          <BlogToc client:only="react" />
         </div>
       </div>
-      <div class="toc-container">
-        <BlogToc client:only="react" />
-      </div>
-    </div>
+    </PageContainer>
   </main>
 </Layout>
 
@@ -64,11 +68,6 @@ const formatDate = (dateString: string) => {
     display: flex;
     gap: 40px;
     align-items: flex-start;
-    max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
-    margin: 0 auto;
-    margin-left: 8.25rem; /* PageTitleの右端に合わせる */
-    margin-right: 2.5vw; /* より右に伸ばす */
-    padding: 0 20px;
   }
   
   .page { 
@@ -92,10 +91,6 @@ const formatDate = (dateString: string) => {
     .blog-container { 
       flex-direction: column; 
       gap: 20px;
-      max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
-      margin-left: 6.5rem; /* PageTitleの右端に合わせる */
-      margin-right: 2.5vw; /* より右に伸ばす */
-      padding: 0 20px;
     }
     
     .page {
@@ -106,23 +101,6 @@ const formatDate = (dateString: string) => {
     .toc-container {
       flex: none;
       display: none; /* 小さい画面ではTOCを非表示 */
-    }
-  }
-  
-  /* 中サイズ画面での調整 */
-  @media (min-width: 1025px) and (max-width: 1400px) {
-    .blog-container {
-      max-width: min(850px, calc(100vw - 22rem));
-      margin-left: 13rem;
-      margin-right: 9rem;
-    }
-    
-    .page {
-      flex: 0 0 75%; /* 75%を維持 */
-    }
-    
-    .toc-container {
-      flex: 0 0 25%; /* 25%を維持 */
     }
   }
   @media (min-width: 768px) {

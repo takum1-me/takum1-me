@@ -1,0 +1,59 @@
+/* Card component styles */
+.card {
+  background: transparent;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: none;
+  border: none;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #8b7355;
+  border-radius: 1px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.card-icon {
+  font-size: 2rem;
+  color: #8b7355;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #8b7355;
+}
+
+/* Card variants */
+.card-interests {
+  /* Additional styles for interests card if needed */
+}
+
+.card-organizations {
+  /* Additional styles for organizations card if needed */
+}
+
+.card-qualifications {
+  /* Additional styles for qualifications card if needed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+}
