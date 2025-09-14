@@ -733,34 +733,24 @@ const categories = [
     }
   }
 
-  // Extend window object for pagination
-  declare global {
-    interface Window {
-      blogPagination?: {
-        filterByCategory: (categoryId: string) => void;
-        showPage: (page: number) => void;
-        previousPage: () => void;
-        nextPage: () => void;
-      };
-    }
-  }
 
   // Initialize pagination when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
-    window.blogPagination = new BlogPagination();
+    (window as any).blogPagination = new BlogPagination();
     
     // Handle window resize
     window.addEventListener('resize', () => {
       if (window.blogPagination) {
-        const wasMobile = window.blogPagination.isMobile;
-        window.blogPagination.isMobile = window.innerWidth <= 767;
+        const pagination = window.blogPagination as any;
+        const wasMobile = pagination.isMobile;
+        pagination.isMobile = window.innerWidth <= 767;
         
         // If mobile state changed, reinitialize display
-        if (wasMobile !== window.blogPagination.isMobile) {
-          if (window.blogPagination.isMobile) {
-            window.blogPagination.showAllBlogs();
+        if (wasMobile !== pagination.isMobile) {
+          if (pagination.isMobile) {
+            pagination.showAllBlogs();
           } else {
-            window.blogPagination.showPage(1);
+            pagination.showPage(1);
           }
         }
       }
