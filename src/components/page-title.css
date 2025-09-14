@@ -12,7 +12,11 @@
     letter-spacing: 0.1em;
     z-index: 100;
     pointer-events: none;
-    will-change: auto;
+    will-change: transform;
+    /* デフォルト値の設定 */
+    --footer-height: 100vh;
+    --scroll-translate-y: 0px;
+    --scroll-skew-y: 0deg;
 }
 
 .page-title::after {
