@@ -28,11 +28,6 @@ const PageTitle: React.FC<PageTitleProps> = ({
           const scrollY = window.scrollY || window.pageYOffset || 0;
           const mainBottom = mainRect.bottom + scrollY;
 
-          // デバッグログ（開発時のみ）
-          if (process.env.NODE_ENV === "development") {
-            console.log("Main Content Bottom:", mainBottom);
-            console.log("Calculated Bar Height:", mainBottom);
-          }
 
           return Math.max(100, mainBottom);
         } else {
@@ -52,7 +47,6 @@ const PageTitle: React.FC<PageTitleProps> = ({
         }
       } catch (error) {
         // エラーが発生した場合はフォールバック値を使用
-        console.warn("PageTitle calculation error:", error);
         return Math.max(100, window.innerHeight * 0.93); // ビューポートの93%
       }
     };
@@ -78,7 +72,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
         element.style.setProperty("--page-height-90", `${barHeight}px`);
         element.style.transform = `rotate(180deg) translateY(${translateY}px)`;
       } catch (error) {
-        console.warn("PageTitle scroll handler error:", error);
+        // エラーハンドリング
       }
     };
 
@@ -90,7 +84,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           try {
             handleScroll();
           } catch (error) {
-            console.warn("PageTitle delayed init error:", error);
+            // エラーハンドリング
           }
         }, delay);
       };
@@ -99,7 +93,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       try {
         handleScroll();
       } catch (error) {
-        console.warn("PageTitle immediate init error:", error);
+        // エラーハンドリング
       }
 
       // 複数のタイミングで実行（ビルド環境での遅延対応）
@@ -160,10 +154,13 @@ const PageTitle: React.FC<PageTitleProps> = ({
     };
   }, [pageType]);
 
-  return (
-    <div ref={titleRef} className={`page-title ${className}`}>
-      {title}
-    </div>
+  return React.createElement(
+    'div',
+    {
+      ref: titleRef,
+      className: `page-title ${className}`
+    },
+    title
   );
 };
 

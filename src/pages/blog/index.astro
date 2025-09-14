@@ -11,7 +11,6 @@ let blogs;
 try {
   blogs = await getAllBlog();
 } catch (error) {
-  console.error("Failed to fetch blogs:", error);
   // 環境変数が設定されていない場合は空のデータを返す
   blogs = { contents: [], totalCount: 0, offset: 0, limit: 0 };
 }
@@ -44,7 +43,7 @@ const categories = [
         client:only="react"
         items={categories}
         onItemClick={(categoryId: string) => {
-          console.log('Category clicked:', categoryId);
+          // Category clicked
         }}
         className="filter-nav vertical"
         showBackground={true}
@@ -129,7 +128,7 @@ const categories = [
   .category-filter {
     position: fixed;
     bottom: 2rem;
-    left: 2rem;
+    left: 1rem;
     z-index: 1000;
     display: flex;
     justify-content: flex-start;
@@ -260,7 +259,7 @@ const categories = [
   }
 
 
-  /* Keyframe animations removed - GSAP handles all animations */
+  /* Keyframe animations removed */
 
   @media (max-width: 767px) {
     .blog-grid {
@@ -286,7 +285,6 @@ const categories = [
     justify-content: center;
     align-items: center;
     min-height: 20rem;
-    animation: fadeIn 0.5s ease-in-out;
   }
 
   .no-blogs-content {
@@ -312,18 +310,7 @@ const categories = [
     line-height: 1.5;
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(1rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* All keyframe animations removed - GSAP provides smoother animations */
+  /* All keyframe animations removed */
 
   /* Pagination Styles */
   .pagination-container {
@@ -473,7 +460,6 @@ const categories = [
 </style>
 
 <script>
-  import { gsap } from 'gsap';
 
   // Pagination functionality
   class BlogPagination {
@@ -540,14 +526,14 @@ const categories = [
       // Recalculate total pages
       this.totalPages = Math.ceil(this.filteredBlogs.length / this.itemsPerPage);
       
-      // Update UI with wave animation
+      // Update UI without animation
       this.updatePaginationUI();
       
       // Show all blogs on mobile, paginated on desktop
       if (this.isMobile) {
-        this.showAllBlogsWithAnimation();
+        this.showAllBlogs();
       } else {
-        this.showPageWithWaveAnimation(1);
+        this.showPage(1);
       }
     }
 
@@ -597,44 +583,6 @@ const categories = [
       }
     }
 
-    showAllBlogsWithAnimation(): void {
-      // Show no blogs message if needed
-      if (this.filteredBlogs.length === 0) {
-        this.hideAllBlogs();
-        this.showNoBlogsMessage();
-        return;
-      } else {
-        this.hideNoBlogsMessage();
-      }
-      
-      // Start smooth motion tile animation for all blogs
-      this.startMotionTileAnimation(this.filteredBlogs);
-    }
-
-    showPageWithWaveAnimation(page: number): void {
-      this.currentPage = page;
-      
-      // Get all visible blogs for current page
-      const startIndex = (page - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      const visibleBlogs = this.filteredBlogs.slice(startIndex, endIndex);
-      
-      // Show no blogs message if needed
-      if (this.filteredBlogs.length === 0) {
-        this.hideAllBlogs();
-        this.showNoBlogsMessage();
-        this.updatePaginationUI();
-        return;
-      } else {
-        this.hideNoBlogsMessage();
-      }
-      
-      // Start smooth motion tile animation
-      this.startMotionTileAnimation(visibleBlogs);
-      
-      // Update pagination UI
-      this.updatePaginationUI();
-    }
 
     hideAllBlogs(): void {
       this.allBlogs.forEach(blog => {
@@ -643,116 +591,9 @@ const categories = [
         
         // Clear all animation classes
         blogElement.classList.remove('animating', 'animating-in', 'animating-out', 'hidden', 'fade-out', 'fade-in', 'domino-in');
-        
-        // Clear GSAP animations
-        gsap.killTweensOf(blogElement);
       });
     }
 
-    calculateGridPositions(blogs: Element[]): Array<{blog: Element, row: number, col: number}> {
-      const positions: Array<{blog: Element, row: number, col: number}> = [];
-      const gridCols = 3; // 3列のグリッド
-      
-      blogs.forEach((blog, index) => {
-        const row = Math.floor(index / gridCols);
-        const col = index % gridCols;
-        positions.push({ blog, row, col });
-      });
-      
-      return positions;
-    }
-
-    startMotionTileAnimation(visibleBlogs: Element[]): void {
-      // Step 1: Hide all blogs first
-      this.hideAllBlogs();
-      
-      // Step 2: Calculate grid positions for wave animation
-      const gridPositions = this.calculateGridPositions(visibleBlogs);
-      
-      // Step 3: Sort by distance from bottom-right (row desc, then col desc)
-      gridPositions.sort((a, b) => {
-        if (a.row !== b.row) {
-          return b.row - a.row; // 下の行から上へ
-        }
-        return b.col - a.col; // 右の列から左へ
-      });
-      
-      // Step 4: Start GSAP-powered smooth wave animation
-      this.startGSAPWaveAnimation(gridPositions);
-    }
-
-    startGSAPWaveAnimation(positions: Array<{blog: Element, row: number, col: number}>): void {
-      // Set initial state for all blogs
-      positions.forEach((position) => {
-        const blog = position.blog as HTMLElement;
-        blog.style.display = 'block';
-        
-        // Set initial GSAP properties - more dramatic rotation
-        gsap.set(blog, {
-          opacity: 0,
-          rotationY: -720, // 2 full rotations (720 degrees)
-          scale: 0.6,
-          z: -200,
-          filter: 'blur(6px)',
-          transformOrigin: 'center center'
-        });
-      });
-
-      // Create timeline for staggered animation
-      const tl = gsap.timeline({
-        delay: 0.3, // Initial delay
-        onComplete: () => {
-          console.log('Animation completed');
-        }
-      });
-
-      // Add each blog to timeline with stagger - right-bottom to left-top
-      positions.forEach((position, index) => {
-        const blog = position.blog as HTMLElement;
-        
-        // Phase 1: Fast spinning in place (multiple rotations)
-        tl.to(blog, {
-          duration: 2.5,
-          rotationY: -360, // Spin from -720 to -360 (1 full rotation)
-          ease: 'power4.out',
-          delay: index * 0.25 // 250ms stagger for more dramatic effect
-        }, index * 0.25);
-
-        // Phase 2: Continue spinning while fading in and scaling
-        tl.to(blog, {
-          duration: 1.8,
-          opacity: 1,
-          scale: 1,
-          z: 0,
-          filter: 'blur(0px)',
-          rotationY: 0, // Complete the spin to final position
-          ease: 'power3.out'
-        }, index * 0.25 + 0.8);
-
-        // Phase 3: Final flourish - small extra spin
-        tl.to(blog, {
-          duration: 0.6,
-          rotationY: 180, // Half rotation flourish
-          ease: 'power2.out'
-        }, index * 0.25 + 2.3);
-
-        // Phase 4: Settle into final position
-        tl.to(blog, {
-          duration: 0.4,
-          rotationY: 0, // Back to normal
-          ease: 'power2.out'
-        }, index * 0.25 + 2.7);
-      });
-
-      // Add a final collective bounce effect after all animations
-      tl.to(positions.map(p => p.blog), {
-        duration: 0.5,
-        scale: 1.08,
-        ease: 'power2.out',
-        yoyo: true,
-        repeat: 1
-      }, '-=0.5');
-    }
 
     updatePaginationUI(): void {
       const currentPageEl = document.getElementById('current-page');

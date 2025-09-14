@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./blog-toc.css";
 
 interface TocItem {
@@ -227,60 +227,77 @@ export default function BlogToc() {
 
   if (tocItems.length === 0) return null;
 
-  return (
-    <>
-      <aside className="toc" ref={tocRef} aria-label="目次">
-        <ul className="toc-list">
-          {tocItems
-            .filter((item) => item.level === 1)
-            .map((item, index) => (
-              <li key={item.id} className="toc-h1">
-                <a
-                  href={`#${item.id}`}
-                  className={activeId === item.id ? "is-active-link" : ""}
-                  onClick={(e) => {
+  return React.createElement(
+    React.Fragment,
+    null,
+    React.createElement(
+      'aside',
+      {
+        className: "toc",
+        ref: tocRef,
+        'aria-label': "目次"
+      },
+      React.createElement(
+        'ul',
+        { className: "toc-list" },
+        tocItems
+          .filter((item) => item.level === 1)
+          .map((item, index) =>
+            React.createElement(
+              'li',
+              { key: item.id, className: "toc-h1" },
+              React.createElement(
+                'a',
+                {
+                  href: `#${item.id}`,
+                  className: activeId === item.id ? "is-active-link" : "",
+                  onClick: (e: React.MouseEvent) => {
                     e.preventDefault();
                     handleClick(item);
-                  }}
-                >
-                  {item.text}
-                </a>
-                {(() => {
-                  const h2Items = getH2Items(tocItems.indexOf(item));
-                  return h2Items.length > 0 ? (
-                    <ul className="toc-h2-list">
-                      {h2Items.map((h2Item) => (
-                        <li key={h2Item.id} className="toc-h2">
-                          <a
-                            href={`#${h2Item.id}`}
-                            className={
-                              activeId === h2Item.id ? "is-active-link" : ""
-                            }
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleClick(h2Item);
-                            }}
-                          >
-                            {h2Item.text}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null;
-                })()}
-              </li>
-            ))}
-        </ul>
-      </aside>
-
-      <button
-        ref={buttonRef}
-        className="toc-toggle-button"
-        onClick={handleToggleClick}
-        aria-label="目次を表示"
-      >
-        TOC
-      </button>
-    </>
+                  }
+                },
+                item.text
+              ),
+              (() => {
+                const h2Items = getH2Items(tocItems.indexOf(item));
+                return h2Items.length > 0
+                  ? React.createElement(
+                      'ul',
+                      { className: "toc-h2-list" },
+                      h2Items.map((h2Item) =>
+                        React.createElement(
+                          'li',
+                          { key: h2Item.id, className: "toc-h2" },
+                          React.createElement(
+                            'a',
+                            {
+                              href: `#${h2Item.id}`,
+                              className: activeId === h2Item.id ? "is-active-link" : "",
+                              onClick: (e: React.MouseEvent) => {
+                                e.preventDefault();
+                                handleClick(h2Item);
+                              }
+                            },
+                            h2Item.text
+                          )
+                        )
+                      )
+                    )
+                  : null;
+              })()
+            )
+          )
+      )
+    ),
+    React.createElement(
+      'button',
+      {
+        ref: buttonRef,
+        className: "toc-toggle-button",
+        onClick: handleToggleClick,
+        'aria-label': "目次を表示"
+      },
+      "TOC"
+    )
   );
 }

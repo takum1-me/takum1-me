@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import "./hover-indicator.css";
 
 // Extend window object for pagination
@@ -54,10 +54,10 @@ export default function HoverIndicator({
       const isVertical = navRef.current.classList.contains("vertical");
 
       if (isVertical) {
-        const left = 16; // 左右に16pxの余白
-        const top = rect.top - navRect.top - 5; // 上下に-5pxの余白
-        const width = navRect.width - 32; // 左右32px削る
-        const height = rect.height + 8; // 上下8px増やす
+        const left = 8; // 左右に8pxの余白（16pxから8pxに変更）
+        const top = rect.top - navRect.top-6.5; // 上下に-12pxの余白（-8pxから-12pxに変更）
+        const width = navRect.width - 16; // 左右16px削る（32pxから16pxに変更）
+        const height = rect.height + 8; // 上下7px増やす（8pxから7pxに変更）
 
         setIndicatorStyle({
           left,
@@ -142,7 +142,7 @@ export default function HoverIndicator({
         return;
       }
 
-      // フォールバック: 既存のアニメーション機能
+      // アニメーションなしでフィルタリング
       const blogCards = document.querySelectorAll(".blog-card");
       const blogGrid = document.querySelector(".blog-grid");
 
@@ -155,40 +155,28 @@ export default function HoverIndicator({
         return categoryId === "all" || cardCategory === categoryId;
       });
 
-      // まず全てのカードにアウトアニメーションを適用
+      // 全てのカードの状態をリセット
       blogCards.forEach((card) => {
-        card.classList.add("animating");
+        card.classList.remove("animating", "animating-in", "hidden");
       });
 
-      // アニメーションの途中（全部消える瞬間）に切り替え
-      setTimeout(() => {
-        // 全てのカードの状態をリセット
-        blogCards.forEach((card) => {
-          card.classList.remove("animating", "animating-in", "hidden");
-        });
+      // 新しい状態を適用（アニメーションなし）
+      blogCards.forEach((card) => {
+        const cardCategory = card.getAttribute("data-category");
 
-        // 新しい状態を適用
-        blogCards.forEach((card) => {
-          const cardCategory = card.getAttribute("data-category");
-
-          if (categoryId === "all" || cardCategory === categoryId) {
-            // 表示するカードはインアニメーション
-            card.classList.add("animating-in");
-
-            setTimeout(() => {
-              card.classList.remove("animating-in");
-            }, 1200);
-          } else {
-            // 非表示にするカードは隠す
-            card.classList.add("hidden");
-          }
-        });
-
-        // ブログがない場合のメッセージ表示
-        if (matchingCards.length === 0) {
-          showNoBlogsMessage(blogGrid, categoryId);
+        if (categoryId === "all" || cardCategory === categoryId) {
+          // 表示するカード
+          card.classList.remove("hidden");
+        } else {
+          // 非表示にするカード
+          card.classList.add("hidden");
         }
-      }, 720); // 3周回転の途中（60%地点）で切り替え
+      });
+
+      // ブログがない場合のメッセージ表示
+      if (matchingCards.length === 0) {
+        showNoBlogsMessage(blogGrid, categoryId);
+      }
     },
     [enableBlogFilter],
   );
@@ -234,44 +222,54 @@ export default function HoverIndicator({
     [onItemClick, enableBlogFilter, handleBlogFilter],
   );
 
-  return (
-    <div
-      className={`hover-indicator-nav ${showBackground ? "with-background" : "no-background"} ${className}`}
-      ref={navRef}
-      onMouseLeave={handleMouseLeave}
-    >
-      <span
-        className={`indicator ${indicatorStyle.show ? "visible" : ""}`}
-        style={{
+  return React.createElement(
+    'div',
+    {
+      className: `hover-indicator-nav ${showBackground ? "with-background" : "no-background"} ${className}`,
+      ref: navRef,
+      onMouseLeave: handleMouseLeave
+    },
+    React.createElement(
+      'span',
+      {
+        className: `indicator ${indicatorStyle.show ? "visible" : ""}`,
+        style: {
           left: indicatorStyle.left,
           top: indicatorStyle.top,
           width: indicatorStyle.width,
           height: indicatorStyle.height,
-        }}
-        aria-hidden
-      />
-      {items.map((item) => (
-        <div
-          key={item.id}
-          className="button-container"
-          onMouseEnter={() => handleContainerMouseEnter(item.id)}
-          onMouseLeave={handleContainerMouseLeave}
-        >
-          <button
-            ref={(el) => {
+        },
+        'aria-hidden': true
+      }
+    ),
+    items.map((item) =>
+      React.createElement(
+        'div',
+        {
+          key: item.id,
+          className: "button-container",
+          onMouseEnter: () => handleContainerMouseEnter(item.id),
+          onMouseLeave: handleContainerMouseLeave
+        },
+        React.createElement(
+          'button',
+          {
+            ref: (el: HTMLButtonElement | null) => {
               if (el) buttonRefs.current.set(item.id, el);
-            }}
-            className={`indicator-button ${hoveredItem === item.id ? "hovered" : ""}`}
-            onClick={() => handleItemClick(item.id)}
-            onMouseEnter={() =>
-              handleMouseEnter(item.id, buttonRefs.current.get(item.id)!)
-            }
-            onMouseLeave={handleMouseLeave}
-          >
-            <span className="button-content">{item.label}</span>
-          </button>
-        </div>
-      ))}
-    </div>
+            },
+            className: `indicator-button ${hoveredItem === item.id ? "hovered" : ""}`,
+            onClick: () => handleItemClick(item.id),
+            onMouseEnter: () =>
+              handleMouseEnter(item.id, buttonRefs.current.get(item.id)!),
+            onMouseLeave: handleMouseLeave
+          },
+          React.createElement(
+            'span',
+            { className: "button-content" },
+            item.label
+          )
+        )
+      )
+    )
   );
 }

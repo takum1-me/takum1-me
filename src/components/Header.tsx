@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import HoverIndicator from "./HoverIndicator";
 import "./header.css";
 
@@ -46,7 +46,7 @@ export default function Header() {
   useEffect(() => {
     lastYRef.current = window.scrollY;
     setIsAtTop(window.scrollY <= 0);
-    setVisible(false);
+    setVisible(window.scrollY <= 0); // ページトップにいる時は表示
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("mousemove", handleMouseMove);
@@ -57,25 +57,31 @@ export default function Header() {
     };
   }, [handleScroll, handleMouseMove]);
 
-  return (
-    <div
-      className={`header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`}
-      role="banner"
-    >
-      <div className="container">
-        <div className="nav">
-          <div className="brand">
-            <a href="/">takum1.me</a>
-          </div>
-          <HoverIndicator
-            items={navItems}
-            onItemClick={handleItemClick}
-            className="header-links"
-            showBackground={false}
-          />
-        </div>
-      </div>
-      <style>{`.container{max-width:var(--max-width);margin:0 auto;padding:0 var(--gap);}`}</style>
-    </div>
+  return React.createElement(
+    'div',
+    {
+      className: `header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`,
+      role: "banner"
+    },
+    React.createElement(
+      'div',
+      { className: "container" },
+      React.createElement(
+        'div',
+        { className: "nav" },
+        React.createElement(
+          'div',
+          { className: "brand" },
+          React.createElement('a', { href: "/" }, "takum1.me")
+        ),
+        React.createElement(HoverIndicator, {
+          items: navItems,
+          onItemClick: handleItemClick,
+          className: "header-links",
+          showBackground: false
+        })
+      )
+    ),
+    React.createElement('style', null, `.container{max-width:var(--max-width);margin:0 auto;padding:0 var(--gap);}`)
   );
 }

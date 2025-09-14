@@ -91,29 +91,47 @@ export default function ArticleCard({
     }
   }, [thumbnail?.url]);
 
-  return (
-    <article className="blog-card" data-category={category}>
-      <a href={`/blog/${slug}`} className="card-link">
-        <div className="card-thumbnail">
-          {thumbnail ? (
-            <img src={thumbnail.url} alt={title} />
-          ) : (
-            <div className="card-thumbnail-placeholder"></div>
-          )}
-        </div>
-        <div
-          className="card-content"
-          style={{
+  return React.createElement(
+    'article',
+    { className: "blog-card", 'data-category': category },
+    React.createElement(
+      'a',
+      { href: `/blog/${slug}`, className: "card-link" },
+      React.createElement(
+        'div',
+        { className: "card-thumbnail" },
+        thumbnail
+          ? React.createElement('img', { src: thumbnail.url, alt: title })
+          : React.createElement('div', { className: "card-thumbnail-placeholder" })
+      ),
+      React.createElement(
+        'div',
+        {
+          className: "card-content",
+          style: {
             background: `rgba(255, 255, 255, ${backgroundOpacity})`,
-          }}
-        >
-          <h2 className="card-title">{title}</h2>
-          <div className="card-footer">
-            {summary && <p className="card-summary">{summary}</p>}
-            <time className="card-date">{formatDate(publishedAt)}</time>
-          </div>
-        </div>
-      </a>
-    </article>
+          }
+        },
+        React.createElement(
+          'h2',
+          { className: "card-title" },
+          title
+        ),
+        React.createElement(
+          'div',
+          { className: "card-footer" },
+          summary && React.createElement(
+            'p',
+            { className: "card-summary" },
+            summary
+          ),
+          React.createElement(
+            'time',
+            { className: "card-date" },
+            formatDate(publishedAt)
+          )
+        )
+      )
+    )
   );
 }

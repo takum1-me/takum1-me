@@ -42,9 +42,6 @@ export async function getBlogById(slug: string): Promise<Blog | null> {
     const res = await fetchWithAuth(`blog?filters=slug[equals]${slug}`);
 
     if (!res.ok) {
-      console.error(
-        `Failed to fetch blog with slug: ${slug}, status: ${res.status}`,
-      );
       return null;
     }
 
@@ -52,13 +49,11 @@ export async function getBlogById(slug: string): Promise<Blog | null> {
 
     // フィルタリングの結果は配列で返ってくるので、最初の1件を返す
     if (!data.contents || data.contents.length === 0) {
-      console.error(`No blog found with slug: ${slug}`);
       return null;
     }
 
     return data.contents[0];
   } catch (error) {
-    console.error(`Error fetching blog with slug ${slug}:`, error);
     return null;
   }
 }

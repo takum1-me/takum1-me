@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./sidebar.css";
 
 const SCROLL_THRESHOLD = 50;
@@ -23,18 +23,24 @@ const Sidebar = () => {
     { href: "/works", label: "Works" },
   ];
 
-  return (
-    <div className="sidebar">
-      <div className="sidebar-content">
-        <nav className="sidebar-nav">
-          {navItems.map(({ href, label }) => (
-            <a key={href} href={href} className="sidebar-link">
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </div>
+  return React.createElement(
+    'div',
+    { className: "sidebar" },
+    React.createElement(
+      'div',
+      { className: "sidebar-content" },
+      React.createElement(
+        'nav',
+        { className: "sidebar-nav" },
+        navItems.map(({ href, label }) =>
+          React.createElement(
+            'a',
+            { key: href, href: href, className: "sidebar-link" },
+            label
+          )
+        )
+      )
+    )
   );
 };
 

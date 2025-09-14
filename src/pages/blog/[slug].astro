@@ -10,7 +10,6 @@ export async function getStaticPaths() {
       params: { slug: blog.slug },
     }));
   } catch (error) {
-    console.error("Failed to fetch blogs:", error);
     // 環境変数が設定されていない場合は空の配列を返す
     return [];
   }

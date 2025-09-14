@@ -18,7 +18,6 @@ export function fetchWithAuth(path: string) {
   return fetch(url, {
     headers,
   }).catch((error) => {
-    console.error(`Network error fetching ${path}:`, error);
     throw error;
   });
 }
