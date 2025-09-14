@@ -14,63 +14,41 @@ const PageTitle: React.FC<PageTitleProps> = ({
   const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // ページネーションまたはmain-contentの下端に合わせて棒の高さを計算
+    // main-contentの下端に合わせて棒の高さを計算
     const calculateBarHeight = () => {
       if (!titleRef.current) return 100; // フォールバック値
 
       try {
-        // ブログページのページネーション要素を取得
-        const paginationContainer = document.querySelector(
-          ".pagination-container",
-        );
+        // main-content要素を取得
+        const mainContent = document.querySelector(".main-content");
 
-        if (paginationContainer) {
-          // ページネーションの下端位置を取得
-          const paginationRect = paginationContainer.getBoundingClientRect();
+        if (mainContent) {
+          // main-contentの下端位置を取得
+          const mainRect = mainContent.getBoundingClientRect();
           const scrollY = window.scrollY || window.pageYOffset || 0;
-          const paginationBottom = paginationRect.bottom + scrollY;
+          const mainBottom = mainRect.bottom + scrollY;
 
           // デバッグログ（開発時のみ）
           if (process.env.NODE_ENV === "development") {
-            console.log("Pagination Bottom:", paginationBottom);
-            console.log("Calculated Bar Height:", paginationBottom);
+            console.log("Main Content Bottom:", mainBottom);
+            console.log("Calculated Bar Height:", mainBottom);
           }
 
-          return Math.max(100, paginationBottom);
+          return Math.max(100, mainBottom);
         } else {
-          // ページネーションが見つからない場合はmain-contentを取得
-          const mainContent = document.querySelector(".main-content");
+          // main-contentが見つからない場合はページの高さの93%をフォールバック
+          const viewportHeight =
+            window.innerHeight || document.documentElement.clientHeight || 1000;
+          const documentHeight = Math.max(
+            document.body?.scrollHeight || 0,
+            document.body?.offsetHeight || 0,
+            document.documentElement?.scrollHeight || 0,
+            document.documentElement?.offsetHeight || 0,
+            viewportHeight,
+          );
 
-          if (mainContent) {
-            // main-contentの下端位置を取得
-            const mainRect = mainContent.getBoundingClientRect();
-            const scrollY = window.scrollY || window.pageYOffset || 0;
-            const mainBottom = mainRect.bottom + scrollY;
-
-            // デバッグログ（開発時のみ）
-            if (process.env.NODE_ENV === "development") {
-              console.log("Main Content Bottom:", mainBottom);
-              console.log("Calculated Bar Height:", mainBottom);
-            }
-
-            return Math.max(100, mainBottom);
-          } else {
-            // どちらも見つからない場合はページの高さの93%をフォールバック
-            const viewportHeight =
-              window.innerHeight ||
-              document.documentElement.clientHeight ||
-              1000;
-            const documentHeight = Math.max(
-              document.body?.scrollHeight || 0,
-              document.body?.offsetHeight || 0,
-              document.documentElement?.scrollHeight || 0,
-              document.documentElement?.offsetHeight || 0,
-              viewportHeight,
-            );
-
-            const pageHeight = Math.max(documentHeight, viewportHeight);
-            return Math.max(100, pageHeight * 0.93);
-          }
+          const pageHeight = Math.max(documentHeight, viewportHeight);
+          return Math.max(100, pageHeight * 0.93);
         }
       } catch (error) {
         // エラーが発生した場合はフォールバック値を使用
