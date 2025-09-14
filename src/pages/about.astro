@@ -147,9 +147,10 @@ import "../components/page-title.css";
 
 <style>
     .about-container {
-        max-width: 1200px;
+        max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
         margin: 0 auto;
-        margin-left: 10rem;
+        margin-left: 8.25rem; /* PageTitleの右端に合わせる */
+        margin-right: 2.5vw; /* より右に伸ばす */
         padding: 2rem 1rem;
         position: relative;
     }
@@ -365,7 +366,21 @@ import "../components/page-title.css";
         border: 1px solid #e2e8f0;
     }
 
+    /* タブレットサイズ */
+    @media (max-width: 1024px) {
+        .about-container {
+            max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
+            margin-left: 6.5rem; /* PageTitleの右端に合わせる */
+            margin-right: 2.5vw; /* より右に伸ばす */
+        }
+    }
+
     @media (max-width: 768px) {
+        .about-container {
+            max-width: calc(85vw - 4rem); /* 右に15%の余白 */
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
         
         .content-grid {
             gap: 1.5rem;

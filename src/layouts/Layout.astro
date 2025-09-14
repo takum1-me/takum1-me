@@ -136,57 +136,64 @@ const jsonldStringfy = JSON.stringify({
 
     main {
       padding: 32px 0;
-      /* ヘッダーの右端と同じ感覚でコンテンツ幅を設定 */
-      max-width: min(1200px, calc(100vw - 5rem));
+      /* PageTitleの右端とページコンテンツの左端を合わせ、ヘッダーの右端まで伸ばす */
+      max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
       margin: 0 auto;
-      margin-left: 10rem;
+      margin-left: 8.25rem; /* PageTitleの右端に合わせる */
+      margin-right: 2.5vw; /* より右に伸ばす */
     }
 
     /* 中程度のデスクトップサイズ */
     @media (min-width: 1025px) and (max-width: 1399px) {
       main {
-        max-width: min(1200px, calc(100vw - 6rem));
-        margin-left: 10rem;
+        max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
+        margin-left: 8.25rem; /* PageTitleの右端に合わせる */
+        margin-right: 2.5vw; /* より右に伸ばす */
       }
     }
 
     /* 大きなデスクトップサイズ */
     @media (min-width: 1400px) {
       main {
-        max-width: min(1200px, calc(100vw - 7rem));
-        margin-left: 10rem;
+        max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
+        margin-left: 8.25rem; /* PageTitleの右端に合わせる */
+        margin-right: 2.5vw; /* より右に伸ばす */
       }
     }
 
     /* タブレットサイズ */
     @media (max-width: 1024px) {
       main {
-        max-width: min(1000px, calc(100vw - 5rem));
-        margin-left: 10rem;
+        max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
+        margin-left: 6.5rem; /* PageTitleの右端に合わせる */
+        margin-right: 2.5vw; /* より右に伸ばす */
       }
     }
 
     /* モバイルサイズ */
     @media (max-width: 768px) {
       main {
-        max-width: calc(100vw - 3rem);
-        margin-left: 1rem;
+        max-width: calc(85vw - 4rem); /* 右に15%の余白 */
+        margin-left: 2rem;
+        margin-right: 2rem;
       }
     }
 
     /* 小さなモバイルサイズ */
     @media (max-width: 480px) {
       main {
-        max-width: calc(100vw - 2.25rem);
-        margin-left: 1rem;
+        max-width: calc(85vw - 3rem); /* 右に15%の余白 */
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
       }
     }
 
     /* 非常に小さなモバイルサイズ */
     @media (max-width: 320px) {
       main {
-        max-width: calc(100vw - 1.5rem);
+        max-width: calc(90vw - 2rem); /* 右に10%の余白 */
         margin-left: 1rem;
+        margin-right: 1rem;
       }
     }
 
@@ -203,6 +210,7 @@ const jsonldStringfy = JSON.stringify({
     
     .main-content {
       padding-top: 5rem; /* ヘッダーの高さ分のマージンを追加 */
+      margin-right:0rem;
     }
     
     @media (max-width: 768px) {

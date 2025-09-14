@@ -38,6 +38,8 @@
   justify-content: space-between;
   padding: 0.5rem 1.25rem;
   backdrop-filter: blur(0.625rem) saturate(140%);
+  max-width: 90vw; /* ヘッダーの左右に余白を作る */
+  margin: 0 auto;
 }
 
 .brand a {
