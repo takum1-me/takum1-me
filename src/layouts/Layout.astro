@@ -1,5 +1,6 @@
 ---
 import ReactHeader from "../components/Header";
+import "../styles/global.css";
 export interface Props {
   pageTitle?: string;
   title?: string;
@@ -85,7 +86,6 @@ const jsonldStringfy = JSON.stringify({
     <meta name="generator" content={Astro.generator} />
     <title>{metadata.title}</title>
     <meta name="description" content={description} />
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
     {!hideHeader && <ReactHeader client:only="react" />}
@@ -102,6 +102,17 @@ const jsonldStringfy = JSON.stringify({
   </body>
   
   <style>
+    :root {
+      --max-width: 1200px;
+      --gap: 16px;
+      
+      /* カラーパレット - より重い青系 */
+      --primary-blue: #0d31aa;      /* メインの青（より重い） */
+      --secondary-blue: #2563eb;    /* セカンダリの青 */
+      --accent-blue: #3b82f6;       /* アクセントの青 */
+      --light-blue: #60a5fa;        /* ライトブルー */
+    }
+
     html, body {
       background: #faf8f5; /* クリーム色の背景 */
       min-height: 100vh;
@@ -109,6 +120,85 @@ const jsonldStringfy = JSON.stringify({
       padding: 0;
       overflow-x: hidden;
       overflow-y: visible;
+    }
+
+    body {
+      font-family:
+        "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
+        sans-serif;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--gap);
+    }
+
+    main {
+      padding: 32px 0;
+      /* ヘッダーの右端と同じ感覚でコンテンツ幅を設定 */
+      max-width: min(1200px, calc(100vw - 5rem));
+      margin: 0 auto;
+      margin-left: 10rem;
+    }
+
+    /* 中程度のデスクトップサイズ */
+    @media (min-width: 1025px) and (max-width: 1399px) {
+      main {
+        max-width: min(1200px, calc(100vw - 6rem));
+        margin-left: 10rem;
+      }
+    }
+
+    /* 大きなデスクトップサイズ */
+    @media (min-width: 1400px) {
+      main {
+        max-width: min(1200px, calc(100vw - 7rem));
+        margin-left: 10rem;
+      }
+    }
+
+    /* タブレットサイズ */
+    @media (max-width: 1024px) {
+      main {
+        max-width: min(1000px, calc(100vw - 5rem));
+        margin-left: 10rem;
+      }
+    }
+
+    /* モバイルサイズ */
+    @media (max-width: 768px) {
+      main {
+        max-width: calc(100vw - 3rem);
+        margin-left: 1rem;
+      }
+    }
+
+    /* 小さなモバイルサイズ */
+    @media (max-width: 480px) {
+      main {
+        max-width: calc(100vw - 2.25rem);
+        margin-left: 1rem;
+      }
+    }
+
+    /* 非常に小さなモバイルサイズ */
+    @media (max-width: 320px) {
+      main {
+        max-width: calc(100vw - 1.5rem);
+        margin-left: 1rem;
+      }
+    }
+
+    footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 16px 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    a {
+      color: inherit;
     }
     
     .main-content {
