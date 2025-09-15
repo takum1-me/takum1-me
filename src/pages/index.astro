@@ -2,7 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
 import Button from "../components/Button";
+import ArticleCard from "../components/ArticleCard";
+import { getLatestBlogs } from "../lib/microcms";
 import "../components/button.css";
+import "../components/article-card.css";
+
+// 最新の3件のブログを取得
+const latestBlogs = await getLatestBlogs(3);
 ---
 
 <Layout title="takum1.me">
@@ -30,7 +36,33 @@ import "../components/button.css";
     </div>
   </section>
 
-
+  <!-- 最新ブログセクション -->
+  <section class="latest-blogs">
+    <div class="latest-blogs-inner">
+      <div class="section-header">
+        <h2 class="section-title">Latest Posts</h2>
+        <p class="section-description">最新のブログ投稿</p>
+      </div>
+      
+      <div class="blog-grid">
+        {latestBlogs.map((blog) => (
+          <ArticleCard
+            client:load
+            title={blog.title}
+            summary={blog.summary}
+            publishedAt={blog.publishedAt}
+            thumbnail={blog.thumbnail}
+            slug={blog.slug}
+            category={blog.category}
+          />
+        ))}
+      </div>
+      
+      <div class="section-footer">
+        <Button href="/blog" variant="secondary">すべての記事を見る</Button>
+      </div>
+    </div>
+  </section>
 
   <style>
     :root { 
@@ -245,6 +277,81 @@ import "../components/button.css";
       .cta-button {
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
+      }
+    }
+
+    /* 最新ブログセクションのスタイル */
+    .latest-blogs {
+      padding: 4rem 0;
+      background: var(--background);
+      border-top: 1px solid rgba(139, 69, 19, 0.1);
+    }
+    
+    .latest-blogs-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 1rem 0;
+      letter-spacing: 0.02em;
+    }
+    
+    .section-description {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .section-footer {
+      text-align: center;
+    }
+    
+    /* タブレット対応 */
+    @media (max-width: 1024px) {
+      .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+    }
+    
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      .latest-blogs {
+        padding: 3rem 0;
+      }
+      
+      .latest-blogs-inner {
+        padding: 0 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .blog-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .section-header {
+        margin-bottom: 2rem;
       }
     }
 

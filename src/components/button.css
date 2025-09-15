@@ -30,12 +30,30 @@
   background: transparent;
   color: #2d3748;
   border-color: #718096;
+  position: relative;
+  overflow: hidden;
+}
+
+.button-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #2d3748;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
 }
 
 .button-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #4a5568;
+  color: white;
+  border-color: #2d3748;
   transform: translateY(-2px);
+}
+
+.button-secondary:hover::before {
+  left: 0;
 }
 
 /* Error page button styles (from 404.astro) */
