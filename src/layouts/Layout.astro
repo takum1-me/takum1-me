@@ -90,7 +90,7 @@ const jsonldStringfy = JSON.stringify({
     <meta name="description" content={description} />
   </head>
   <body>
-    {!hideHeader && <ReactHeader client:only="react" />}
+    {!hideHeader && <ReactHeader client:load />}
     <main class="main-content">
       <div class="container">
         <slot />
