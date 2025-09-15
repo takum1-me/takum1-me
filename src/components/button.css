@@ -58,23 +58,23 @@
 
 /* Error page button styles (from 404.astro) */
 .button-error-primary {
-  background-color: #006367;
+  background-color: #6b7280;
   color: white;
 }
 
 .button-error-primary:hover {
-  background-color: #004d51;
+  background-color: #4b5563;
   transform: translateY(-1px);
 }
 
 .button-error-secondary {
   background-color: transparent;
-  color: #006367;
-  border-color: #006367;
+  color: #6b7280;
+  border-color: #6b7280;
 }
 
 .button-error-secondary:hover {
-  background-color: #006367;
+  background-color: #6b7280;
   color: white;
   transform: translateY(-1px);
 }
