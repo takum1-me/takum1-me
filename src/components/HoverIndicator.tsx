@@ -68,9 +68,11 @@ export default function HoverIndicator({
           width = navRect.width - 16;
           height = rect.height + 8;
         } else {
-          left = rect.left - navRect.left - 10;
+          // 文字を真ん中に配置するため、ボタンの中心からホバー効果の中心を計算
+          const buttonCenterX = rect.left - navRect.left + rect.width / 2;
+          left = buttonCenterX - 50; // 100pxの半分（50px）を引いて中央配置
           top = rect.top - navRect.top - 2;
-          width = rect.width + 20;
+          width = 100; // 固定幅
           height = rect.height + 4;
         }
 

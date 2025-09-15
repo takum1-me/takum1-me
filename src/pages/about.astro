@@ -62,7 +62,7 @@ import "../components/sns-links.css";
                     <div class="organization-item">
                         <h3>
                             <a href="https://www.coins.tsukuba.ac.jp/" target="_blank" rel="noopener noreferrer">
-                                筑波大学情報学群情報科学類
+                                <span>筑波大学情報学群情報科学類</span>
                             </a>
                         </h3>
                         <span class="organization-period">2022年4月〜</span>
@@ -70,7 +70,7 @@ import "../components/sns-links.css";
                     <div class="organization-item">
                         <h3>
                             <a href="https://www.zdk.tsukuba.ac.jp/" target="_blank" rel="noopener noreferrer">
-                                全学学類・専門学群・総合学域群代表者会議
+                                <span>全学学類・専門学群・総合学域群代表者会議</span>
                             </a>
                         </h3>
                         <span class="organization-period">2023年4月〜</span>
@@ -79,7 +79,7 @@ import "../components/sns-links.css";
                     <div class="organization-item">
                         <h3>
                             <a href="https://www.coins.tsukuba.ac.jp/~class/" target="_blank" rel="noopener noreferrer">
-                                情報科学類 クラス代表者会議
+                                <span>情報科学類 クラス代表者会議</span>
                             </a>
                         </h3>
                         <span class="organization-period">2022年4月〜</span>
@@ -88,7 +88,7 @@ import "../components/sns-links.css";
                     <div class="organization-item">
                         <h3>
                             <a href="https://cafeore.cafe/" target="_blank" rel="noopener noreferrer">
-                                珈琲・俺
+                                <span>珈琲・俺</span>
                             </a>
                         </h3>
                         <span class="organization-period">2023年6月〜</span>
@@ -185,17 +185,46 @@ import "../components/sns-links.css";
     }
 
     .organization-item h3 a {
-        color: inherit;
+        color: #1e293b;
         text-decoration: none;
         display: inline-block;
-        padding: 0.25rem 0;
+        padding: 0.25rem 0.5rem;
+        margin-left: -0.5rem;
         border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: transparent;
+    }
+
+    .organization-item h3 a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: #8b7355;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 0;
+    }
+
+    .organization-item h3 a span {
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s ease;
     }
 
     .organization-item h3 a:hover {
-        color: #8b7355;
-        background: rgba(139, 115, 85, 0.05);
-        padding: 0.25rem 0.5rem;
+        color: #ffffff;
+    }
+
+    .organization-item h3 a:hover span {
+        color: #ffffff;
+    }
+
+    .organization-item h3 a:hover::before {
+        width: 100%;
     }
 
     .organization-period {
