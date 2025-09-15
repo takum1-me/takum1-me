@@ -1,0 +1,91 @@
+/* FooterSnsLinks component styles */
+.footer-sns-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+.footer-sns-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-sns-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: left 0.5s;
+}
+
+.footer-sns-link:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.footer-sns-link:hover::before {
+  left: 100%;
+}
+
+.footer-sns-link {
+  color: #6b7280; /* ベースカラー（統一されたグレー） */
+}
+
+.footer-sns-link:hover {
+  background: transparent;
+  border-color: #d1d5db;
+}
+
+.footer-sns-link.twitter:hover {
+  color: #1da1f2; /* Twitter/X ブランドカラー */
+}
+
+.footer-sns-link.instagram:hover {
+  color: #e4405f; /* Instagram ブランドカラー */
+}
+
+.footer-sns-link.github:hover {
+  color: #333; /* GitHub ブランドカラー */
+}
+
+.footer-sns-link svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-sns-link:hover svg {
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer-sns-links {
+    gap: 0.75rem;
+  }
+  
+  .footer-sns-link {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .footer-sns-link svg {
+    width: 18px;
+    height: 18px;
+  }
+}

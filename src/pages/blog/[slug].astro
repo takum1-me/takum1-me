@@ -166,13 +166,34 @@ const formatDate = (dateString: string) => {
     margin: 0.5rem 0 1rem;
   }
   .back a {
-    color: #374151;
+    color: #9ca3af;
     text-decoration: none;
     font-weight: 600;
+    position: relative;
+    background: linear-gradient(90deg, #374151 0%, #374151 0%, #9ca3af 0%, #9ca3af 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: background 0.6s ease;
+  }
+  .back a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #374151;
+    transition: width 0.5s ease;
   }
   .back a:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    background: linear-gradient(90deg, #374151 0%, #374151 100%, #374151 100%, #374151 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .back a:hover::after {
+    width: 100%;
   }
 
   /* ▼▼▼ ここから変更 ▼▼▼ */

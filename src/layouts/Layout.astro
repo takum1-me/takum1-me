@@ -1,6 +1,8 @@
 ---
 import ReactHeader from "../components/Header";
+import ReactFooter from "../components/Footer";
 import "../styles/global.css";
+import "../components/footer.css";
 export interface Props {
   pageTitle?: string;
   title?: string;
@@ -94,11 +96,7 @@ const jsonldStringfy = JSON.stringify({
         <slot />
       </div>
     </main>
-    <footer>
-      <div class="container">
-        © {new Date().getFullYear()} takum1
-      </div>
-    </footer>
+    <ReactFooter client:only="react" />
   </body>
   
   <style>
@@ -123,6 +121,8 @@ const jsonldStringfy = JSON.stringify({
     }
 
     body {
+      display: flex;
+      flex-direction: column;
       font-family:
         "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
         sans-serif;
@@ -136,6 +136,7 @@ const jsonldStringfy = JSON.stringify({
 
     main {
       padding: 32px 0 0 0;
+      flex: 1;
       /* PageTitleの右端とページコンテンツの左端を合わせ、ヘッダーの右端まで伸ばす */
       max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
       margin: 0 auto;
@@ -146,6 +147,7 @@ const jsonldStringfy = JSON.stringify({
     /* 中程度のデスクトップサイズ */
     @media (min-width: 1025px) and (max-width: 1399px) {
       main {
+        flex: 1;
         max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
         margin-left: 8.25rem; /* PageTitleの右端に合わせる */
         margin-right: 2.5vw; /* より右に伸ばす */
@@ -155,6 +157,7 @@ const jsonldStringfy = JSON.stringify({
     /* 大きなデスクトップサイズ */
     @media (min-width: 1400px) {
       main {
+        flex: 1;
         max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
         margin-left: 6rem; /* PageTitleの右端に合わせる */
         margin-right: 2.5vw; /* より右に伸ばす */
@@ -164,6 +167,7 @@ const jsonldStringfy = JSON.stringify({
     /* タブレットサイズ */
     @media (max-width: 1024px) {
       main {
+        flex: 1;
         max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
         margin-left: 6.5rem; /* PageTitleの右端に合わせる */
         margin-right: 2.5vw; /* より右に伸ばす */
@@ -173,6 +177,7 @@ const jsonldStringfy = JSON.stringify({
     /* モバイルサイズ */
     @media (max-width: 768px) {
       main {
+        flex: 1;
         max-width: calc(100vw - 2.5rem); /* 少し左に調整 */
         margin-left: 2.5rem;
         margin-right: 0; /* 右マージンを削除 */
@@ -182,6 +187,7 @@ const jsonldStringfy = JSON.stringify({
     /* 小さなモバイルサイズ */
     @media (max-width: 480px) {
       main {
+        flex: 1;
         max-width: calc(100vw - 2rem); /* 少し左に調整 */
         margin-left: 1rem;
         margin-right: 0; /* 右マージンを削除 */
@@ -191,17 +197,14 @@ const jsonldStringfy = JSON.stringify({
     /* 非常に小さなモバイルサイズ */
     @media (max-width: 320px) {
       main {
+        flex: 1;
         max-width: calc(100vw - 1.5rem); /* 少し左に調整 */
         margin-left: 1rem;
         margin-right: 0; /* 右マージンを削除 */
       }
     }
 
-    footer {
-      padding: 16px 0;
-      color: #6b7280;
-      font-size: 14px;
-    }
+    /* Footer styles are now handled by the Footer component */
     
 
     a {
