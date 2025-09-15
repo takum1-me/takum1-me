@@ -45,22 +45,20 @@ const snsData: SnsLink[] = [
 ];
 
 export default function FooterSnsLinks({ className = '' }: FooterSnsLinksProps) {
-  return React.createElement(
-    'div',
-    { className: `footer-sns-links ${className}` },
-    snsData.map((sns) =>
-      React.createElement(
-        'a',
-        {
-          key: sns.name,
-          href: sns.href,
-          className: `footer-sns-link ${sns.variant}`,
-          target: '_blank',
-          rel: 'noopener noreferrer',
-          'aria-label': sns.name,
-        },
-        sns.icon
-      )
-    )
+  return (
+    <div className={`footer-sns-links ${className}`}>
+      {snsData.map((sns) => (
+        <a
+          key={sns.name}
+          href={sns.href}
+          className={`footer-sns-link ${sns.variant}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={sns.name}
+        >
+          {sns.icon}
+        </a>
+      ))}
+    </div>
   );
 }
