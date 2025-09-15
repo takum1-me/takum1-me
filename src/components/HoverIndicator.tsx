@@ -38,6 +38,42 @@ export default function HoverIndicator({
   const rafRef = useRef<number | null>(null);
   const isFirstMoveRef = useRef<boolean>(true);
 
+  // インジケーターを完全にリセットする関数（エントリー時専用）
+  const resetIndicatorOnEntry = useCallback((mouseX: number, mouseY: number) => {
+    if (!indicatorRef.current) return;
+    
+    const indicator = indicatorRef.current;
+    
+    // CSSトランジションを一時的に無効化（位置とサイズのみ）
+    indicator.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+    
+    // 指定された位置にインジケーターを設定
+    indicator.style.left = `${mouseX - 10}px`;
+    indicator.style.top = `${mouseY - 10}px`;
+    indicator.style.width = "20px";
+    indicator.style.height = "20px";
+    indicator.style.opacity = "0";
+    indicator.style.transform = "scale(0.7)";
+    
+    // 次のフレームで完全なトランジションを再度有効化
+    requestAnimationFrame(() => {
+      if (indicator) {
+        indicator.style.transition = "";
+      }
+    });
+  }, []);
+
+  // インジケーターを非表示にする関数（リーブ時専用）
+  const hideIndicator = useCallback(() => {
+    if (!indicatorRef.current) return;
+    
+    const indicator = indicatorRef.current;
+    
+    // トランジションを保持したまま非表示にする
+    indicator.style.opacity = "0";
+    indicator.style.transform = "scale(0.7)";
+  }, []);
+
   // リサイズハンドラー（シンプル化）
   useEffect(() => {
     return () => {
@@ -101,12 +137,12 @@ export default function HoverIndicator({
   );
 
   const handleMouseLeave = useCallback(() => {
-    // インジケーターを非表示（上下アニメーションは残す）
-    if (indicatorRef.current) {
-      indicatorRef.current.style.opacity = "0";
-      indicatorRef.current.style.transform = "scale(0.7)";
-    }
-  }, []);
+    // インジケーターを非表示（滑らかなアニメーションを保持）
+    hideIndicator();
+    
+    // フラグをリセットして、次回のエントリー時に正しく動作するようにする
+    isFirstMoveRef.current = true;
+  }, [hideIndicator]);
 
   const handleNavMouseMove = useCallback((e: React.MouseEvent) => {
     if (!navRef.current) return;
@@ -125,13 +161,9 @@ export default function HoverIndicator({
       const mouseY = e.clientY - navRect.top;
       
       // 最初の移動時は現在のカーソル位置から開始
-      if (isFirstMoveRef.current && indicatorRef.current) {
-        indicatorRef.current.style.left = `${mouseX - 10}px`;
-        indicatorRef.current.style.top = `${mouseY - 10}px`;
-        indicatorRef.current.style.width = "20px";
-        indicatorRef.current.style.height = "20px";
-        indicatorRef.current.style.opacity = "0";
-        indicatorRef.current.style.transform = "scale(0.7)";
+      if (isFirstMoveRef.current) {
+        // インジケーターを現在のカーソル位置にリセット（エントリー時専用）
+        resetIndicatorOnEntry(mouseX, mouseY);
         isFirstMoveRef.current = false;
       }
       
@@ -163,21 +195,19 @@ export default function HoverIndicator({
 
   const handleNavMouseEnter = useCallback((e: React.MouseEvent) => {
     // ナビゲーション領域に入った時にインジケーターをリセット
-    if (indicatorRef.current && navRef.current) {
+    if (navRef.current) {
       // 現在のカーソル位置を取得
       const navRect = navRef.current.getBoundingClientRect();
       const mouseX = e.clientX - navRect.left;
       const mouseY = e.clientY - navRect.top;
       
-      // インジケーターを現在のカーソル位置に設定
-      indicatorRef.current.style.left = `${mouseX - 10}px`;
-      indicatorRef.current.style.top = `${mouseY - 10}px`;
-      indicatorRef.current.style.width = "20px";
-      indicatorRef.current.style.height = "20px";
-      indicatorRef.current.style.opacity = "0";
-      indicatorRef.current.style.transform = "scale(0.7)";
+      // インジケーターを現在のカーソル位置にリセット（エントリー時専用）
+      resetIndicatorOnEntry(mouseX, mouseY);
+      
+      // フラグをリセットして、次の移動で正しく動作するようにする
+      isFirstMoveRef.current = true;
     }
-  }, []);
+  }, [resetIndicatorOnEntry]);
 
   const handleBlogFilter = useCallback(
     (categoryId: string) => {
