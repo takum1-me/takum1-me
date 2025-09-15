@@ -3,9 +3,12 @@ import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
 import Button from "../components/Button";
 import ArticleCard from "../components/ArticleCard";
+import ThoughtDisplay from "../components/ThoughtDisplay";
 import { getLatestBlogs } from "../lib/microcms";
 import "../components/button.css";
 import "../components/article-card.css";
+import "../components/thought-display.css";
+import "../components/thought-modal.css";
 
 // 最新の3件のブログを取得
 const latestBlogs = await getLatestBlogs(3);
@@ -22,7 +25,7 @@ const latestBlogs = await getLatestBlogs(3);
             <div class="sub-line">Coffee, Programming, Design</div>
           </div>
           <div class="hero-description">
-            <p>最近始めた焙煎、ちょっと難しくて楽しい。</p>
+            <ThoughtDisplay client:load />
           </div>
           <div class="hero-cta">
             <Button href="/about" variant="primary">About Me</Button>
@@ -210,6 +213,30 @@ const latestBlogs = await getLatestBlogs(3);
       font-weight: 400;
     }
     
+    /* 一言コンポーネントのスタイル調整 */
+    .hero-description .thought-display {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(139, 69, 19, 0.1);
+      margin: 0;
+      padding: 1.25rem;
+    }
+    
+    .hero-description .thought-display:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(139, 69, 19, 0.15);
+    }
+    
+    .hero-description .thought-content {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .hero-description .thought-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
     .bean { 
       width: 8rem; 
       height: 8rem; 
@@ -277,6 +304,18 @@ const latestBlogs = await getLatestBlogs(3);
       .cta-button {
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
+      }
+      
+      .hero-description .thought-display {
+        padding: 1rem;
+      }
+      
+      .hero-description .thought-content {
+        font-size: 1rem;
+      }
+      
+      .hero-description .thought-date {
+        font-size: 0.75rem;
       }
     }
 

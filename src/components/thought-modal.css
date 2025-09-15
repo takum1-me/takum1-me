@@ -1,0 +1,191 @@
+.thought-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.thought-modal {
+  background: var(--background);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.thought-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(139, 69, 19, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.thought-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.thought-modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.thought-modal-close:hover {
+  background: rgba(139, 69, 19, 0.1);
+  color: var(--text-primary);
+}
+
+.thought-modal-content {
+  padding: 1.5rem 2rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.thought-item {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(139, 69, 19, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.thought-item:last-child {
+  margin-bottom: 0;
+}
+
+.thought-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(139, 69, 19, 0.15);
+  transform: translateY(-1px);
+}
+
+.thought-item.active {
+  background: rgba(139, 69, 19, 0.1);
+  border-color: rgba(139, 69, 19, 0.2);
+}
+
+.thought-item.active::before {
+  content: "現在";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+.thought-item {
+  position: relative;
+}
+
+.thought-item-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 0;
+  font-style: italic;
+}
+
+.thought-item-date {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* スクロールバーのスタイリング */
+.thought-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thought-modal-content::-webkit-scrollbar-track {
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 3px;
+}
+
+.thought-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 19, 0.3);
+  border-radius: 3px;
+}
+
+.thought-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 69, 19, 0.5);
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .thought-modal-overlay {
+    padding: 0.5rem;
+  }
+  
+  .thought-modal {
+    max-height: 90vh;
+  }
+  
+  .thought-modal-header {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .thought-modal-title {
+    font-size: 1.25rem;
+  }
+  
+  .thought-modal-content {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .thought-item {
+    padding: 1rem;
+  }
+  
+  .thought-item-content {
+    font-size: 0.95rem;
+  }
+  
+  .thought-item-date {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .thought-modal-header {
+    padding: 1rem;
+  }
+  
+  .thought-modal-content {
+    padding: 1rem;
+  }
+  
+  .thought-item {
+    padding: 0.875rem;
+  }
+}
