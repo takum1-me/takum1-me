@@ -5,8 +5,9 @@
   overflow: hidden;
   position: relative;
   aspect-ratio: 1 / 1;
-  width: 300px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 300px;
+  min-width: 200px;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
@@ -143,7 +144,8 @@
 /* Mobile responsive */
 @media (max-width: 767px) {
   .blog-card {
-    width: 280px;
+    max-width: 280px;
+    min-width: 180px;
   }
 
   .card-content {
@@ -171,6 +173,7 @@
 /* 小さなモバイル（480px以下） */
 @media (max-width: 480px) {
   .blog-card {
-    width: 260px;
+    max-width: 260px;
+    min-width: 160px;
   }
 }

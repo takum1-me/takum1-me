@@ -117,7 +117,7 @@ const categories = [
 
   .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
     position: relative;
@@ -125,11 +125,11 @@ const categories = [
     justify-items: center;
   }
 
-  /* デスクトップ（1200px以上）: 4列 */
+  /* デスクトップ（1200px以上）: 3列 */
   @media (min-width: 1200px) {
     .blog-grid {
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 1400px;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -139,6 +139,9 @@ const categories = [
   @media (min-width: 992px) and (max-width: 1199px) {
     .blog-grid {
       grid-template-columns: repeat(3, 1fr);
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
@@ -147,6 +150,9 @@ const categories = [
     .blog-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
