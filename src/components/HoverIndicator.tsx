@@ -1,5 +1,9 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
+import { gsap } from "gsap";
+import { Flip } from "gsap/Flip";
 import "./hover-indicator.css";
+
+gsap.registerPlugin(Flip);
 
 // Extend window object for pagination
 declare global {
@@ -32,53 +36,89 @@ export default function HoverIndicator({
   showBackground = false,
   enableBlogFilter = false,
 }: HoverIndicatorProps) {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [indicatorStyle, setIndicatorStyle] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    show: false,
-  });
   const navRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const updateIndicator = useCallback(
-    (targetElement: HTMLButtonElement, show: boolean = false) => {
-      if (!navRef.current) return;
+  // レスポンシブ対応のためのリサイズハンドラー
+  useEffect(() => {
+    const handleResize = () => {
+      // 現在ホバー中の要素があれば、アニメーションを再実行
+      const currentIndicator = indicatorRef.current;
+      if (currentIndicator && currentIndicator.style.opacity === "1") {
+        gsap.killTweensOf(currentIndicator);
+        const isMobile = window.innerWidth <= 768;
+        gsap.to(currentIndicator, {
+          x: isMobile ? -1 : -2,
+          duration: isMobile ? 2 : 1.5,
+          ease: "power1.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
+      }
+    };
 
-      const rect = targetElement.getBoundingClientRect();
-      const navRect = navRef.current.getBoundingClientRect();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-      // 縦レイアウトの場合はコンテナ全体をカバー
-      const isVertical = navRef.current.classList.contains("vertical");
+  const animateIndicator = useCallback(
+    (targetElement: HTMLButtonElement | null) => {
+      if (!indicatorRef.current || !navRef.current) return;
 
-      if (isVertical) {
-        const left = 8; // 左右に8pxの余白（16pxから8pxに変更）
-        const top = rect.top - navRect.top-6.5; // 上下に-12pxの余白（-8pxから-12pxに変更）
-        const width = navRect.width - 16; // 左右16px削る（32pxから16pxに変更）
-        const height = rect.height + 8; // 上下7px増やす（8pxから7pxに変更）
+      const indicator = indicatorRef.current;
+      
+      // 既存のアニメーションを停止
+      gsap.killTweensOf(indicator);
+      
+      if (targetElement) {
+        // ターゲット要素の位置とサイズを取得
+        const rect = targetElement.getBoundingClientRect();
+        const navRect = navRef.current.getBoundingClientRect();
+        const isVertical = navRef.current.classList.contains("vertical");
 
-        setIndicatorStyle({
+        let left, top, width, height;
+
+        if (isVertical) {
+          left = 8;
+          top = rect.top - navRect.top - 6.5;
+          width = navRect.width - 16;
+          height = rect.height + 8;
+        } else {
+          left = rect.left - navRect.left - 10;
+          top = rect.top - navRect.top - 2;
+          width = rect.width + 20;
+          height = rect.height + 4;
+        }
+
+        // GSAPでアニメーション
+        gsap.to(indicator, {
           left,
           top,
           width,
           height,
-          show,
+          opacity: 1,
+          scale: 1.05,
+          duration: 0.1,
+          ease: "power1.inOut",
+        });
+
+        // ウニョウニョの揺らぎアニメーション（レスポンシブ対応）
+        const isMobile = window.innerWidth <= 768;
+        gsap.to(indicator, {
+          x: isMobile ? -1 : -2,
+          duration: isMobile ? 2 : 1.5,
+          ease: "power1.inOut",
+          yoyo: true,
+          repeat: -1,
         });
       } else {
-        // 横レイアウトの場合は従来通り
-        const left = rect.left - navRect.left - 14;
-        const top = rect.top - navRect.top - 2;
-        const width = rect.width + 28;
-        const height = rect.height + 4;
-
-        setIndicatorStyle({
-          left,
-          top,
-          width,
-          height,
-          show,
+        // ホバー解除時のアニメーション
+        gsap.to(indicator, {
+          opacity: 0,
+          scale: 0.7,
+          duration: 0.3,
+          ease: "power2.in",
         });
       }
     },
@@ -86,51 +126,49 @@ export default function HoverIndicator({
   );
 
   const handleMouseEnter = useCallback(
-    (itemId: string, element: HTMLButtonElement | HTMLDivElement) => {
-      setHoveredItem(itemId);
-      // ボタンまたはコンテナのどちらがホバーされたかに関わらず、ボタンを基準に位置計算
-      const buttonElement = buttonRefs.current.get(itemId);
-      if (buttonElement) {
-        updateIndicator(buttonElement, true);
-      }
-    },
-    [updateIndicator],
-  );
-
-  const handleMouseLeave = useCallback((e: React.MouseEvent) => {
-    // マウスがナビゲーション全体から離れた場合のみホバーを解除
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (!navRef.current?.contains(relatedTarget)) {
-      setHoveredItem(null);
-      setIndicatorStyle((prev) => ({ ...prev, show: false }));
-    }
-  }, []);
-
-  const handleContainerMouseLeave = useCallback((e: React.MouseEvent) => {
-    // コンテナから離れた場合、次の要素に移動していない場合はホバーを解除
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    const currentContainer = e.currentTarget as HTMLElement;
-
-    // 同じナビゲーション内の他の要素に移動していない場合のみホバーを解除
-    if (
-      !navRef.current?.contains(relatedTarget) ||
-      !currentContainer.parentElement?.contains(relatedTarget)
-    ) {
-      setHoveredItem(null);
-      setIndicatorStyle((prev) => ({ ...prev, show: false }));
-    }
-  }, []);
-
-  const handleContainerMouseEnter = useCallback(
     (itemId: string) => {
-      setHoveredItem(itemId);
       const buttonElement = buttonRefs.current.get(itemId);
-      if (buttonElement) {
-        updateIndicator(buttonElement, true);
-      }
+      animateIndicator(buttonElement || null);
     },
-    [updateIndicator],
+    [animateIndicator],
   );
+
+  const handleMouseLeave = useCallback(() => {
+    animateIndicator(null);
+  }, [animateIndicator]);
+
+  const handleNavMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!navRef.current) return;
+    
+    const navRect = navRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - navRect.left;
+    const mouseY = e.clientY - navRect.top;
+    
+    // 各ボタンの位置をチェックして、マウスが最も近いボタンを特定
+    let closestButton: HTMLButtonElement | null = null;
+    let minDistance = Infinity;
+    
+    buttonRefs.current.forEach((button) => {
+      const buttonRect = button.getBoundingClientRect();
+      const buttonNavLeft = buttonRect.left - navRect.left;
+      const buttonNavTop = buttonRect.top - navRect.top;
+      
+      // マウスがボタンの範囲内または近くにあるかチェック
+      const distance = Math.sqrt(
+        Math.pow(mouseX - (buttonNavLeft + buttonRect.width / 2), 2) +
+        Math.pow(mouseY - (buttonNavTop + buttonRect.height / 2), 2)
+      );
+      
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestButton = button;
+      }
+    });
+    
+    if (closestButton) {
+      animateIndicator(closestButton);
+    }
+  }, [animateIndicator]);
 
   const handleBlogFilter = useCallback(
     (categoryId: string) => {
@@ -227,18 +265,14 @@ export default function HoverIndicator({
     {
       className: `hover-indicator-nav ${showBackground ? "with-background" : "no-background"} ${className}`,
       ref: navRef,
+      onMouseMove: handleNavMouseMove,
       onMouseLeave: handleMouseLeave
     },
     React.createElement(
-      'span',
+      'div',
       {
-        className: `indicator ${indicatorStyle.show ? "visible" : ""}`,
-        style: {
-          left: indicatorStyle.left,
-          top: indicatorStyle.top,
-          width: indicatorStyle.width,
-          height: indicatorStyle.height,
-        },
+        ref: indicatorRef,
+        className: "indicator",
         'aria-hidden': true
       }
     ),
@@ -248,8 +282,8 @@ export default function HoverIndicator({
         {
           key: item.id,
           className: "button-container",
-          onMouseEnter: () => handleContainerMouseEnter(item.id),
-          onMouseLeave: handleContainerMouseLeave
+          onMouseEnter: () => handleMouseEnter(item.id),
+          onMouseLeave: handleMouseLeave
         },
         React.createElement(
           'button',
@@ -257,10 +291,9 @@ export default function HoverIndicator({
             ref: (el: HTMLButtonElement | null) => {
               if (el) buttonRefs.current.set(item.id, el);
             },
-            className: `indicator-button ${hoveredItem === item.id ? "hovered" : ""}`,
+            className: "indicator-button",
             onClick: () => handleItemClick(item.id),
-            onMouseEnter: () =>
-              handleMouseEnter(item.id, buttonRefs.current.get(item.id)!),
+            onMouseEnter: () => handleMouseEnter(item.id),
             onMouseLeave: handleMouseLeave
           },
           React.createElement(
