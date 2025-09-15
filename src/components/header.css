@@ -27,7 +27,7 @@
 
 .nav {
   position: relative;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(250, 248, 245, 0.95);
   border: none;
   border-bottom: 0.0625rem solid #e5e7eb;
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
