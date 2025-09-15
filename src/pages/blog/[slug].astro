@@ -68,34 +68,41 @@ const formatDate = (dateString: string) => {
     display: flex;
     gap: 40px;
     align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
   
   .page { 
-    flex: 0 0 75%; /* 画面の75%を記事に割り当て */
+    flex: 0 0 70%; /* 画面の70%を記事に割り当て */
     min-width: 0;
+    margin-right: 2rem; /* TOCとの間隔を確保 */
   }
   
   .toc-container {
-    flex: 0 0 25%; /* 画面の25%をTOCに割り当て */
+    flex: 0 0 30%; /* 画面の30%をTOCに割り当て */
     position: relative;
   }
   
   .article-container {
     width: 100%;
     max-width: none;
-    margin: 0 auto;
-    padding: 0 1rem;
+    margin: 0;
+    padding: 0;
   }
   
   @media (max-width: 1024px) { 
     .blog-container { 
       flex-direction: column; 
       gap: 20px;
+      max-width: none;
+      padding: 0 1rem;
     }
     
     .page {
       flex: none;
       max-width: none;
+      margin-right: 0;
     }
     
     .toc-container {

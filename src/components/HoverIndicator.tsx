@@ -1,9 +1,5 @@
 import React, { useRef, useCallback, useEffect } from "react";
-import { gsap } from "gsap";
-import { Flip } from "gsap/Flip";
 import "./hover-indicator.css";
-
-gsap.registerPlugin(Flip);
 
 // Extend window object for pagination
 declare global {
@@ -39,27 +35,17 @@ export default function HoverIndicator({
   const navRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const rafRef = useRef<number | null>(null);
+  const isFirstMoveRef = useRef<boolean>(true);
 
-  // レスポンシブ対応のためのリサイズハンドラー
+  // リサイズハンドラー（シンプル化）
   useEffect(() => {
-    const handleResize = () => {
-      // 現在ホバー中の要素があれば、アニメーションを再実行
-      const currentIndicator = indicatorRef.current;
-      if (currentIndicator && currentIndicator.style.opacity === "1") {
-        gsap.killTweensOf(currentIndicator);
-        const isMobile = window.innerWidth <= 768;
-        gsap.to(currentIndicator, {
-          x: isMobile ? -1 : -2,
-          duration: isMobile ? 2 : 1.5,
-          ease: "power1.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
+    return () => {
+      // RAFのクリーンアップ
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const animateIndicator = useCallback(
@@ -67,9 +53,6 @@ export default function HoverIndicator({
       if (!indicatorRef.current || !navRef.current) return;
 
       const indicator = indicatorRef.current;
-      
-      // 既存のアニメーションを停止
-      gsap.killTweensOf(indicator);
       
       if (targetElement) {
         // ターゲット要素の位置とサイズを取得
@@ -91,35 +74,17 @@ export default function HoverIndicator({
           height = rect.height + 4;
         }
 
-        // GSAPでアニメーション
-        gsap.to(indicator, {
-          left,
-          top,
-          width,
-          height,
-          opacity: 1,
-          scale: 1.05,
-          duration: 0.1,
-          ease: "power1.inOut",
-        });
-
-        // ウニョウニョの揺らぎアニメーション（レスポンシブ対応）
-        const isMobile = window.innerWidth <= 768;
-        gsap.to(indicator, {
-          x: isMobile ? -1 : -2,
-          duration: isMobile ? 2 : 1.5,
-          ease: "power1.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
+        // CSSトランジションで滑らかにアニメーション
+        indicator.style.left = `${left}px`;
+        indicator.style.top = `${top}px`;
+        indicator.style.width = `${width}px`;
+        indicator.style.height = `${height}px`;
+        indicator.style.opacity = "1";
+        indicator.style.transform = "scale(1.05)";
       } else {
-        // ホバー解除時のアニメーション
-        gsap.to(indicator, {
-          opacity: 0,
-          scale: 0.7,
-          duration: 0.3,
-          ease: "power2.in",
-        });
+        // ホバー解除時の設定
+        indicator.style.opacity = "0";
+        indicator.style.transform = "scale(0.7)";
       }
     },
     [],
@@ -134,41 +99,83 @@ export default function HoverIndicator({
   );
 
   const handleMouseLeave = useCallback(() => {
-    animateIndicator(null);
-  }, [animateIndicator]);
+    // インジケーターを非表示（上下アニメーションは残す）
+    if (indicatorRef.current) {
+      indicatorRef.current.style.opacity = "0";
+      indicatorRef.current.style.transform = "scale(0.7)";
+    }
+  }, []);
 
   const handleNavMouseMove = useCallback((e: React.MouseEvent) => {
     if (!navRef.current) return;
     
-    const navRect = navRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - navRect.left;
-    const mouseY = e.clientY - navRect.top;
+    // 既存のRAFをキャンセル
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
     
-    // 各ボタンの位置をチェックして、マウスが最も近いボタンを特定
-    let closestButton: HTMLButtonElement | null = null;
-    let minDistance = Infinity;
-    
-    buttonRefs.current.forEach((button) => {
-      const buttonRect = button.getBoundingClientRect();
-      const buttonNavLeft = buttonRect.left - navRect.left;
-      const buttonNavTop = buttonRect.top - navRect.top;
+    // RAFでスロットリング
+    rafRef.current = requestAnimationFrame(() => {
+      if (!navRef.current) return;
       
-      // マウスがボタンの範囲内または近くにあるかチェック
-      const distance = Math.sqrt(
-        Math.pow(mouseX - (buttonNavLeft + buttonRect.width / 2), 2) +
-        Math.pow(mouseY - (buttonNavTop + buttonRect.height / 2), 2)
-      );
+      const navRect = navRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - navRect.left;
+      const mouseY = e.clientY - navRect.top;
       
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestButton = button;
+      // 最初の移動時は現在のカーソル位置から開始
+      if (isFirstMoveRef.current && indicatorRef.current) {
+        indicatorRef.current.style.left = `${mouseX - 10}px`;
+        indicatorRef.current.style.top = `${mouseY - 10}px`;
+        indicatorRef.current.style.width = "20px";
+        indicatorRef.current.style.height = "20px";
+        indicatorRef.current.style.opacity = "0";
+        indicatorRef.current.style.transform = "scale(0.7)";
+        isFirstMoveRef.current = false;
+      }
+      
+      // 各ボタンの位置をチェックして、マウスが最も近いボタンを特定
+      let closestButton: HTMLButtonElement | null = null;
+      let minDistance = Infinity;
+      
+      buttonRefs.current.forEach((button) => {
+        const buttonRect = button.getBoundingClientRect();
+        const buttonNavLeft = buttonRect.left - navRect.left;
+        const buttonNavTop = buttonRect.top - navRect.top;
+        
+        // より軽量な距離計算（平方根を避ける）
+        const deltaX = mouseX - (buttonNavLeft + buttonRect.width / 2);
+        const deltaY = mouseY - (buttonNavTop + buttonRect.height / 2);
+        const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+        
+        if (distanceSquared < minDistance) {
+          minDistance = distanceSquared;
+          closestButton = button;
+        }
+      });
+      
+      if (closestButton) {
+        animateIndicator(closestButton);
       }
     });
-    
-    if (closestButton) {
-      animateIndicator(closestButton);
-    }
   }, [animateIndicator]);
+
+  const handleNavMouseEnter = useCallback((e: React.MouseEvent) => {
+    // ナビゲーション領域に入った時にインジケーターをリセット
+    if (indicatorRef.current && navRef.current) {
+      // 現在のカーソル位置を取得
+      const navRect = navRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - navRect.left;
+      const mouseY = e.clientY - navRect.top;
+      
+      // インジケーターを現在のカーソル位置に設定
+      indicatorRef.current.style.left = `${mouseX - 10}px`;
+      indicatorRef.current.style.top = `${mouseY - 10}px`;
+      indicatorRef.current.style.width = "20px";
+      indicatorRef.current.style.height = "20px";
+      indicatorRef.current.style.opacity = "0";
+      indicatorRef.current.style.transform = "scale(0.7)";
+    }
+  }, []);
 
   const handleBlogFilter = useCallback(
     (categoryId: string) => {
@@ -265,6 +272,7 @@ export default function HoverIndicator({
     {
       className: `hover-indicator-nav ${showBackground ? "with-background" : "no-background"} ${className}`,
       ref: navRef,
+      onMouseEnter: handleNavMouseEnter,
       onMouseMove: handleNavMouseMove,
       onMouseLeave: handleMouseLeave
     },

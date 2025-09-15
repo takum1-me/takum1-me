@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useCallback } from "react";
+import { gsap } from "gsap";
 
 interface ArticleCardProps {
   title: string;
@@ -79,6 +80,72 @@ export default function ArticleCard({
   category,
 }: ArticleCardProps) {
   const [backgroundOpacity, setBackgroundOpacity] = React.useState(0.7);
+  const cardRef = useRef<HTMLElement>(null);
+  const thumbnailRef = useRef<HTMLImageElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!cardRef.current || !thumbnailRef.current || !contentRef.current) return;
+
+    // 既存のアニメーションを停止
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    const card = cardRef.current;
+    const thumbnail = thumbnailRef.current;
+    const content = contentRef.current;
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(card, {
+        y: -4,
+        duration: 0.4,
+        ease: "power2.out"
+      })
+      .to(thumbnail, {
+        scale: 1.05,
+        duration: 0.4,
+        ease: "power2.out"
+      }, 0)
+      .to(content, {
+        y: -2,
+        duration: 0.3,
+        ease: "power2.out"
+      }, 0.1);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!cardRef.current || !thumbnailRef.current || !contentRef.current) return;
+
+    // 既存のアニメーションを停止
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    const card = cardRef.current;
+    const thumbnail = thumbnailRef.current;
+    const content = contentRef.current;
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(card, {
+        y: 0,
+        duration: 0.4,
+        ease: "power2.out"
+      })
+      .to(thumbnail, {
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out"
+      }, 0)
+      .to(content, {
+        y: 0,
+        duration: 0.3,
+        ease: "power2.out"
+      }, 0);
+  }, []);
 
   React.useEffect(() => {
     if (thumbnail?.url) {
@@ -93,7 +160,13 @@ export default function ArticleCard({
 
   return React.createElement(
     'article',
-    { className: "blog-card", 'data-category': category },
+    { 
+      ref: cardRef,
+      className: "blog-card", 
+      'data-category': category,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave
+    },
     React.createElement(
       'a',
       { href: `/blog/${slug}`, className: "card-link" },
@@ -101,12 +174,17 @@ export default function ArticleCard({
         'div',
         { className: "card-thumbnail" },
         thumbnail
-          ? React.createElement('img', { src: thumbnail.url, alt: title })
+          ? React.createElement('img', { 
+              ref: thumbnailRef,
+              src: thumbnail.url, 
+              alt: title 
+            })
           : React.createElement('div', { className: "card-thumbnail-placeholder" })
       ),
       React.createElement(
         'div',
         {
+          ref: contentRef,
           className: "card-content",
           style: {
             background: `rgba(255, 255, 255, ${backgroundOpacity})`,

@@ -16,12 +16,16 @@ export default function Header() {
     { id: "works", label: "Works", href: "/works" },
   ];
 
+
   const handleScroll = useCallback(() => {
     const y = window.scrollY;
     const goingUp = y < lastYRef.current;
-    setIsAtTop(y <= 0);
+    
+    // 常にトップ固定
+    setIsAtTop(true);
 
-    const shouldShow = y <= 0 || goingUp || hoverRef.current;
+    // 上スクロール時またはホバー時のみ表示
+    const shouldShow = goingUp || hoverRef.current;
     setVisible(shouldShow);
     lastYRef.current = y;
   }, []);
@@ -35,7 +39,7 @@ export default function Header() {
     } else {
       const y = window.scrollY;
       const goingUp = y < lastYRef.current;
-      setVisible(y <= 0 || goingUp);
+      setVisible(goingUp);
     }
   }, []);
 
@@ -45,8 +49,8 @@ export default function Header() {
 
   useEffect(() => {
     lastYRef.current = window.scrollY;
-    setIsAtTop(window.scrollY <= 0);
-    setVisible(window.scrollY <= 0); // ページトップにいる時は表示
+    setIsAtTop(true); // 常にトップ固定
+    setVisible(true); // 初期表示
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("mousemove", handleMouseMove);

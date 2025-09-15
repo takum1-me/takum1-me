@@ -5,7 +5,6 @@
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
   cursor: pointer;
   position: relative;
@@ -22,16 +21,16 @@
 
 .button-primary:hover {
   background: #D2691E;
-  transform: translateY(-2px);
   box-shadow: 0 0.5rem 1.5rem rgba(139, 69, 19, 0.4);
 }
 
 .button-secondary {
   background: transparent;
-  color: #2d3748;
+  color: #718096;
   border-color: #718096;
   position: relative;
   overflow: hidden;
+  transition: color 0.2s ease 0.2s;
 }
 
 .button-secondary::before {
@@ -41,15 +40,19 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: #2d3748;
+  background: #718096;
+  z-index: 0;
   transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: -1;
+}
+
+.button-secondary span {
+  position: relative;
+  z-index: 1;
 }
 
 .button-secondary:hover {
   color: white;
-  border-color: #2d3748;
-  transform: translateY(-2px);
+  border-color: #718096;
 }
 
 .button-secondary:hover::before {
@@ -64,7 +67,6 @@
 
 .button-error-primary:hover {
   background-color: #4b5563;
-  transform: translateY(-1px);
 }
 
 .button-error-secondary {
@@ -76,7 +78,6 @@
 .button-error-secondary:hover {
   background-color: #6b7280;
   color: white;
-  transform: translateY(-1px);
 }
 
 /* SNS Link styles (from about.astro) */
@@ -106,11 +107,9 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
 }
 
 .button-sns:hover {
-  transform: translateY(-4px) scale(1.05);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
@@ -152,19 +151,10 @@
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button-sns:hover svg {
-  transform: rotate(360deg) scale(1.1);
 }
 
 .button-sns span {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button-sns:hover span {
-  transform: translateX(2px);
+  /* GSAPでアニメーション制御するため、CSSアニメーションは削除 */
 }
 
 /* Size variants */

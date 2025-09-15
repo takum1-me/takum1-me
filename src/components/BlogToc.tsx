@@ -9,14 +9,12 @@ interface TocItem {
 }
 
 const SCROLL_TRIGGER = 200;
-const ANIMATION_DELAY = 800;
 
 export default function BlogToc() {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
   const [isTocVisible, setIsTocVisible] = useState<boolean>(false);
   const tocRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // TOC項目の生成
   const generateTocItems = useCallback(() => {
@@ -145,11 +143,6 @@ export default function BlogToc() {
       tocRef.current.classList.toggle("animate-in", shouldShow);
       tocRef.current.classList.toggle("animate-out", !shouldShow);
       setIsTocVisible(shouldShow);
-
-      if (buttonRef.current) {
-        buttonRef.current.classList.toggle("animate-in", !shouldShow);
-        buttonRef.current.classList.toggle("animate-out", shouldShow);
-      }
     }
 
     updateActiveHeading(tocItems);
@@ -171,30 +164,6 @@ export default function BlogToc() {
     });
   }, []);
 
-  // TOC切り替え処理
-  const handleToggleClick = useCallback(() => {
-    if (!tocRef.current || !buttonRef.current) return;
-
-    if (isTocVisible) {
-      tocRef.current.classList.remove("animate-in");
-      tocRef.current.classList.add("animate-out");
-      setIsTocVisible(false);
-
-      setTimeout(() => {
-        buttonRef.current?.classList.remove("animate-out");
-        buttonRef.current?.classList.add("animate-in");
-      }, ANIMATION_DELAY);
-    } else {
-      buttonRef.current.classList.remove("animate-in");
-      buttonRef.current.classList.add("animate-out");
-
-      setTimeout(() => {
-        tocRef.current?.classList.remove("animate-out");
-        tocRef.current?.classList.add("animate-in");
-        setIsTocVisible(true);
-      }, 400);
-    }
-  }, [isTocVisible]);
 
   // H2項目の取得
   const getH2Items = useCallback(
@@ -289,15 +258,5 @@ export default function BlogToc() {
           )
       )
     ),
-    React.createElement(
-      'button',
-      {
-        ref: buttonRef,
-        className: "toc-toggle-button",
-        onClick: handleToggleClick,
-        'aria-label': "目次を表示"
-      },
-      "TOC"
-    )
   );
 }
