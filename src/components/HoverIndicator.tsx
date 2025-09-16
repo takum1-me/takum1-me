@@ -168,7 +168,7 @@ export default function HoverIndicator({
 
     // 慣性パラメータ
     const friction = 0.85; // 摩擦係数（0-1、1に近いほど慣性が強い）
-    const maxSpeed = 15; // 最大追従速度（遅く調整）
+    const maxSpeed = 10; // 最大追従速度（遅く調整）
     const minSpeed = 0.1; // 最小追従速度
 
     if (isVertical) {
