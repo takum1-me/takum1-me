@@ -38,29 +38,36 @@ export default function HoverIndicator({
   const rafRef = useRef<number | null>(null);
   const isFirstMoveRef = useRef<boolean>(true);
 
-  // インジケーターを完全にリセットする関数（エントリー時専用）
+  // インジケーターをリセットする関数（エントリー時専用）
   const resetIndicatorOnEntry = useCallback((mouseX: number, mouseY: number) => {
-    if (!indicatorRef.current) return;
+    if (!indicatorRef.current || !navRef.current) return;
     
     const indicator = indicatorRef.current;
+    const navRect = navRef.current.getBoundingClientRect();
+    const isVertical = navRef.current.classList.contains("vertical");
     
-    // CSSトランジションを一時的に無効化（位置とサイズのみ）
-    indicator.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+    // シンプルにカーソル位置に設定
+    if (isVertical) {
+      const width = navRect.width - 16;
+      const height = 40;
+      indicator.style.left = "8px";
+      indicator.style.top = `${mouseY - height / 2}px`;
+      indicator.style.width = `${width}px`;
+      indicator.style.height = `${height}px`;
+    } else {
+      const width = 100;
+      const height = 45;
+      const left = mouseX - width / 2;
+      const top = 8; // 上下位置を固定（少し下に配置）
+      
+      indicator.style.left = `${Math.max(-30, Math.min(left, navRect.width - width + 30))}px`;
+      indicator.style.top = `${top}px`;
+      indicator.style.width = `${width}px`;
+      indicator.style.height = `${height}px`;
+    }
     
-    // 指定された位置にインジケーターを設定
-    indicator.style.left = `${mouseX - 10}px`;
-    indicator.style.top = `${mouseY - 10}px`;
-    indicator.style.width = "20px";
-    indicator.style.height = "20px";
     indicator.style.opacity = "0";
-    indicator.style.transform = "scale(0.7)";
-    
-    // 次のフレームで完全なトランジションを再度有効化
-    requestAnimationFrame(() => {
-      if (indicator) {
-        indicator.style.transition = "";
-      }
-    });
+    indicator.style.transform = "scale(0.8)";
   }, []);
 
   // インジケーターを非表示にする関数（リーブ時専用）
@@ -84,57 +91,52 @@ export default function HoverIndicator({
     };
   }, []);
 
-  const animateIndicator = useCallback(
-    (targetElement: HTMLButtonElement | null) => {
-      if (!indicatorRef.current || !navRef.current) return;
+  const updateIndicatorPosition = useCallback((mouseX: number, mouseY: number) => {
+    if (!indicatorRef.current || !navRef.current) return;
 
-      const indicator = indicatorRef.current;
+    const indicator = indicatorRef.current;
+    const navRect = navRef.current.getBoundingClientRect();
+    const isVertical = navRef.current.classList.contains("vertical");
+
+    // デバッグ用ログ
+    console.log('Nav rect:', navRect);
+    console.log('Mouse position:', mouseX, mouseY);
+
+    // シンプルな固定サイズのインジケーター
+    let left, top, width, height;
+
+    if (isVertical) {
+      // 垂直レイアウトの場合
+      width = navRect.width - 16;
+      height = 40;
+      left = 8;
+      top = mouseY - height / 2;
       
-      if (targetElement) {
-        // ターゲット要素の位置とサイズを取得
-        const rect = targetElement.getBoundingClientRect();
-        const navRect = navRef.current.getBoundingClientRect();
-        const isVertical = navRef.current.classList.contains("vertical");
+      // ナビゲーション領域内に制限
+      top = Math.max(0, Math.min(top, navRect.height - height));
+    } else {
+      // 水平レイアウトの場合 - 上下位置を固定して左右のみ追従
+      width = 100;
+      height = 45;
+      left = mouseX - width / 2;
+      top = 8; // 上下位置を固定（少し下に配置）
+      
+      // ナビゲーション領域を左右30px外側まで拡張して制限
+      const minLeft = -30;
+      const maxLeft = navRect.width - width + 30;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+      
+      console.log('Calculated left:', left, 'min:', minLeft, 'max:', maxLeft);
+    }
 
-        let left, top, width, height;
-
-        if (isVertical) {
-          left = 8;
-          top = rect.top - navRect.top - 6.5;
-          width = navRect.width - 16;
-          height = rect.height + 8;
-        } else {
-          // 文字を真ん中に配置するため、ボタンの中心からホバー効果の中心を計算
-          const buttonCenterX = rect.left - navRect.left + rect.width / 2;
-          left = buttonCenterX - 50; // 100pxの半分（50px）を引いて中央配置
-          top = rect.top - navRect.top - 2;
-          width = 100; // 固定幅
-          height = rect.height + 4;
-        }
-
-        // CSSトランジションで滑らかにアニメーション
-        indicator.style.left = `${left}px`;
-        indicator.style.top = `${top}px`;
-        indicator.style.width = `${width}px`;
-        indicator.style.height = `${height}px`;
-        indicator.style.opacity = "1";
-        indicator.style.transform = "scale(1.05)";
-      } else {
-        // ホバー解除時の設定
-        indicator.style.opacity = "0";
-        indicator.style.transform = "scale(0.7)";
-      }
-    },
-    [],
-  );
-
-  const handleMouseEnter = useCallback(
-    (itemId: string) => {
-      const buttonElement = buttonRefs.current.get(itemId);
-      animateIndicator(buttonElement || null);
-    },
-    [animateIndicator],
-  );
+    // インジケーターの位置を更新
+    indicator.style.left = `${left}px`;
+    indicator.style.top = `${top}px`;
+    indicator.style.width = `${width}px`;
+    indicator.style.height = `${height}px`;
+    indicator.style.opacity = "1";
+    indicator.style.transform = "scale(1)";
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     // インジケーターを非表示（滑らかなアニメーションを保持）
@@ -147,51 +149,20 @@ export default function HoverIndicator({
   const handleNavMouseMove = useCallback((e: React.MouseEvent) => {
     if (!navRef.current) return;
     
-    // 既存のRAFをキャンセル
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
+    const navRect = navRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - navRect.left;
+    const mouseY = e.clientY - navRect.top;
+    
+    // 最初の移動時は現在のカーソル位置から開始
+    if (isFirstMoveRef.current) {
+      // インジケーターを現在のカーソル位置にリセット（エントリー時専用）
+      resetIndicatorOnEntry(mouseX, mouseY);
+      isFirstMoveRef.current = false;
     }
     
-    // RAFでスロットリング
-    rafRef.current = requestAnimationFrame(() => {
-      if (!navRef.current) return;
-      
-      const navRect = navRef.current.getBoundingClientRect();
-      const mouseX = e.clientX - navRect.left;
-      const mouseY = e.clientY - navRect.top;
-      
-      // 最初の移動時は現在のカーソル位置から開始
-      if (isFirstMoveRef.current) {
-        // インジケーターを現在のカーソル位置にリセット（エントリー時専用）
-        resetIndicatorOnEntry(mouseX, mouseY);
-        isFirstMoveRef.current = false;
-      }
-      
-      // 各ボタンの位置をチェックして、マウスが最も近いボタンを特定
-      let closestButton: HTMLButtonElement | null = null;
-      let minDistance = Infinity;
-      
-      buttonRefs.current.forEach((button) => {
-        const buttonRect = button.getBoundingClientRect();
-        const buttonNavLeft = buttonRect.left - navRect.left;
-        const buttonNavTop = buttonRect.top - navRect.top;
-        
-        // より軽量な距離計算（平方根を避ける）
-        const deltaX = mouseX - (buttonNavLeft + buttonRect.width / 2);
-        const deltaY = mouseY - (buttonNavTop + buttonRect.height / 2);
-        const distanceSquared = deltaX * deltaX + deltaY * deltaY;
-        
-        if (distanceSquared < minDistance) {
-          minDistance = distanceSquared;
-          closestButton = button;
-        }
-      });
-      
-      if (closestButton) {
-        animateIndicator(closestButton);
-      }
-    });
-  }, [animateIndicator]);
+    // カーソル位置に即座に追従
+    updateIndicatorPosition(mouseX, mouseY);
+  }, [updateIndicatorPosition, resetIndicatorOnEntry]);
 
   const handleNavMouseEnter = useCallback((e: React.MouseEvent) => {
     // ナビゲーション領域に入った時にインジケーターをリセット
@@ -321,9 +292,7 @@ export default function HoverIndicator({
         'div',
         {
           key: item.id,
-          className: "button-container",
-          onMouseEnter: () => handleMouseEnter(item.id),
-          onMouseLeave: handleMouseLeave
+          className: "button-container"
         },
         React.createElement(
           'button',
@@ -332,9 +301,7 @@ export default function HoverIndicator({
               if (el) buttonRefs.current.set(item.id, el);
             },
             className: "indicator-button",
-            onClick: () => handleItemClick(item.id),
-            onMouseEnter: () => handleMouseEnter(item.id),
-            onMouseLeave: handleMouseLeave
+            onClick: () => handleItemClick(item.id)
           },
           React.createElement(
             'span',
