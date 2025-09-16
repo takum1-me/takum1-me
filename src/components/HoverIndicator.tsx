@@ -57,10 +57,34 @@ export default function HoverIndicator({
     } else {
       const width = 100;
       const height = 45;
-      const left = mouseX - width / 2;
       const top = 8; // 上下位置を固定（少し下に配置）
       
-      indicator.style.left = `${Math.max(-30, Math.min(left, navRect.width - width + 30))}px`;
+      // 端の要素の中心位置を計算
+      const firstButton = buttonRefs.current.get(items[0]?.id);
+      const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
+      
+      let left = mouseX - width / 2; // カーソルに追従する位置
+      
+      if (firstButton && lastButton) {
+        const firstButtonRect = firstButton.getBoundingClientRect();
+        const lastButtonRect = lastButton.getBoundingClientRect();
+        
+        // ナビゲーション領域に対する相対位置に変換
+        const firstButtonCenter = firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
+        const lastButtonCenter = lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
+        
+        // エントリー時の制御（端の要素の中心を過ぎた場合は適切な位置に設定）
+        if (mouseX < firstButtonCenter) {
+          left = Math.max(-30, firstButtonCenter - width / 2);
+        } else if (mouseX > lastButtonCenter) {
+          left = Math.min(navRect.width - width + 30, lastButtonCenter - width / 2);
+        }
+      }
+      
+      // 最終的な制限
+      left = Math.max(-30, Math.min(left, navRect.width - width + 30));
+      
+      indicator.style.left = `${left}px`;
       indicator.style.top = `${top}px`;
       indicator.style.width = `${width}px`;
       indicator.style.height = `${height}px`;
@@ -68,7 +92,7 @@ export default function HoverIndicator({
     
     indicator.style.opacity = "0";
     indicator.style.transform = "scale(0.8)";
-  }, []);
+  }, [items]);
 
   // インジケーターを非表示にする関数（リーブ時専用）
   const hideIndicator = useCallback(() => {
@@ -98,10 +122,6 @@ export default function HoverIndicator({
     const navRect = navRef.current.getBoundingClientRect();
     const isVertical = navRef.current.classList.contains("vertical");
 
-    // デバッグ用ログ
-    console.log('Nav rect:', navRect);
-    console.log('Mouse position:', mouseX, mouseY);
-
     // シンプルな固定サイズのインジケーター
     let left, top, width, height;
 
@@ -118,15 +138,63 @@ export default function HoverIndicator({
       // 水平レイアウトの場合 - 上下位置を固定して左右のみ追従
       width = 100;
       height = 45;
-      left = mouseX - width / 2;
       top = 8; // 上下位置を固定（少し下に配置）
       
-      // ナビゲーション領域を左右30px外側まで拡張して制限
-      const minLeft = -30;
-      const maxLeft = navRect.width - width + 30;
-      left = Math.max(minLeft, Math.min(left, maxLeft));
+      // 端の要素の中心位置を計算
+      const firstButton = buttonRefs.current.get(items[0]?.id);
+      const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
       
-      console.log('Calculated left:', left, 'min:', minLeft, 'max:', maxLeft);
+      console.log('Items:', items);
+      console.log('Button refs:', buttonRefs.current);
+      console.log('First button ID:', items[0]?.id, 'Button:', firstButton);
+      console.log('Last button ID:', items[items.length - 1]?.id, 'Button:', lastButton);
+      
+      let targetLeft = mouseX - width / 2; // カーソルに追従する位置
+      
+      if (firstButton && lastButton) {
+        const firstButtonRect = firstButton.getBoundingClientRect();
+        const lastButtonRect = lastButton.getBoundingClientRect();
+        
+        // ナビゲーション領域に対する相対位置に変換
+        const firstButtonCenter = firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
+        const lastButtonCenter = lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
+        
+        console.log('Nav rect:', navRect);
+        console.log('First button rect:', firstButtonRect);
+        console.log('Last button rect:', lastButtonRect);
+        console.log('First button center:', firstButtonCenter);
+        console.log('Last button center:', lastButtonCenter);
+        console.log('Mouse X:', mouseX);
+        
+        // 端の要素の中心を過ぎた場合の制御
+        if (mouseX < firstButtonCenter) {
+          console.log('Left of first button center - should freeze');
+          // 最初の要素の中心より左の場合、ホバーは動かない（最後の位置で固定）
+          const currentLeft = parseFloat(indicator.style.left) || 0;
+          // 既に固定位置にある場合はそのまま、そうでなければ最初の要素の中心に移動
+          left = Math.max(-30, Math.min(currentLeft, firstButtonCenter - width / 2));
+          console.log('Frozen left position:', left, 'current:', currentLeft);
+        } else if (mouseX > lastButtonCenter) {
+          console.log('Right of last button center - should freeze');
+          // 最後の要素の中心より右の場合、ホバーは動かない（最後の位置で固定）
+          const currentLeft = parseFloat(indicator.style.left) || 0;
+          // 既に固定位置にある場合はそのまま、そうでなければ最後の要素の中心に移動
+          left = Math.min(navRect.width - width + 30, Math.max(currentLeft, lastButtonCenter - width / 2));
+          console.log('Frozen right position:', left, 'current:', currentLeft);
+        } else {
+          console.log('Between button centers - should follow');
+          // 通常の追従（端の要素の中心間では自由に動く）
+          left = targetLeft;
+          console.log('Following position:', left);
+        }
+      } else {
+        console.log('Buttons not found - using normal tracking');
+        // ボタンが見つからない場合は通常の制限
+        left = targetLeft;
+      }
+      
+      // 最終的な制限（表示範囲は30px外側まで維持）
+      left = Math.max(-30, Math.min(left, navRect.width - width + 30));
     }
 
     // インジケーターの位置を更新
@@ -136,7 +204,7 @@ export default function HoverIndicator({
     indicator.style.height = `${height}px`;
     indicator.style.opacity = "1";
     indicator.style.transform = "scale(1)";
-  }, []);
+  }, [items]);
 
   const handleMouseLeave = useCallback(() => {
     // インジケーターを非表示（滑らかなアニメーションを保持）
