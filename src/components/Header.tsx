@@ -136,12 +136,16 @@ export default function Header() {
             },
             React.createElement('span', { className: "close-icon" }, "×")
           ),
-          React.createElement(HoverIndicator, {
-            items: navItems,
-            onItemClick: handleItemClick,
-            className: "mobile-header-links vertical",
-            showBackground: false
-          }),
+          React.createElement(
+            'div',
+            { className: "mobile-nav-container" },
+            React.createElement(HoverIndicator, {
+              items: navItems,
+              onItemClick: handleItemClick,
+              className: "mobile-header-links vertical",
+              showBackground: false
+            })
+          ),
           React.createElement(
             'div',
             { className: "mobile-sns-section" },

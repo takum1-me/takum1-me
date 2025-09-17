@@ -307,6 +307,13 @@ export default function HoverIndicator({
       // ナビゲーション領域内に制限
       targetTop = Math.max(0, Math.min(calculatedTop, navRect.height - height));
       
+      // 垂直レイアウトでマウスが領域外に出た場合はホバーを非表示
+      if (mouseY < 0 || mouseY > navRect.height) {
+        hideIndicator();
+        isAnimatingRef.current = false;
+        return;
+      }
+      
       // ターゲット位置を設定
       targetPositionRef.current = { x: targetLeft, y: targetTop };
     } else {
@@ -403,6 +410,18 @@ export default function HoverIndicator({
     const navRect = navRef.current.getBoundingClientRect();
     const mouseX = e.clientX - navRect.left;
     const mouseY = e.clientY - navRect.top;
+    const isVertical = navRef.current.classList.contains("vertical");
+    
+    // 垂直レイアウトの場合、ナビゲーション領域外に出た場合はホバーを非表示
+    if (isVertical) {
+      if (mouseY < 0 || mouseY > navRect.height) {
+        hideIndicator();
+        isAnimatingRef.current = false;
+        lastMousePositionRef.current = null;
+        isFirstMoveRef.current = true;
+        return;
+      }
+    }
     
     // 最初の移動時は現在のカーソル位置から開始
     if (isFirstMoveRef.current) {
@@ -413,7 +432,7 @@ export default function HoverIndicator({
     
     // カーソル位置に即座に追従
     updateIndicatorPosition(mouseX, mouseY);
-  }, [updateIndicatorPosition, resetIndicatorOnEntry]);
+  }, [updateIndicatorPosition, resetIndicatorOnEntry, hideIndicator]);
 
   const handleNavMouseEnter = useCallback((e: React.MouseEvent) => {
     // ナビゲーション領域に入った時にインジケーターをリセット
