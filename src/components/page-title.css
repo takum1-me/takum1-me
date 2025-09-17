@@ -20,6 +20,13 @@
   --page-height-90: 93vh;
 }
 
+/* タイピングカーソルのスタイル */
+.typing-cursor {
+  color: #8b7355;
+  font-weight: 300;
+  /* CSSアニメーションは無効化、GSAPで制御 */
+}
+
 .page-title::after {
   content: "";
   position: fixed;

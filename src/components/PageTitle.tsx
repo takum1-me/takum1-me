@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 interface PageTitleProps {
   title: string;
@@ -12,6 +13,76 @@ const PageTitle: React.FC<PageTitleProps> = ({
   pageType = "default",
 }) => {
   const titleRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+
+  // GSAPテキストタイピングアニメーション
+  useEffect(() => {
+    if (!textRef.current || !title) return;
+
+    // テキストを文字ごとに分割してspanで囲む
+    const chars = title.split('').map((char, index) => 
+      `<span class="char" style="opacity: 0; transform: translateY(20px);">${char}</span>`
+    ).join('');
+    
+    textRef.current.innerHTML = chars;
+
+    // GSAPアニメーション
+    const tl = gsap.timeline({ delay: 0.5 });
+    
+    // 各文字を順番に表示し、カーソルを移動
+    title.split('').forEach((char, index) => {
+      // 文字を表示
+      tl.to(`.char:nth-child(${index + 1})`, {
+        opacity: 1,
+        y: 0,
+        duration: 0.2,
+        ease: "power2.out"
+      })
+      // カーソルを現在の文字の後ろに追加
+      .call(() => {
+        // 既存のカーソルを削除
+        const existingCursor = textRef.current?.querySelector('.typing-cursor');
+        if (existingCursor) {
+          existingCursor.remove();
+        }
+        
+        // 新しいカーソルを現在の文字の後ろに追加
+        const currentChar = textRef.current?.querySelector(`.char:nth-child(${index + 1})`);
+        if (currentChar) {
+          const cursor = document.createElement('span');
+          cursor.className = 'typing-cursor';
+          cursor.style.opacity = '1';
+          cursor.textContent = '|';
+          currentChar.parentNode?.insertBefore(cursor, currentChar.nextSibling);
+          
+          // カーソルの点滅アニメーション
+          gsap.to(cursor, {
+            opacity: 0,
+            duration: 0.5,
+            repeat: -1,
+            yoyo: true,
+            ease: "power2.inOut"
+          });
+        }
+      }, null, "-=0.1");
+    });
+    
+    // タイピング完了後にカーソルを非表示
+    tl.call(() => {
+      const cursor = textRef.current?.querySelector('.typing-cursor');
+      if (cursor) {
+        gsap.killTweensOf(cursor);
+        gsap.set(cursor, { opacity: 0 });
+      }
+    });
+
+    return () => {
+      tl.kill();
+      // 全てのカーソルアニメーションを停止
+      const cursors = textRef.current?.querySelectorAll('.typing-cursor');
+      cursors?.forEach(cursor => gsap.killTweensOf(cursor));
+    };
+  }, [title]);
 
   useEffect(() => {
     // main-contentの下端に合わせて棒の高さを計算
@@ -160,7 +231,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       ref: titleRef,
       className: `page-title ${className}`
     },
-    title
+    React.createElement('span', { ref: textRef })
   );
 };
 
