@@ -85,6 +85,12 @@ const PageTitle: React.FC<PageTitleProps> = ({
   }, [title]);
 
   useEffect(() => {
+    // モバイルサイズ（768px以下）ではスクロールアニメーションを無効化
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      return; // モバイルではスクロールアニメーションを実行しない
+    }
+
     // main-contentの下端に合わせて棒の高さを計算
     const calculateBarHeight = () => {
       if (!titleRef.current) return 100; // フォールバック値
@@ -178,9 +184,30 @@ const PageTitle: React.FC<PageTitleProps> = ({
     // イベントリスナーを追加（より安全な方法）
     const addEventListeners = () => {
       window.addEventListener("scroll", handleScroll, { passive: true });
-      window.addEventListener("resize", handleScroll, { passive: true });
+      window.addEventListener("resize", () => {
+        // リサイズ時にモバイル判定を更新
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          // モバイルになったらスクロールアニメーションを停止
+          if (titleRef.current) {
+            titleRef.current.style.transform = 'rotate(180deg)';
+          }
+        } else {
+          // デスクトップになったらスクロールアニメーションを再開
+          handleScroll();
+        }
+      }, { passive: true });
       // 画面サイズ変更時の追加イベント
-      window.addEventListener("orientationchange", handleScroll, {
+      window.addEventListener("orientationchange", () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          if (titleRef.current) {
+            titleRef.current.style.transform = 'rotate(180deg)';
+          }
+        } else {
+          handleScroll();
+        }
+      }, {
         passive: true,
       });
     };
