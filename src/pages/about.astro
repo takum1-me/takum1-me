@@ -4,6 +4,9 @@ import PageTitle from "../components/PageTitle";
 import PageContainer from "../components/PageContainer";
 import Card, { CardHeader } from "../components/Card";
 import SnsLinks from "../components/SnsLinks";
+import { aboutData } from "../data/about";
+import { organizations } from "../data/organizations";
+import { qualifications } from "../data/qualifications";
 import "../components/page-title.css";
 import "../components/page-container.css";
 import "../components/card.css";
@@ -20,36 +23,36 @@ import "../components/sns-links.css";
                 </CardHeader>
                 
                 <div class="coffee-section">
-                    <h3>コーヒー</h3>
+                    <h3>{aboutData.coffee.title}</h3>
                     <p class="coffee-description">
-                        ドリップにはCT62やbeandy silkを使用しています。ローストにも挑戦しており、特に浅煎りが好きです。
+                        {aboutData.coffee.description}
                     </p>
                     
                     <div class="coffee-equipment">
                         <h4>使用器具</h4>
                         <div class="equipment-tags">
-                            <span class="equipment-tag">CT62</span>
-                            <span class="equipment-tag">beandy silk</span>
+                            {aboutData.coffee.equipment.map(equipment => (
+                                <span class="equipment-tag">{equipment.name}</span>
+                            ))}
                         </div>
                     </div>
 
                     <div class="coffee-preferences">
                         <h4>お気に入りの産地・品種</h4>
                         <div class="preference-tags">
-                            <span class="preference-tag">コロンビア</span>
-                            <span class="preference-tag">Chiroso</span>
-                            <span class="preference-tag">その他様々な品種を探索中...</span>
+                            {aboutData.coffee.preferences.map(preference => (
+                                <span class="preference-tag">{preference.name}</span>
+                            ))}
                         </div>
                     </div>
                 </div>
 
                 <div class="other-interests">
-                    <h3>その他の関心分野</h3>
+                    <h3>{aboutData.otherInterests.title}</h3>
                     <div class="interest-tags">
-                        <span class="interest-tag">Design / UX</span>
-                        <span class="interest-tag">キャッチコピー / 広告</span>
-                        <span class="interest-tag">美術・読書</span>
-                        <span class="interest-tag">旅行</span>
+                        {aboutData.otherInterests.interests.map(interest => (
+                            <span class="interest-tag">{interest.name}</span>
+                        ))}
                     </div>
                 </div>
             </Card>
@@ -59,41 +62,17 @@ import "../components/sns-links.css";
                     <h2>所属</h2>
                 </CardHeader>
                 <div class="organizations-list">
-                    <div class="organization-item">
-                        <h3>
-                            <a href="https://www.coins.tsukuba.ac.jp/" target="_blank" rel="noopener noreferrer">
-                                <span>筑波大学情報学群情報科学類</span>
-                            </a>
-                        </h3>
-                        <span class="organization-period">2022年4月〜</span>
-                    </div>
-                    <div class="organization-item">
-                        <h3>
-                            <a href="https://www.zdk.tsukuba.ac.jp/" target="_blank" rel="noopener noreferrer">
-                                <span>全学学類・専門学群・総合学域群代表者会議</span>
-                            </a>
-                        </h3>
-                        <span class="organization-period">2023年4月〜</span>
-                        <div class="role">議長（2024年5月〜2025年3月）</div>
-                    </div>
-                    <div class="organization-item">
-                        <h3>
-                            <a href="https://www.coins.tsukuba.ac.jp/~class/" target="_blank" rel="noopener noreferrer">
-                                <span>情報科学類 クラス代表者会議</span>
-                            </a>
-                        </h3>
-                        <span class="organization-period">2022年4月〜</span>
-                        <div class="role">議長（2023年4月〜2025年3月）</div>
-                    </div>
-                    <div class="organization-item">
-                        <h3>
-                            <a href="https://cafeore.cafe/" target="_blank" rel="noopener noreferrer">
-                                <span>珈琲・俺</span>
-                            </a>
-                        </h3>
-                        <span class="organization-period">2023年6月〜</span>
-                        <div class="role">総務局長（2024年1月〜2024年12月）</div>
-                    </div>
+                    {organizations.map(organization => (
+                        <div class="organization-item">
+                            <h3>
+                                <a href={organization.url} target="_blank" rel="noopener noreferrer">
+                                    <span>{organization.name}</span>
+                                </a>
+                            </h3>
+                            <span class="organization-period">{organization.period}</span>
+                            {organization.role && <div class="role">{organization.role}</div>}
+                        </div>
+                    ))}
                 </div>
             </Card>
 
@@ -102,22 +81,12 @@ import "../components/sns-links.css";
                     <h2>資格</h2>
                 </CardHeader>
                 <div class="qualifications-list">
-                    <div class="qualification-item">
-                        <span class="qualification-name">日商簿記3級</span>
-                        <span class="qualification-date">2023年12月</span>
-                    </div>
-                    <div class="qualification-item">
-                        <span class="qualification-name">AP（応用情報技術者検定）</span>
-                        <span class="qualification-date">2024年12月</span>
-                    </div>
-                    <div class="qualification-item">
-                        <span class="qualification-name">FE（基本情報技術者検定）</span>
-                        <span class="qualification-date">2024年1月</span>
-                    </div>
-                    <div class="qualification-item">
-                        <span class="qualification-name">知的財産管理技能検定3級</span>
-                        <span class="qualification-date">2023年12月</span>
-                    </div>
+                    {qualifications.map(qualification => (
+                        <div class="qualification-item">
+                            <span class="qualification-name">{qualification.name}</span>
+                            <span class="qualification-date">{qualification.date}</span>
+                        </div>
+                    ))}
                 </div>
             </Card>
         </div>
