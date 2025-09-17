@@ -27,7 +27,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
     textRef.current.innerHTML = chars;
 
     // GSAPアニメーション
-    const tl = gsap.timeline({ delay: 0.5 });
+    const tl = gsap.timeline({ delay: 0.2 });
     
     // 各文字を順番に表示し、カーソルを移動
     title.split('').forEach((char, index) => {
