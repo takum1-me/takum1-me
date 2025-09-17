@@ -34,12 +34,13 @@ export const aboutData: AboutData = {
     description: "ドリップにはCT62やbeandy silkを使用しています。ローストにも挑戦しており、特に浅煎りが好きです。",
     equipment: [
       { name: "CT62" },
-      { name: "beandy silk" }
+      { name: "beandy silk dripper" }
     ],
     preferences: [
       { name: "コロンビア" },
-      { name: "Chiroso" },
-      { name: "その他様々な品種を探索中..." }
+      { name: "エチオピア" },
+      { name: "ナチュラル" },
+      { name: "アナエロビック" }
     ]
   },
   otherInterests: {

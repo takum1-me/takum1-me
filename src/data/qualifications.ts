@@ -13,11 +13,11 @@ export const qualifications: Qualification[] = [
     date: "2023年12月"
   },
   {
-    name: "AP（応用情報技術者検定）",
-    date: "2024年12月"
-  },
-  {
     name: "FE（基本情報技術者検定）",
     date: "2024年1月"
+  },
+  {
+    name: "AP（応用情報技術者検定）",
+    date: "2024年12月"
   }
 ];
