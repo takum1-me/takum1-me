@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 interface ButtonProps {
   href?: string;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'sns';
+  variant?: 'primary' | 'secondary';
   size?: 'small' | 'medium' | 'large';
   className?: string;
   children: React.ReactNode;
@@ -29,7 +29,6 @@ export default function Button({
   const variantClasses = {
     primary: 'button-primary',
     secondary: 'button-secondary',
-    sns: 'button-sns',
   };
   const sizeClasses = {
     small: 'button-small',
@@ -56,36 +55,14 @@ export default function Button({
     
     tlRef.current = gsap.timeline();
     
-    if (variant === 'sns') {
-      // SNSボタンの特別なアニメーション
-      tlRef.current
-        .to(button, {
-          y: -4,
-          scale: 1.05,
-          duration: 0.3,
-          ease: "power2.out"
-        })
-        .to(button.querySelector('svg'), {
-          rotation: 360,
-          scale: 1.1,
-          duration: 1.2,
-          ease: "power2.out"
-        }, 0)
-        .to(button.querySelector('span'), {
-          x: 2,
-          duration: 0.3,
-          ease: "power2.out"
-        }, 0);
-    } else {
-      // 通常のボタンアニメーション
-      tlRef.current
-        .to(button, {
-          y: -2,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-    }
-  }, [variant]);
+    // 通常のボタンアニメーション
+    tlRef.current
+      .to(button, {
+        y: -2,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     if (!buttonRef.current) return;
@@ -99,36 +76,14 @@ export default function Button({
     
     tlRef.current = gsap.timeline();
     
-    if (variant === 'sns') {
-      // SNSボタンのリセット
-      tlRef.current
-        .to(button, {
-          y: 0,
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out"
-        })
-        .to(button.querySelector('svg'), {
-          rotation: 0,
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out"
-        }, 0)
-        .to(button.querySelector('span'), {
-          x: 0,
-          duration: 0.3,
-          ease: "power2.out"
-        }, 0);
-    } else {
-      // 通常のボタンリセット
-      tlRef.current
-        .to(button, {
-          y: 0,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-    }
-  }, [variant]);
+    // 通常のボタンリセット
+    tlRef.current
+      .to(button, {
+        y: 0,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+  }, []);
 
   if (href) {
     return (

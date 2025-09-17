@@ -38,18 +38,6 @@
   color: #8b7355;
 }
 
-/* Card variants */
-.card-interests {
-  /* Additional styles for interests card if needed */
-}
-
-.card-organizations {
-  /* Additional styles for organizations card if needed */
-}
-
-.card-qualifications {
-  /* Additional styles for qualifications card if needed */
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

@@ -1,12 +1,6 @@
 :root {
   --max-width: 1200px;
   --gap: 16px;
-
-  /* カラーパレット - より重い青系 */
-  --primary-blue: #0d31aa; /* メインの青（より重い） */
-  --secondary-blue: #2563eb; /* セカンダリの青 */
-  --accent-blue: #3b82f6; /* アクセントの青 */
-  --light-blue: #60a5fa; /* ライトブルー */
 }
 
 html,

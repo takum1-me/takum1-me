@@ -69,94 +69,6 @@
   background-color: #4b5563;
 }
 
-.button-error-secondary {
-  background-color: transparent;
-  color: #6b7280;
-  border-color: #6b7280;
-}
-
-.button-error-secondary:hover {
-  background-color: #6b7280;
-  color: white;
-}
-
-/* SNS Link styles (from about.astro) */
-.button-sns {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  background: white;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #374151;
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  min-width: 160px;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.button-sns::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-}
-
-.button-sns:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.button-sns:hover::before {
-  left: 100%;
-}
-
-.button-sns.twitter {
-  color: #8b7355;
-}
-
-.button-sns.twitter:hover {
-  background: #8b7355;
-  color: white;
-  box-shadow: 0 8px 25px rgba(139, 115, 85, 0.3);
-}
-
-.button-sns.instagram {
-  color: #a68b5b;
-}
-
-.button-sns.instagram:hover {
-  background: #a68b5b;
-  color: white;
-  box-shadow: 0 8px 25px rgba(166, 139, 91, 0.3);
-}
-
-.button-sns.github {
-  color: #6b5b47;
-}
-
-.button-sns.github:hover {
-  background: #6b5b47;
-  color: white;
-  box-shadow: 0 8px 25px rgba(107, 91, 71, 0.3);
-}
-
-.button-sns svg {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.button-sns span {
-  /* GSAPでアニメーション制御するため、CSSアニメーションは削除 */
-}
-
 /* Size variants */
 .button-small {
   padding: 0.5rem 1rem;
@@ -175,15 +87,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .button-sns {
-    min-width: 140px;
-    padding: 0.875rem 1.25rem;
-  }
-  
-  .button-sns span {
-    font-size: 0.9rem;
-  }
-  
   .button {
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
