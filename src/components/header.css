@@ -84,6 +84,94 @@
   padding-right:2rem;
 }
 
+/* ハンバーガーメニュー */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger-line {
+  width: 2rem;
+  height: 0.25rem;
+  background: #111827;
+  border-radius: 0.125rem;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.hamburger-menu.active .hamburger-line:first-child {
+  transform: rotate(45deg);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: translateX(1.25rem);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+/* モバイルメニュー */
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(250, 248, 245, 0.95);
+  backdrop-filter: blur(0.625rem) saturate(140%);
+  border-bottom: 0.0625rem solid #e5e7eb;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  opacity: 0;
+  transform: translateY(-0.625rem);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.mobile-menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mobile-header-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-header-links.vertical {
+  position: relative;
+}
+
+/* BlogFilterと同じ背景付きスタイル */
+.mobile-header-links.with-background {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* モバイルメニューのbutton-containerはHoverIndicatorのデフォルトスタイルを使用 */
+
+/* モバイルメニューのボタンスタイルはHoverIndicatorのデフォルトスタイルを使用 */
+
+/* モバイルメニューのホバーインジケーターはHoverIndicatorのデフォルトスタイルを使用 */
+
 /* タブレットサイズ */
 @media (max-width: 1024px) {
   .header-wrap {
@@ -94,16 +182,26 @@
 
   .nav {
     padding: 0.4rem 1rem;
+    position: relative;
   }
-
 
   .brand a {
     font-size: 1rem;
   }
 
-  .header-links .indicator-button {
-    font-size: 1.1rem;
-    padding: 0.5rem;
+  /* ハンバーガーメニューを表示 */
+  .hamburger-menu {
+    display: flex;
+  }
+
+  /* デスクトップのナビゲーションを非表示 */
+  .header-links {
+    display: none;
+  }
+
+  /* モバイルメニューを表示 */
+  .mobile-menu {
+    display: block;
   }
 
   /* ページ最上部の時は全幅にする */
@@ -138,20 +236,26 @@
 
   .nav {
     padding: 0.35rem 0.875rem;
+    position: relative;
   }
-
 
   .brand a {
     font-size: 0.9rem;
   }
 
-  .header-links {
-    gap: 0.5rem;
+  /* ハンバーガーメニューを表示 */
+  .hamburger-menu {
+    display: flex;
   }
 
-  .header-links .indicator-button {
-    font-size: 1rem;
-    padding: 0.45rem;
+  /* デスクトップのナビゲーションを非表示 */
+  .header-links {
+    display: none;
+  }
+
+  /* モバイルメニューを表示 */
+  .mobile-menu {
+    display: block;
   }
 
   /* ページ最上部の時は全幅にする */
@@ -186,20 +290,26 @@
 
   .nav {
     padding: 0.3rem 0.75rem;
+    position: relative;
   }
-
 
   .brand a {
     font-size: 0.85rem;
   }
 
-  .header-links {
-    gap: 0.4rem;
+  /* ハンバーガーメニューを表示 */
+  .hamburger-menu {
+    display: flex;
   }
 
-  .header-links .indicator-button {
-    font-size: 0.9rem;
-    padding: 0.4rem;
+  /* デスクトップのナビゲーションを非表示 */
+  .header-links {
+    display: none;
+  }
+
+  /* モバイルメニューを表示 */
+  .mobile-menu {
+    display: block;
   }
 
   /* ページ最上部の時は全幅にする */
@@ -234,20 +344,26 @@
 
   .nav {
     padding: 0.25rem 0.5rem;
+    position: relative;
   }
-
 
   .brand a {
     font-size: 0.8rem;
   }
 
-  .header-links {
-    gap: 0.3rem;
+  /* ハンバーガーメニューを表示 */
+  .hamburger-menu {
+    display: flex;
   }
 
-  .header-links .indicator-button {
-    font-size: 0.85rem;
-    padding: 0.35rem;
+  /* デスクトップのナビゲーションを非表示 */
+  .header-links {
+    display: none;
+  }
+
+  /* モバイルメニューを表示 */
+  .mobile-menu {
+    display: block;
   }
 
   /* ページ最上部の時は全幅にする */

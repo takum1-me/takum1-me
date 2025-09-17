@@ -7,6 +7,7 @@ const HOVER_THRESHOLD = 120;
 export default function Header() {
   const [visible, setVisible] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastYRef = useRef<number>(0);
   const hoverRef = useRef<boolean>(false);
 
@@ -44,7 +45,12 @@ export default function Header() {
   }, []);
 
   const handleItemClick = useCallback((id: string) => {
+    setIsMobileMenuOpen(false); // モバイルメニューを閉じる
     window.location.href = `/${id}`;
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
   }, []);
 
   useEffect(() => {
@@ -77,6 +83,28 @@ export default function Header() {
           'div',
           { className: "brand" },
           React.createElement('a', { href: "/" }, "takum1.me")
+        ),
+        React.createElement(
+          'button',
+          {
+            className: `hamburger-menu${isMobileMenuOpen ? " active" : ""}`,
+            onClick: toggleMobileMenu,
+            'aria-label': "メニューを開く",
+            'aria-expanded': isMobileMenuOpen
+          },
+          React.createElement('span', { className: "hamburger-line" }),
+          React.createElement('span', { className: "hamburger-line" }),
+          React.createElement('span', { className: "hamburger-line" })
+        ),
+        React.createElement(
+          'div',
+          { className: `mobile-menu${isMobileMenuOpen ? " open" : ""}` },
+          React.createElement(HoverIndicator, {
+            items: navItems,
+            onItemClick: handleItemClick,
+            className: "mobile-header-links vertical",
+            showBackground: false
+          })
         ),
         React.createElement(HoverIndicator, {
           items: navItems,
