@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import HoverIndicator from "./HoverIndicator";
+import FooterSnsLinks from "./FooterSnsLinks";
 import "./header.css";
 
 const HOVER_THRESHOLD = 120;
@@ -46,11 +47,33 @@ export default function Header() {
 
   const handleItemClick = useCallback((id: string) => {
     setIsMobileMenuOpen(false); // モバイルメニューを閉じる
+    // スクロール制御を解除
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.classList.remove('mobile-menu-open'); // グレーアウトを解除
     window.location.href = `/${id}`;
   }, []);
 
   const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(prev => !prev);
+    setIsMobileMenuOpen(prev => {
+      const newState = !prev;
+      // サイドバー開時にページスクロールを無効化とグレーアウト
+      if (newState) {
+        // より確実なスクロール制御
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.classList.add('mobile-menu-open');
+      } else {
+        // スクロール制御を解除
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.classList.remove('mobile-menu-open');
+      }
+      return newState;
+    });
   }, []);
 
   useEffect(() => {
@@ -64,6 +87,11 @@ export default function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);
+      // コンポーネントアンマウント時にスクロールを元に戻す
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.classList.remove('mobile-menu-open');
     };
   }, [handleScroll, handleMouseMove]);
 
@@ -99,12 +127,28 @@ export default function Header() {
         React.createElement(
           'div',
           { className: `mobile-menu${isMobileMenuOpen ? " open" : ""}` },
+          React.createElement(
+            'button',
+            {
+              className: "mobile-menu-close",
+              onClick: toggleMobileMenu,
+              'aria-label': "メニューを閉じる"
+            },
+            React.createElement('span', { className: "close-icon" }, "×")
+          ),
           React.createElement(HoverIndicator, {
             items: navItems,
             onItemClick: handleItemClick,
             className: "mobile-header-links vertical",
             showBackground: false
-          })
+          }),
+          React.createElement(
+            'div',
+            { className: "mobile-sns-section" },
+            React.createElement(FooterSnsLinks, {
+              className: "mobile-sns-links"
+            })
+          )
         ),
         React.createElement(HoverIndicator, {
           items: navItems,
