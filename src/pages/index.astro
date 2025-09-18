@@ -2,11 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import CoffeeBean from "../assets/coffee-bean.svg";
 import Button from "../components/Button";
-import ArticleCard from "../components/ArticleCard";
+import HomeArticleCard from "../components/HomeArticleCard";
 import ThoughtDisplay from "../components/ThoughtDisplay";
 import { getLatestBlogs } from "../lib/microcms";
 import "../components/button.css";
-import "../components/article-card.css";
+import "../components/home-article-card.css";
 import "../components/thought-display.css";
 import "../components/thought-modal.css";
 
@@ -49,7 +49,7 @@ const latestBlogs = await getLatestBlogs(3);
       
       <div class="blog-grid">
         {latestBlogs.map((blog) => (
-          <ArticleCard
+          <HomeArticleCard
             client:load
             title={blog.title}
             summary={blog.summary}

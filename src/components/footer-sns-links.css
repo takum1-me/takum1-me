@@ -58,6 +58,18 @@
   color: #e4405f; /* Instagram ブランドカラー */
 }
 
+/* Instagramアイコンの色制御 */
+.footer-sns-link.instagram .instagram-icon {
+  filter: grayscale(100%) brightness(0.6) saturate(0); /* 通常時：他のアイコンと同じグレー */
+  opacity: 0.7; /* 他のアイコンと同じ透明度 */
+  transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-sns-link.instagram:hover .instagram-icon {
+  filter: none; /* ホバー時：元の色（グラデーション） */
+  opacity: 1; /* ホバー時：完全に不透明 */
+}
+
 .footer-sns-link.github:hover {
   color: #333; /* GitHub ブランドカラー */
 }
