@@ -33,7 +33,7 @@ const latestBlogs = await getLatestBlogs(3);
           </div>
         </div>
         <div class="hero-visual">
-          <CoffeeBean class="bean" stroke="#8B4513" />
+          <CoffeeBean class="bean" stroke="var(--primary)" />
         </div>
       </div>
     </div>
@@ -68,30 +68,6 @@ const latestBlogs = await getLatestBlogs(3);
   </section>
 
   <style>
-    :root { 
-      --max-width: 960px; 
-      --gap: 16px; 
-      --ink: #111827; 
-      --muted: #6b7280;
-      --primary: #8B4513;
-      --secondary: #D2691E;
-      --accent: #D4AF37;
-      --background: #faf8f5;
-      --surface: rgba(255, 255, 255, 0.1);
-      --surface-hover: rgba(255, 255, 255, 0.15);
-      --text-primary: #2d3748;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-    }
-    
-    html,body {
-      background: var(--background);
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial, sans-serif;
-    }
     
     .hero { 
       padding: 4rem 0; 
@@ -110,7 +86,7 @@ const latestBlogs = await getLatestBlogs(3);
       align-items: center;
       width: 100%;
       position: relative;
-      max-width: 1200px;
+      max-width: var(--max-width);
       margin: 0 auto;
       padding: 0 2rem;
     }
@@ -178,26 +154,48 @@ const latestBlogs = await getLatestBlogs(3);
     }
     
     .cta-button:not(.secondary) {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 0.25rem 0.75rem rgba(139, 69, 19, 0.3);
+      background: transparent;
+      color: var(--secondary);
+      border: 2px solid var(--secondary);
+      position: relative;
+      overflow: hidden;
+      transition: color 0.2s ease 0.2s;
+    }
+    
+    .cta-button:not(.secondary)::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background: var(--secondary);
+      z-index: 0;
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .cta-button:not(.secondary) span {
+      position: relative;
+      z-index: 1;
     }
     
     .cta-button:not(.secondary):hover {
-      background: var(--secondary);
-      transform: translateY(-2px);
-      box-shadow: 0 0.5rem 1.5rem rgba(139, 69, 19, 0.4);
+      color: white;
+    }
+    
+    .cta-button:not(.secondary):hover::before {
+      height: 100%;
     }
     
     .cta-button.secondary {
       background: transparent;
-      color: var(--text-primary);
+      color: var(--text-muted);
       border-color: var(--text-muted);
     }
     
     .cta-button.secondary:hover {
       background: var(--surface);
-      border-color: var(--text-secondary);
+      border-color: var(--text-muted);
       transform: translateY(-2px);
     }
     
@@ -216,14 +214,14 @@ const latestBlogs = await getLatestBlogs(3);
     /* 一言コンポーネントのスタイル調整 */
     .hero-description .thought-display {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(139, 69, 19, 0.1);
+      border: 1px solid var(--primary-10);
       margin: 0;
       padding: 1.25rem;
     }
     
     .hero-description .thought-display:hover {
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(139, 69, 19, 0.15);
+      border-color: var(--primary-15);
     }
     
     .hero-description .thought-content {
@@ -323,11 +321,11 @@ const latestBlogs = await getLatestBlogs(3);
     .latest-blogs {
       padding: 4rem 0;
       background: var(--background);
-      border-top: 1px solid rgba(139, 69, 19, 0.1);
+      border-top: 1px solid var(--primary-10);
     }
     
     .latest-blogs-inner {
-      max-width: 1200px;
+      max-width: var(--max-width);
       margin: 0 auto;
       padding: 0 2rem;
     }

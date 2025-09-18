@@ -1,7 +1,7 @@
 /* Footer component styles */
 .site-footer {
-  background: #faf8f5; /* サイトの背景色と同じ */
-  color: #6b7280;
+  background: var(--background); /* サイトの背景色と同じ */
+  color: var(--muted);
   padding: 2rem 0;
   margin-top: auto;
   border-top: 1px solid #e5e7eb;
@@ -29,7 +29,7 @@
 .footer-copyright p {
   margin: 0;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--muted);
   font-weight: 400;
 }
 

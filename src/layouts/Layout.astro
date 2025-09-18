@@ -101,9 +101,6 @@ const jsonldStringfy = JSON.stringify({
   
   <style>
     :root {
-      --max-width: 1200px;
-      --gap: 16px;
-      
       /* カラーパレット - より重い青系 */
       --primary-blue: #0d31aa;      /* メインの青（より重い） */
       --secondary-blue: #2563eb;    /* セカンダリの青 */
@@ -112,7 +109,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     html, body {
-      background: #faf8f5; /* クリーム色の背景 */
+      background: var(--background); /* クリーム色の背景 */
       min-height: 100vh;
       margin: 0;
       padding: 0;

@@ -42,7 +42,7 @@
 }
 
 .footer-sns-link {
-  color: #6b7280; /* ベースカラー（統一されたグレー） */
+  color: var(--muted); /* ベースカラー（統一されたグレー） */
 }
 
 .footer-sns-link:hover {

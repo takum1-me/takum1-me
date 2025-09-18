@@ -1,20 +1,29 @@
 :root {
-  --max-width: 1200px;
+  --max-width: 1200px; /* index.astroの960pxから1200pxに統一 */
   --gap: 16px;
+  --ink: #111827;
+  --muted: #6b7280;
+  --primary: #8B4513;
+  --primary-10: rgba(139, 69, 19, 0.1);
+  --primary-15: rgba(139, 69, 19, 0.15);
+  --secondary: #e46103;
+  --accent: #D4AF37;
+  --background: #faf8f5;
+  --surface: rgba(255, 255, 255, 0.1);
+  --surface-hover: rgba(255, 255, 255, 0.15);
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-muted: #2d3748;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  background: #faf8f5; /* クリーム色の背景 */
+  background: var(--background);
   min-height: 100vh;
-}
-
-body {
-  font-family:
-    "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
-    sans-serif;
+  overflow-x: hidden;
+  font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial, sans-serif;
 }
 
 .container {

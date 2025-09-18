@@ -67,8 +67,8 @@ import "../components/button.css";
     transition: all 0.3s ease;
     animation: pulse-button 2s ease-in-out infinite;
     background-color: transparent;
-    border: 2px solid #6b7280;
-    color: #6b7280;
+    border: 2px solid var(--muted);
+    color: var(--muted);
   }
 
   .button-error-primary::before {
@@ -78,7 +78,7 @@ import "../components/button.css";
     left: 0;
     width: 0;
     height: 100%;
-    background-color: #6b7280;
+    background-color: var(--muted);
     transition: width 0.5s ease-in-out;
     z-index: -1;
     transform-origin: left center;

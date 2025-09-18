@@ -98,7 +98,7 @@
 
 .toc > .toc-list > li > a {
   font-weight: 700;
-  color: #6b7280;
+  color: var(--muted);
   font-size: 15px;
   text-decoration: none;
   transition: color 0.18s ease;
@@ -129,7 +129,7 @@
   text-overflow: ellipsis;
   display: block;
   line-height: 1.5;
-  color: #6b7280;
+  color: var(--muted);
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
