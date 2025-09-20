@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import HeaderHoverIndicator from "./hoverindicator/HeaderHoverIndicator";
-import FooterSnsLinks from "./footer/FooterSnsLinks";
+import HeaderHoverIndicator from "../hoverindicator/HeaderHoverIndicator";
+import FooterSnsLinks from "../footer/FooterSnsLinks";
 import "./header.css";
 
 const HOVER_THRESHOLD = 120;

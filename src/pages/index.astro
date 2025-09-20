@@ -1,13 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Button from "../components/Button";
-import HomeArticleCard from "../components/HomeArticleCard";
-import ThoughtDisplay from "../components/ThoughtDisplay";
+import Button from "../components/button/Button";
+import HomeArticleCard from "../components/card/HomeArticleCard";
+import ThoughtDisplay from "../components/thought/ThoughtDisplay";
 import { getLatestBlogs } from "../lib/microcms";
-import "../components/button.css";
-import "../components/home-article-card.css";
-import "../components/thought-display.css";
-import "../components/thought-modal.css";
+import "../components/button/button.css";
+import "../components/card/home-article-card.css";
+import "../components/thought/thought-display.css";
+import "../components/thought/thought-modal.css";
 
 // 最新の3件のブログを取得
 const latestBlogs = await getLatestBlogs(3);

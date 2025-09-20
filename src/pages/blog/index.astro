@@ -1,11 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getAllBlog } from "../../lib/microcms";
-import BlogFilter from "../../components/BlogFilter.astro";
-import ArticleCard from "../../components/ArticleCard";
-import PageTitle from "../../components/PageTitle";
-import "../../components/article-card.css";
-import "../../components/page-title.css";
+import BlogFilter from "../../components/blog/BlogFilter.astro";
+import ArticleCard from "../../components/card/ArticleCard";
+import PageTitle from "../../components/page/PageTitle";
+import "../../components/card/article-card.css";
+import "../../components/page/page-title.css";
 
 let blogs;
 try {

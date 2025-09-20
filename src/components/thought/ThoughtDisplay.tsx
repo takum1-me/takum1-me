@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getCurrentThought, thoughts } from "../data/thoughts";
-import type { Thought } from "../data/thoughts";
+import { getCurrentThought, thoughts } from "../../data/thoughts";
+import type { Thought } from "../../data/thoughts";
 
 interface ThoughtDisplayProps {
   className?: string;

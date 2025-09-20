@@ -1,4 +1,4 @@
-.hover-indicator-nav {
+.base-hover-indicator-nav {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -7,7 +7,7 @@
   backdrop-filter: blur(0.375rem);
 }
 
-.hover-indicator-nav.vertical {
+.base-hover-indicator-nav.vertical {
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
@@ -20,7 +20,7 @@
   margin: 0;
 }
 
-.hover-indicator-nav.vertical .button-container {
+.base-hover-indicator-nav.vertical .button-container {
   display: block;
   width: 100%;
   margin: 0;
@@ -28,12 +28,12 @@
   padding: 0rem 0.25rem;
 }
 
-.hover-indicator-nav.with-background {
+.base-hover-indicator-nav.with-background {
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0.75rem 0.7rem 0.25rem;
 }
 
-.hover-indicator-nav.no-background {
+.base-hover-indicator-nav.no-background {
   background: none;
   box-shadow: none;
 }
@@ -73,8 +73,6 @@
   z-index: 0;
 }
 
-/* CSSトランジションで滑らかなアニメーションを実現 */
-
 .indicator-button {
   position: relative;
   background: none;
@@ -95,13 +93,13 @@
   z-index: 3;
 }
 
-.hover-indicator-nav.with-background .indicator-button {
+.base-hover-indicator-nav.with-background .indicator-button {
   font-size: 1rem;
   padding: 0.4rem 0.8rem;
   font-weight: bold;
 }
 
-.hover-indicator-nav.vertical .indicator-button {
+.base-hover-indicator-nav.vertical .indicator-button {
   width: 100%;
   text-align: left;
   padding-top: 0.5rem;
@@ -109,13 +107,13 @@
 }
 
 /* モバイルナビゲーションコンテナ内のボタンは特別なパディング */
-.mobile-nav-container .hover-indicator-nav.vertical .indicator-button {
+.mobile-nav-container .base-hover-indicator-nav.vertical .indicator-button {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
 
 @media (max-width: 47.9375rem) {
-  .hover-indicator-nav.with-background .indicator-button {
+  .base-hover-indicator-nav.with-background .indicator-button {
     font-size: 0.9rem;
     padding: 0.15rem 0.5rem;
   }

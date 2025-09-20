@@ -1,9 +1,9 @@
 ---
 import { getAllBlog, getBlogById } from "../../lib/microcms";
 import Layout from "../../layouts/Layout.astro";
-import BlogToc from "../../components/BlogToc.tsx";
-import PageContainer from "../../components/PageContainer";
-import "../../components/page-container.css";
+import BlogToc from "../../components/blog/BlogToc.tsx";
+import PageContainer from "../../components/page/PageContainer";
+import "../../components/page/page-container.css";
 
 export async function getStaticPaths() {
   try {
