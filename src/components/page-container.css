@@ -57,11 +57,11 @@
     margin-left: 6.5rem;
     margin-right: 2.5vw;
   }
-  
+
   .page-container-works {
     margin-left: 8rem;
   }
-  
+
   .page-container-error {
     margin-left: 8rem;
   }
@@ -74,17 +74,17 @@
     margin-left: 2rem;
     margin-right: 0;
   }
-  
+
   .page-container-blog {
     max-width: calc(95vw - 6.5rem);
     margin-left: 6.5rem;
     margin-right: 2.5vw;
   }
-  
+
   .page-container-works {
     margin-left: 5rem;
   }
-  
+
   .page-container-error {
     margin-left: 5rem;
   }
@@ -94,7 +94,7 @@
   .page-container-works {
     margin-left: 3.5rem;
   }
-  
+
   .page-container-error {
     margin-left: 3.5rem;
   }
@@ -104,7 +104,7 @@
   .page-container-works {
     margin-left: 2.5rem;
   }
-  
+
   .page-container-error {
     margin-left: 2.5rem;
   }

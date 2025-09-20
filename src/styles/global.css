@@ -3,11 +3,11 @@
   --gap: 16px;
   --ink: #111827;
   --muted: #6b7280;
-  --primary: #8B4513;
+  --primary: #8b4513;
   --primary-10: rgba(139, 69, 19, 0.1);
   --primary-15: rgba(139, 69, 19, 0.15);
   --secondary: #e66305;
-  --accent: #D4AF37;
+  --accent: #d4af37;
   --background: #faf8f5;
   --surface: rgba(255, 255, 255, 0.1);
   --surface-hover: rgba(255, 255, 255, 0.15);
@@ -23,7 +23,9 @@ body {
   background: var(--background);
   min-height: 100vh;
   overflow-x: hidden;
-  font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial, sans-serif;
+  font-family:
+    "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
+    sans-serif;
 }
 
 .container {

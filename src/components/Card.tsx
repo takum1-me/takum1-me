@@ -1,35 +1,29 @@
-import React from 'react';
+import React from "react";
 
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  variant?: 'default' | 'interests' | 'organizations' | 'qualifications';
+  variant?: "default" | "interests" | "organizations" | "qualifications";
 }
 
 export default function Card({
   children,
-  className = '',
-  variant = 'default',
+  className = "",
+  variant = "default",
 }: CardProps) {
-  const baseClasses = 'card';
+  const baseClasses = "card";
   const variantClasses = {
-    default: 'card-default',
-    interests: 'card-interests',
-    organizations: 'card-organizations',
-    qualifications: 'card-qualifications',
+    default: "card-default",
+    interests: "card-interests",
+    organizations: "card-organizations",
+    qualifications: "card-qualifications",
   };
 
-  const cardClasses = [
-    baseClasses,
-    variantClasses[variant],
-    className,
-  ].filter(Boolean).join(' ');
+  const cardClasses = [baseClasses, variantClasses[variant], className]
+    .filter(Boolean)
+    .join(" ");
 
-  return (
-    <section className={cardClasses}>
-      {children}
-    </section>
-  );
+  return <section className={cardClasses}>{children}</section>;
 }
 
 interface CardHeaderProps {
@@ -37,10 +31,6 @@ interface CardHeaderProps {
   className?: string;
 }
 
-export function CardHeader({ children, className = '' }: CardHeaderProps) {
-  return (
-    <div className={`card-header ${className}`}>
-      {children}
-    </div>
-  );
+export function CardHeader({ children, className = "" }: CardHeaderProps) {
+  return <div className={`card-header ${className}`}>{children}</div>;
 }

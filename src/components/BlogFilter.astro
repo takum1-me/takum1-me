@@ -15,7 +15,7 @@ const { categories } = Astro.props;
   <HoverIndicator 
     client:only="react"
     items={categories}
-    onItemClick={(categoryId: string) => {
+    onItemClick={(_categoryId: string) => {
       // Category clicked
     }}
     className="filter-nav vertical"

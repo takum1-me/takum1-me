@@ -15,14 +15,6 @@ try {
   blogs = { contents: [], totalCount: 0, offset: 0, limit: 0 };
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Asia/Tokyo",
-  });
-};
 
 const categories = [
   { id: "all", label: "All" },

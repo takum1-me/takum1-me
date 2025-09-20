@@ -1,4 +1,4 @@
-export function fetchWithAuth(path: string) {
+export async function fetchWithAuth(path: string) {
   const apiUrl = import.meta.env.MICROCMS_API_URL;
   const apiKey = import.meta.env.MICROCMS_API_KEY;
 

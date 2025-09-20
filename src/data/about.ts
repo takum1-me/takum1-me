@@ -10,7 +10,6 @@ export interface Interest {
   name: string;
 }
 
-
 export interface CoffeeSection {
   title: string;
   description: string;
@@ -31,17 +30,15 @@ export interface AboutData {
 export const aboutData: AboutData = {
   coffee: {
     title: "コーヒー",
-    description: "ドリップにはCT62やbeandy silkを使用しています。ローストにも挑戦しており、特に浅煎りが好きです。",
-    equipment: [
-      { name: "CT62" },
-      { name: "beandy silk dripper" }
-    ],
+    description:
+      "ドリップにはCT62やbeandy silkを使用しています。ローストにも挑戦しており、特に浅煎りが好きです。",
+    equipment: [{ name: "CT62" }, { name: "beandy silk dripper" }],
     preferences: [
       { name: "コロンビア" },
       { name: "エチオピア" },
       { name: "ナチュラル" },
-      { name: "アナエロビック" }
-    ]
+      { name: "アナエロビック" },
+    ],
   },
   otherInterests: {
     title: "その他の関心分野",
@@ -49,7 +46,7 @@ export const aboutData: AboutData = {
       { name: "Design / UX" },
       { name: "キャッチコピー / 広告" },
       { name: "美術・読書" },
-      { name: "旅行" }
-    ]
-  }
+      { name: "旅行" },
+    ],
+  },
 };

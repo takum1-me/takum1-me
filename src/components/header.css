@@ -80,8 +80,8 @@
   font-weight: 700;
   font-size: 1.25rem;
   padding: 0.625rem;
-  padding-left:2rem;
-  padding-right:2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 /* ハンバーガーメニュー */
@@ -155,7 +155,7 @@
 
 /* 背景オーバーレイ */
 .mobile-menu::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: -100vw;
@@ -175,14 +175,14 @@
 
 /* サイドバー開時のページコンテンツグレーアウト */
 body.mobile-menu-open {
-  overflow: hidden ;
-  position: fixed ;
-  width: 100% ;
-  height: 100vh ;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100vh;
 }
 
 body.mobile-menu-open::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
@@ -244,7 +244,9 @@ body.mobile-menu-open::before {
 /* モバイルメニューのホバーインジケーターの文字拡大を制限 */
 .mobile-header-links .indicator-button:hover {
   transform: scale(1.03);
-  transition: transform 0.2s ease-out, color 0.2s ease-out;
+  transition:
+    transform 0.2s ease-out,
+    color 0.2s ease-out;
 }
 
 .mobile-header-links .button-content:hover {
@@ -292,13 +294,18 @@ body.mobile-menu-open::before {
 }
 
 .mobile-sns-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(229, 231, 235, 0.5), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(229, 231, 235, 0.5),
+    transparent
+  );
 }
 
 .mobile-sns-links {

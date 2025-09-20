@@ -38,13 +38,18 @@
 }
 
 .sns-link::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s;
 }
 
@@ -111,16 +116,16 @@
   .sns-section {
     padding: 2rem 1rem;
   }
-  
+
   .sns-links {
     gap: 1rem;
   }
-  
+
   .sns-link {
     min-width: 140px;
     padding: 0.875rem 1.25rem;
   }
-  
+
   .sns-link span {
     font-size: 0.9rem;
   }

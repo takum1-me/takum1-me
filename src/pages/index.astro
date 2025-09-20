@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import CoffeeBean from "../assets/coffee-bean.svg";
 import Button from "../components/Button";
 import HomeArticleCard from "../components/HomeArticleCard";
 import ThoughtDisplay from "../components/ThoughtDisplay";
@@ -31,9 +30,6 @@ const latestBlogs = await getLatestBlogs(3);
             <Button href="/about" variant="primary">About Me</Button>
             <Button href="/blog" variant="secondary">Latest Posts</Button>
           </div>
-        </div>
-        <div class="hero-visual">
-          <CoffeeBean class="bean" stroke="var(--primary)" />
         </div>
       </div>
     </div>
@@ -102,13 +98,6 @@ const latestBlogs = await getLatestBlogs(3);
     .hero-text {
       max-width: 600px;
     }
-    
-    .hero-visual {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
     
     .site-title { 
       font-size: 4rem; 
@@ -235,19 +224,6 @@ const latestBlogs = await getLatestBlogs(3);
       color: var(--text-muted);
     }
     
-    .bean { 
-      width: 8rem; 
-      height: 8rem; 
-      opacity: 0.8;
-      transition: all 0.3s ease;
-    }
-    
-    .bean:hover {
-      opacity: 1;
-      transform: scale(1.05);
-    }
-
-    
     p {
       color: var(--text-secondary);
       line-height: 1.7;
@@ -269,10 +245,6 @@ const latestBlogs = await getLatestBlogs(3);
         font-size: 1.2rem;
       }
       
-      .bean {
-        width: 6rem;
-        height: 6rem;
-      }
       
       .hero-cta {
         justify-content: center;
@@ -294,10 +266,6 @@ const latestBlogs = await getLatestBlogs(3);
         font-size: 1.1rem;
       }
       
-      .bean {
-        width: 5rem;
-        height: 5rem;
-      }
       
       .cta-button {
         padding: 0.75rem 1.5rem;

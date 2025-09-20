@@ -164,7 +164,6 @@ export default function BlogToc() {
     });
   }, []);
 
-
   // H2項目の取得
   const getH2Items = useCallback(
     (h1Index: number) => {
@@ -200,63 +199,64 @@ export default function BlogToc() {
     React.Fragment,
     null,
     React.createElement(
-      'aside',
+      "aside",
       {
         className: "toc",
         ref: tocRef,
-        'aria-label': "目次"
+        "aria-label": "目次",
       },
       React.createElement(
-        'ul',
+        "ul",
         { className: "toc-list" },
         tocItems
           .filter((item) => item.level === 1)
-          .map((item, index) =>
+          .map((item, _index) =>
             React.createElement(
-              'li',
+              "li",
               { key: item.id, className: "toc-h1" },
               React.createElement(
-                'a',
+                "a",
                 {
                   href: `#${item.id}`,
                   className: activeId === item.id ? "is-active-link" : "",
                   onClick: (e: React.MouseEvent) => {
                     e.preventDefault();
                     handleClick(item);
-                  }
+                  },
                 },
-                item.text
+                item.text,
               ),
               (() => {
                 const h2Items = getH2Items(tocItems.indexOf(item));
                 return h2Items.length > 0
                   ? React.createElement(
-                      'ul',
+                      "ul",
                       { className: "toc-h2-list" },
                       h2Items.map((h2Item) =>
                         React.createElement(
-                          'li',
+                          "li",
                           { key: h2Item.id, className: "toc-h2" },
                           React.createElement(
-                            'a',
+                            "a",
                             {
                               href: `#${h2Item.id}`,
-                              className: activeId === h2Item.id ? "is-active-link" : "",
+                              className:
+                                activeId === h2Item.id ? "is-active-link" : "",
                               onClick: (e: React.MouseEvent) => {
                                 e.preventDefault();
                                 handleClick(h2Item);
-                              }
+                              },
                             },
-                            h2Item.text
-                          )
-                        )
-                      )
+                            h2Item.text,
+                          ),
+                        ),
+                      ),
                     )
                   : null;
-              })()
-            )
-          )
-      )
+              })(),
+            ),
+          ),
+      ),
     ),
   );
 }

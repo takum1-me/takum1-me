@@ -86,7 +86,8 @@ export default function ArticleCard({
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !contentRef.current) return;
+    if (!cardRef.current || !thumbnailRef.current || !contentRef.current)
+      return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -102,22 +103,31 @@ export default function ArticleCard({
       .to(card, {
         y: -4,
         duration: 0.4,
-        ease: "power2.out"
+        ease: "power2.out",
       })
-      .to(thumbnail, {
-        scale: 1.05,
-        duration: 0.4,
-        ease: "power2.out"
-      }, 0)
-      .to(content, {
-        y: -2,
-        duration: 0.3,
-        ease: "power2.out"
-      }, 0.1);
+      .to(
+        thumbnail,
+        {
+          scale: 1.05,
+          duration: 0.4,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        content,
+        {
+          y: -2,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0.1,
+      );
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !contentRef.current) return;
+    if (!cardRef.current || !thumbnailRef.current || !contentRef.current)
+      return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -133,18 +143,26 @@ export default function ArticleCard({
       .to(card, {
         y: 0,
         duration: 0.4,
-        ease: "power2.out"
+        ease: "power2.out",
       })
-      .to(thumbnail, {
-        scale: 1,
-        duration: 0.4,
-        ease: "power2.out"
-      }, 0)
-      .to(content, {
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      }, 0);
+      .to(
+        thumbnail,
+        {
+          scale: 1,
+          duration: 0.4,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        content,
+        {
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      );
   }, []);
 
   React.useEffect(() => {
@@ -159,57 +177,52 @@ export default function ArticleCard({
   }, [thumbnail?.url]);
 
   return React.createElement(
-    'article',
-    { 
+    "article",
+    {
       ref: cardRef,
-      className: "blog-card", 
-      'data-category': category,
+      className: "blog-card",
+      "data-category": category,
       onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave
+      onMouseLeave: handleMouseLeave,
     },
     React.createElement(
-      'a',
+      "a",
       { href: `/blog/${slug}`, className: "card-link" },
       React.createElement(
-        'div',
+        "div",
         { className: "card-thumbnail" },
         thumbnail
-          ? React.createElement('img', { 
+          ? React.createElement("img", {
               ref: thumbnailRef,
-              src: thumbnail.url, 
-              alt: title 
+              src: thumbnail.url,
+              alt: title,
             })
-          : React.createElement('div', { className: "card-thumbnail-placeholder" })
+          : React.createElement("div", {
+              className: "card-thumbnail-placeholder",
+            }),
       ),
       React.createElement(
-        'div',
+        "div",
         {
           ref: contentRef,
           className: "card-content",
           style: {
             background: `rgba(255, 255, 255, ${backgroundOpacity})`,
-          }
+          },
         },
+        React.createElement("h2", { className: "card-title" }, title),
         React.createElement(
-          'h2',
-          { className: "card-title" },
-          title
-        ),
-        React.createElement(
-          'div',
+          "div",
           { className: "card-footer" },
-          summary && React.createElement(
-            'p',
-            { className: "card-summary" },
-            summary
-          ),
+          summary &&
+            React.createElement("p", { className: "card-summary" }, summary),
           React.createElement(
-            'time',
+            "time",
             { className: "card-date" },
-            formatDate(publishedAt)
-          )
-        )
-      )
-    )
+            formatDate(publishedAt),
+          ),
+        ),
+      ),
+    ),
   );
 }

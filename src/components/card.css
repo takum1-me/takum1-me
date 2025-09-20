@@ -9,7 +9,7 @@
 }
 
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -37,7 +37,6 @@
   font-weight: 600;
   color: #8b7355;
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

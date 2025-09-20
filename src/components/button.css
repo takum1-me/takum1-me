@@ -23,7 +23,7 @@
 }
 
 .button-primary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -57,7 +57,7 @@
 }
 
 .button-secondary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -84,12 +84,12 @@
 
 /* Error page button styles (from 404.astro) */
 .button-error-primary {
-  background-color: var(--muted);
-  color: white;
+  color: var(--secondary);
+  background-color: none;
 }
 
 .button-error-primary:hover {
-  background-color: #4b5563;
+  color: white;
 }
 
 /* Size variants */

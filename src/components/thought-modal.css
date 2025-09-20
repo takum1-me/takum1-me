@@ -146,31 +146,31 @@
   .thought-modal-overlay {
     padding: 0.5rem;
   }
-  
+
   .thought-modal {
     max-height: 90vh;
   }
-  
+
   .thought-modal-header {
     padding: 1.25rem 1.5rem;
   }
-  
+
   .thought-modal-title {
     font-size: 1.25rem;
   }
-  
+
   .thought-modal-content {
     padding: 1.25rem 1.5rem;
   }
-  
+
   .thought-item {
     padding: 1rem;
   }
-  
+
   .thought-item-content {
     font-size: 0.95rem;
   }
-  
+
   .thought-item-date {
     font-size: 0.8rem;
   }
@@ -180,13 +180,12 @@
   .thought-modal-header {
     padding: 1rem;
   }
-  
+
   .thought-modal-content {
     padding: 1rem;
   }
-  
+
   .thought-item {
     padding: 0.875rem;
   }
 }
-

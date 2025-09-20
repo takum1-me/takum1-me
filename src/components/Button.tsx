@@ -1,11 +1,11 @@
-import React, { useRef, useCallback } from 'react';
-import { gsap } from 'gsap';
+import React, { useRef, useCallback } from "react";
+import { gsap } from "gsap";
 
 interface ButtonProps {
   href?: string;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary";
+  size?: "small" | "medium" | "large";
   className?: string;
   children: React.ReactNode;
   target?: string;
@@ -15,9 +15,9 @@ interface ButtonProps {
 export default function Button({
   href,
   onClick,
-  variant = 'primary',
-  size = 'medium',
-  className = '',
+  variant = "primary",
+  size = "medium",
+  className = "",
   children,
   target,
   rel,
@@ -25,15 +25,15 @@ export default function Button({
   const buttonRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  const baseClasses = 'button';
+  const baseClasses = "button";
   const variantClasses = {
-    primary: 'button-primary',
-    secondary: 'button-secondary',
+    primary: "button-primary",
+    secondary: "button-secondary",
   };
   const sizeClasses = {
-    small: 'button-small',
-    medium: 'button-medium',
-    large: 'button-large',
+    small: "button-small",
+    medium: "button-medium",
+    large: "button-large",
   };
 
   const buttonClasses = [
@@ -41,7 +41,9 @@ export default function Button({
     variantClasses[variant],
     sizeClasses[size],
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const handleMouseEnter = useCallback(() => {
     if (!buttonRef.current) return;
@@ -52,16 +54,15 @@ export default function Button({
     }
 
     const button = buttonRef.current;
-    
+
     tlRef.current = gsap.timeline();
-    
+
     // 通常のボタンアニメーション
-    tlRef.current
-      .to(button, {
-        y: -2,
-        duration: 0.3,
-        ease: "power2.out"
-      });
+    tlRef.current.to(button, {
+      y: -2,
+      duration: 0.3,
+      ease: "power2.out",
+    });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -73,16 +74,15 @@ export default function Button({
     }
 
     const button = buttonRef.current;
-    
+
     tlRef.current = gsap.timeline();
-    
+
     // 通常のボタンリセット
-    tlRef.current
-      .to(button, {
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      });
+    tlRef.current.to(button, {
+      y: 0,
+      duration: 0.3,
+      ease: "power2.out",
+    });
   }, []);
 
   if (href) {

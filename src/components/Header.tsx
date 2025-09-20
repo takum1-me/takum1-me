@@ -18,11 +18,10 @@ export default function Header() {
     { id: "works", label: "Works", href: "/works" },
   ];
 
-
   const handleScroll = useCallback(() => {
     const y = window.scrollY;
     const goingUp = y < lastYRef.current;
-    
+
     // 常にトップ固定
     setIsAtTop(true);
 
@@ -48,29 +47,29 @@ export default function Header() {
   const handleItemClick = useCallback((id: string) => {
     setIsMobileMenuOpen(false); // モバイルメニューを閉じる
     // スクロール制御を解除
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.width = '';
-    document.body.classList.remove('mobile-menu-open'); // グレーアウトを解除
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+    document.body.classList.remove("mobile-menu-open"); // グレーアウトを解除
     window.location.href = `/${id}`;
   }, []);
 
   const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(prev => {
+    setIsMobileMenuOpen((prev) => {
       const newState = !prev;
       // サイドバー開時にページスクロールを無効化とグレーアウト
       if (newState) {
         // より確実なスクロール制御
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.classList.add('mobile-menu-open');
+        document.body.style.overflow = "hidden";
+        document.body.style.position = "fixed";
+        document.body.style.width = "100%";
+        document.body.classList.add("mobile-menu-open");
       } else {
         // スクロール制御を解除
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.classList.remove('mobile-menu-open');
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.width = "";
+        document.body.classList.remove("mobile-menu-open");
       }
       return newState;
     });
@@ -88,80 +87,84 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);
       // コンポーネントアンマウント時にスクロールを元に戻す
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.classList.remove('mobile-menu-open');
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.classList.remove("mobile-menu-open");
     };
   }, [handleScroll, handleMouseMove]);
 
   return React.createElement(
-    'div',
+    "div",
     {
       className: `header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`,
-      role: "banner"
+      role: "banner",
     },
     React.createElement(
-      'div',
+      "div",
       { className: "container" },
       React.createElement(
-        'div',
+        "div",
         { className: "nav" },
         React.createElement(
-          'div',
+          "div",
           { className: "brand" },
-          React.createElement('a', { href: "/" }, "takum1.me")
+          React.createElement("a", { href: "/" }, "takum1.me"),
         ),
         React.createElement(
-          'button',
+          "button",
           {
             className: `hamburger-menu${isMobileMenuOpen ? " active" : ""}`,
             onClick: toggleMobileMenu,
-            'aria-label': "メニューを開く",
-            'aria-expanded': isMobileMenuOpen
+            "aria-label": "メニューを開く",
+            "aria-expanded": isMobileMenuOpen,
           },
-          React.createElement('span', { className: "hamburger-line" }),
-          React.createElement('span', { className: "hamburger-line" }),
-          React.createElement('span', { className: "hamburger-line" })
+          React.createElement("span", { className: "hamburger-line" }),
+          React.createElement("span", { className: "hamburger-line" }),
+          React.createElement("span", { className: "hamburger-line" }),
         ),
         React.createElement(
-          'div',
+          "div",
           { className: `mobile-menu${isMobileMenuOpen ? " open" : ""}` },
           React.createElement(
-            'button',
+            "button",
             {
               className: "mobile-menu-close",
               onClick: toggleMobileMenu,
-              'aria-label': "メニューを閉じる"
+              "aria-label": "メニューを閉じる",
             },
-            React.createElement('span', { className: "close-icon" }, "×")
+            React.createElement("span", { className: "close-icon" }, "×"),
           ),
           React.createElement(
-            'div',
+            "div",
             { className: "mobile-nav-container" },
             React.createElement(HoverIndicator, {
               items: navItems,
               onItemClick: handleItemClick,
               className: "mobile-header-links vertical",
-              showBackground: false
-            })
+              showBackground: false,
+            }),
           ),
           React.createElement(
-            'div',
+            "div",
             { className: "mobile-sns-section" },
             React.createElement(FooterSnsLinks, {
-              className: "mobile-sns-links"
-            })
-          )
+              className: "mobile-sns-links",
+            }),
+          ),
         ),
         React.createElement(HoverIndicator, {
           items: navItems,
           onItemClick: handleItemClick,
           className: "header-links",
-          showBackground: false
-        })
-      )
+          showBackground: false,
+        }),
+      ),
     ),
-    React.createElement('style', null, `.container{max-width:var(--max-width);margin:0 auto;padding:0 var(--gap);}`)
+    React.createElement(
+      "style",
+      null,
+      `.container{max-width:var(--max-width);margin:0 auto;padding:0 var(--gap);}`,
+    ),
   );
 }

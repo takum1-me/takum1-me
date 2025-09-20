@@ -67,7 +67,9 @@
     0 0.125rem 0.5rem rgba(0, 0, 0, 0.04),
     0 0 0 0.125rem rgba(255, 255, 255, 0.1),
     0 0 1.5rem rgba(255, 255, 255, 0.05);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   z-index: 0;
 }
 
@@ -102,8 +104,8 @@
 .hover-indicator-nav.vertical .indicator-button {
   width: 100%;
   text-align: left;
-  padding-top:0.5rem;
-  padding-bottom:0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 /* モバイルナビゲーションコンテナ内のボタンは特別なパディング */
@@ -119,7 +121,6 @@
   }
 }
 
-
 .indicator-button:focus {
   outline: none;
   color: #0f172a;
@@ -129,7 +130,9 @@
 .indicator-button:hover {
   color: #0f172a;
   transform: scale(1.05);
-  transition: transform 0.2s ease-out, color 0.2s ease-out;
+  transition:
+    transform 0.2s ease-out,
+    color 0.2s ease-out;
 }
 
 .button-content:hover {

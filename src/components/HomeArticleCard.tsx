@@ -84,7 +84,8 @@ export default function HomeArticleCard({
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current) return;
+    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
+      return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -100,22 +101,31 @@ export default function HomeArticleCard({
       .to(card, {
         y: -8,
         duration: 0.1,
-        ease: "power2.out"
+        ease: "power2.out",
       })
-      .to(thumbnail, {
-        scale: 1.1,
-        duration: 0.05,
-        ease: "power2.out"
-      }, 0)
-      .to(overlay, {
-        opacity: 1,
-        duration: 0.05,
-        ease: "power2.out"
-      }, 0.05);
+      .to(
+        thumbnail,
+        {
+          scale: 1.1,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        overlay,
+        {
+          opacity: 1,
+          duration: 0.05,
+          ease: "power2.out",
+        },
+        0.05,
+      );
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current) return;
+    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
+      return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -131,18 +141,26 @@ export default function HomeArticleCard({
       .to(card, {
         y: 0,
         duration: 0.2,
-        ease: "power2.out"
+        ease: "power2.out",
       })
-      .to(thumbnail, {
-        scale: 1,
-        duration: 0.2,
-        ease: "power2.out"
-      }, 0)
-      .to(overlay, {
-        opacity: 0,
-        duration: 0.15,
-        ease: "power2.out"
-      }, 0);
+      .to(
+        thumbnail,
+        {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        overlay,
+        {
+          opacity: 0,
+          duration: 0.15,
+          ease: "power2.out",
+        },
+        0,
+      );
   }, []);
 
   React.useEffect(() => {
@@ -157,57 +175,56 @@ export default function HomeArticleCard({
   }, [thumbnail?.url]);
 
   return React.createElement(
-    'article',
-    { 
+    "article",
+    {
       ref: cardRef,
-      className: "home-article-card", 
-      'data-category': category,
+      className: "home-article-card",
+      "data-category": category,
       onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave
+      onMouseLeave: handleMouseLeave,
     },
     React.createElement(
-      'a',
+      "a",
       { href: `/blog/${slug}`, className: "home-card-link" },
       React.createElement(
-        'div',
+        "div",
         { className: "home-card-thumbnail" },
         thumbnail
-          ? React.createElement('img', { 
+          ? React.createElement("img", {
               ref: thumbnailRef,
-              src: thumbnail.url, 
-              alt: title 
+              src: thumbnail.url,
+              alt: title,
             })
-          : React.createElement('div', { className: "home-card-thumbnail-placeholder" }),
+          : React.createElement("div", {
+              className: "home-card-thumbnail-placeholder",
+            }),
         React.createElement(
-          'div',
+          "div",
           {
             ref: overlayRef,
             className: "home-card-overlay",
             style: {
               background: `rgba(255, 255, 255, ${overlayOpacity})`,
-            }
+            },
           },
+          React.createElement("h2", { className: "home-card-title" }, title),
           React.createElement(
-            'h2',
-            { className: "home-card-title" },
-            title
-          ),
-          React.createElement(
-            'div',
+            "div",
             { className: "home-card-footer" },
-            summary && React.createElement(
-              'p',
-              { className: "home-card-summary" },
-              summary
-            ),
+            summary &&
+              React.createElement(
+                "p",
+                { className: "home-card-summary" },
+                summary,
+              ),
             React.createElement(
-              'time',
+              "time",
               { className: "home-card-date" },
-              formatDate(publishedAt)
-            )
-          )
-        )
-      )
-    )
+              formatDate(publishedAt),
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }

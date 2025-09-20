@@ -1,24 +1,26 @@
-import { useState, useEffect } from 'react';
-import { getCurrentThought, thoughts } from '../data/thoughts';
-import type { Thought } from '../data/thoughts';
+import { useState, useEffect } from "react";
+import { getCurrentThought, thoughts } from "../data/thoughts";
+import type { Thought } from "../data/thoughts";
 
 interface ThoughtDisplayProps {
   className?: string;
 }
 
-export default function ThoughtDisplay({ className = "" }: ThoughtDisplayProps) {
+export default function ThoughtDisplay({
+  className = "",
+}: ThoughtDisplayProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [allThoughts, setAllThoughts] = useState<Thought[]>([]);
   const currentThought = getCurrentThought();
-  
+
   useEffect(() => {
     // 新しい順でソート
-    const sortedThoughts = [...thoughts].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+    const sortedThoughts = [...thoughts].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
     setAllThoughts(sortedThoughts);
   }, []);
-  
+
   if (!currentThought) {
     return null;
   }
@@ -33,13 +35,13 @@ export default function ThoughtDisplay({ className = "" }: ThoughtDisplayProps) 
 
   return (
     <>
-      <div 
+      <div
         className={`thought-display clickable ${className}`}
         onClick={handleClick}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleClick();
           }
@@ -49,7 +51,7 @@ export default function ThoughtDisplay({ className = "" }: ThoughtDisplayProps) 
         <span className="thought-date">{currentThought.date}</span>
         <span className="thought-hint">クリックして過去の一言を見る</span>
       </div>
-      
+
       {/* モーダルを直接ここに実装 */}
       {isModalOpen && (
         <div className="thought-modal-overlay" onClick={handleClose}>
@@ -60,12 +62,12 @@ export default function ThoughtDisplay({ className = "" }: ThoughtDisplayProps) 
                 ×
               </button>
             </div>
-            
+
             <div className="thought-modal-content">
               {allThoughts.map((thought, index) => (
-                <div 
-                  key={thought.id} 
-                  className={`thought-item ${index === 0 ? 'active' : ''}`}
+                <div
+                  key={thought.id}
+                  className={`thought-item ${index === 0 ? "active" : ""}`}
                 >
                   <p className="thought-item-content">{thought.content}</p>
                   <span className="thought-item-date">{thought.date}</span>
