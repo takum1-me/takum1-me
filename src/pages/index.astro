@@ -100,10 +100,12 @@ const songsData = await loadSongsData();
       gap: 4rem;
       align-items: center;
       width: 100%;
+      text-align: left;
     }
     
     .hero-text {
       max-width: 600px;
+      text-align: left;
     }
     
     .site-title { 
@@ -185,10 +187,25 @@ const songsData = await loadSongsData();
       margin: 0;
     }
 
-    @media (max-width: 768px) {
+    /* タブレット対応 - 左揃えを維持 */
+    @media (max-width: 1024px) {
       .hero-content {
         grid-template-columns: 1fr;
         gap: 2rem;
+        text-align: left;
+      }
+      
+      .hero-text {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        text-align: center;
+      }
+      
+      .hero-text {
         text-align: center;
       }
       
