@@ -4,13 +4,19 @@ import Button from "../components/button/Button";
 import HomeArticleCard from "../components/card/HomeArticleCard";
 import ThoughtDisplay from "../components/thought/ThoughtDisplay";
 import { getLatestBlogs } from "../lib/microcms";
+import SongCard from "../components/music/SongCard";
+import { loadSongsData } from "../lib/songs-loader";
 import "../components/button/button.css";
 import "../components/card/home-article-card.css";
 import "../components/thought/thought-display.css";
 import "../components/thought/thought-modal.css";
+import "../components/music/song-card.css";
 
 // 最新の3件のブログを取得
 const latestBlogs = await getLatestBlogs(3);
+
+// 楽曲データを動的に取得
+const songsData = await loadSongsData();
 ---
 
 <Layout title="takum1.me">
@@ -26,6 +32,19 @@ const latestBlogs = await getLatestBlogs(3);
           <div class="hero-description">
             <ThoughtDisplay client:load />
           </div>
+                 <div class="hero-music">
+                   <h3 class="favorite-songs-title">お気に入りの曲</h3>
+                   <div class="songs-grid">
+                     {songsData.map((song, index) => (
+                       <SongCard 
+                         title={song.title}
+                         artist={song.artist}
+                         appleMusicUrl={song.appleMusicUrl}
+                         artworkUrl={song.artworkUrl}
+                       />
+                     ))}
+                   </div>
+                 </div>
           <div class="hero-cta">
             <Button href="/about" variant="primary">About Me</Button>
             <Button href="/blog" variant="secondary">Latest Posts</Button>
@@ -192,6 +211,20 @@ const latestBlogs = await getLatestBlogs(3);
       margin: 2rem 0;
     }
     
+    .favorite-songs-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .songs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
     .hero-description p {
       font-size: 1.1rem;
       line-height: 1.7;
@@ -282,6 +315,11 @@ const latestBlogs = await getLatestBlogs(3);
       
       .hero-description .thought-date {
         font-size: 0.75rem;
+      }
+      
+      .songs-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
       }
     }
 
