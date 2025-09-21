@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import SongModal from "./SongModal";
 
 interface SongData {
   title: string;
@@ -128,11 +127,7 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
         </div>
       </div>
 
-      <SongModal
-        song={selectedSong}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      
     </>
   );
 }
