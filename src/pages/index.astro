@@ -2,14 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import Button from "../components/button/Button";
 import HomeArticleCard from "../components/card/HomeArticleCard";
-import ThoughtDisplay from "../components/thought/ThoughtDisplay";
 import { getLatestBlogs } from "../lib/microcms";
 import StackedSongCards from "../components/music/StackedSongCards";
 import { loadSongsData } from "../lib/songs-loader";
 import "../components/button/button.css";
 import "../components/card/home-article-card.css";
-import "../components/thought/thought-display.css";
-import "../components/thought/thought-modal.css";
 import "../components/music/stacked-song-cards.css";
 import "../components/music/song-modal.css";
 
@@ -30,10 +27,7 @@ const songsData = await loadSongsData();
             <div class="sub-line">Undergraduate / Brewer</div>
             <div class="sub-line">Coffee, Programming, Design</div>
           </div>
-          <div class="hero-description">
-            <ThoughtDisplay client:load />
-          </div>
-                 <div class="hero-music">
+          <div class="hero-music">
                    <h3 class="favorite-songs-title">お気に入りの曲</h3>
                    <StackedSongCards songs={songsData} client:load />
                  </div>
@@ -104,7 +98,7 @@ const songsData = await loadSongsData();
     }
     
     .hero-text {
-      max-width: 600px;
+      max-width: 400px;
       text-align: left;
     }
     
@@ -134,10 +128,6 @@ const songsData = await loadSongsData();
     }
     
     
-    .hero-description {
-      margin: 2rem 0;
-    }
-    
     .favorite-songs-title {
       font-size: 1.5rem;
       font-weight: 600;
@@ -147,38 +137,6 @@ const songsData = await loadSongsData();
     
     .hero-music {
       margin-top: 2rem;
-    }
-    
-    .hero-description p {
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-      margin: 0;
-      font-weight: 400;
-    }
-    
-    /* 一言コンポーネントのスタイル調整 */
-    .hero-description .thought-display {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--primary-10);
-      margin: 0;
-      padding: 1.25rem;
-    }
-    
-    .hero-description .thought-display:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--primary-15);
-    }
-    
-    .hero-description .thought-content {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      margin: 0 0 0.5rem 0;
-    }
-    
-    .hero-description .thought-date {
-      font-size: 0.8rem;
-      color: var(--text-muted);
     }
     
     p {
@@ -231,19 +189,6 @@ const songsData = await loadSongsData();
       
       .site-sub {
         font-size: 1.1rem;
-      }
-      
-      
-      .hero-description .thought-display {
-        padding: 1rem;
-      }
-      
-      .hero-description .thought-content {
-        font-size: 1rem;
-      }
-      
-      .hero-description .thought-date {
-        font-size: 0.75rem;
       }
       
     }

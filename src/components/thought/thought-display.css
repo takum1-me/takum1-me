@@ -6,6 +6,7 @@
   border: 1px solid rgba(139, 69, 19, 0.1);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  max-width: 350px;
 }
 
 .thought-display.clickable {
@@ -59,6 +60,7 @@
   .thought-display {
     margin: 1.5rem 0;
     padding: 1.25rem;
+    max-width: 300px;
   }
 
   .thought-content {
@@ -78,6 +80,7 @@
   .thought-display {
     margin: 1rem 0;
     padding: 1rem;
+    max-width: 280px;
   }
 
   .thought-content {
