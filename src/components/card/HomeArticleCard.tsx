@@ -83,6 +83,28 @@ export default function HomeArticleCard({
   const overlayRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
+  // 初期ロードアニメーション
+  React.useEffect(() => {
+    if (cardRef.current) {
+      gsap.fromTo(
+        cardRef.current,
+        {
+          y: 50,
+          opacity: 0,
+          scale: 0.9,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          delay: Math.random() * 0.3, // ランダムな遅延で自然な表示
+        },
+      );
+    }
+  }, []);
+
   const handleMouseEnter = useCallback(() => {
     if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
       return;
@@ -99,15 +121,17 @@ export default function HomeArticleCard({
     tlRef.current = gsap.timeline();
     tlRef.current
       .to(card, {
-        y: -8,
-        duration: 0.1,
+        y: -12,
+        scale: 1.02,
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        duration: 0.3,
         ease: "power2.out",
       })
       .to(
         thumbnail,
         {
-          scale: 1.1,
-          duration: 0.05,
+          scale: 1.15,
+          duration: 0.3,
           ease: "power2.out",
         },
         0,
@@ -116,10 +140,10 @@ export default function HomeArticleCard({
         overlay,
         {
           opacity: 1,
-          duration: 0.05,
+          duration: 0.2,
           ease: "power2.out",
         },
-        0.05,
+        0.1,
       );
   }, []);
 
@@ -140,14 +164,16 @@ export default function HomeArticleCard({
     tlRef.current
       .to(card, {
         y: 0,
-        duration: 0.2,
+        scale: 1,
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        duration: 0.4,
         ease: "power2.out",
       })
       .to(
         thumbnail,
         {
           scale: 1,
-          duration: 0.2,
+          duration: 0.4,
           ease: "power2.out",
         },
         0,
@@ -156,7 +182,7 @@ export default function HomeArticleCard({
         overlay,
         {
           opacity: 0,
-          duration: 0.15,
+          duration: 0.2,
           ease: "power2.out",
         },
         0,

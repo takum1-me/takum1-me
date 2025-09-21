@@ -41,9 +41,9 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
       }
     }
 
-    // 画像URLを適切なサイズに調整
+    // 画像URLを適切なサイズに調整（アスペクト比1.9:1を維持）
     const artworkUrl =
-      ogImage?.replace(/1200x630wp-60\.jpg$/, "300x300bb.jpg") || "";
+      ogImage?.replace(/1200x630wp-60\.jpg$/, "600x315bb.jpg") || "";
 
     return {
       title,

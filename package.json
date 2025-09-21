@@ -12,7 +12,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
-    "check-all": "npm run typecheck && npm run format && npm run lint"
+    "call": "npm run typecheck && npm run format && npm run lint"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

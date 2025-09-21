@@ -6,6 +6,10 @@ export interface CoffeePreference {
   name: string;
 }
 
+export interface CoffeeFlavor {
+  name: string;
+}
+
 export interface Interest {
   name: string;
 }
@@ -15,6 +19,7 @@ export interface CoffeeSection {
   description: string;
   equipment: CoffeeEquipment[];
   preferences: CoffeePreference[];
+  favoriteFlavors: CoffeeFlavor[];
 }
 
 export interface OtherInterests {
@@ -38,6 +43,12 @@ export const aboutData: AboutData = {
       { name: "エチオピア" },
       { name: "ナチュラル" },
       { name: "アナエロビック" },
+    ],
+    favoriteFlavors: [
+      { name: "Fruity" },
+      { name: "Berry" },
+      { name: "Floral" },
+      { name: "Jasmine" },
     ],
   },
   otherInterests: {

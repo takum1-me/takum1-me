@@ -4,6 +4,7 @@ import PageTitle from "../components/page/PageTitle";
 import PageContainer from "../components/page/PageContainer";
 import Card, { CardHeader } from "../components/card/Card";
 import SnsLinks from "../components/footer/SnsLinks";
+import CoffeeFlavorTag from "../components/coffee/CoffeeFlavorTag";
 import { aboutData } from "../data/about";
 import { organizations } from "../data/organizations";
 import { qualifications } from "../data/qualifications";
@@ -11,6 +12,7 @@ import "../components/page/page-title.css";
 import "../components/page/page-container.css";
 import "../components/card/card.css";
 import "../components/footer/sns-links.css";
+import "../components/coffee/coffee-flavor-tag.css";
 ---
 
 <Layout title="About">
@@ -42,6 +44,15 @@ import "../components/footer/sns-links.css";
                         <div class="preference-tags">
                             {aboutData.coffee.preferences.map(preference => (
                                 <span class="preference-tag">{preference.name}</span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div class="coffee-flavors">
+                        <h4>好きなフレーバー</h4>
+                        <div class="flavor-tags-container">
+                            {aboutData.coffee.favoriteFlavors.map(flavor => (
+                                <CoffeeFlavorTag flavorName={flavor.name} client:load />
                             ))}
                         </div>
                     </div>
@@ -232,12 +243,14 @@ import "../components/footer/sns-links.css";
     }
 
     .coffee-equipment,
-    .coffee-preferences {
+    .coffee-preferences,
+    .coffee-flavors {
         margin-bottom: 1.5rem;
     }
 
     .coffee-equipment h4,
-    .coffee-preferences h4 {
+    .coffee-preferences h4,
+    .coffee-flavors h4 {
         margin: 0 0 0.75rem 0;
         font-size: 1rem;
         font-weight: 600;
@@ -245,7 +258,8 @@ import "../components/footer/sns-links.css";
     }
 
     .equipment-tags,
-    .preference-tags {
+    .preference-tags,
+    .flavor-tags-container {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
@@ -259,7 +273,7 @@ import "../components/footer/sns-links.css";
         border-radius: 6px;
         font-size: 0.9rem;
         font-weight: 500;
-        border: 1px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
     }
 
     .preference-tag {
@@ -288,7 +302,7 @@ import "../components/footer/sns-links.css";
         border-radius: 6px;
         font-size: 0.9rem;
         font-weight: 500;
-        border: 1px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
     }
 
     @media (max-width: 768px) {
@@ -312,7 +326,8 @@ import "../components/footer/sns-links.css";
         
         .equipment-tags,
         .preference-tags,
-        .interest-tags {
+        .interest-tags,
+        .flavor-tags-container {
             justify-content: center;
         }
     }
