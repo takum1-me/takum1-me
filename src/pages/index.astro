@@ -35,7 +35,7 @@ const songsData = await loadSongsData();
                  <div class="hero-music">
                    <h3 class="favorite-songs-title">お気に入りの曲</h3>
                    <div class="songs-grid">
-                     {songsData.map((song, index) => (
+                     {songsData.map((song) => (
                        <SongCard 
                          title={song.title}
                          artist={song.artist}
