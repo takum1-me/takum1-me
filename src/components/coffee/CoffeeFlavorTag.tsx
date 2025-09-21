@@ -12,7 +12,8 @@ export default function CoffeeFlavorTag({ flavorName }: CoffeeFlavorTagProps) {
   );
 
   // 色が見つからない場合はデフォルト色を使用
-  const color = flavorData?.color || "#8b7355";
+  const originalColor = flavorData?.color || "#8b7355";
+  const color = addOpacity(originalColor, 0.8);
 
   return (
     <span
@@ -27,3 +28,13 @@ export default function CoffeeFlavorTag({ flavorName }: CoffeeFlavorTagProps) {
   );
 }
 
+// 透明度を追加する関数
+function addOpacity(hexColor: string, opacity: number): string {
+  // ヘックスカラーをRGBに変換
+  const hex = hexColor.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}

@@ -48,7 +48,6 @@ export const aboutData: AboutData = {
       { name: "Fruity" },
       { name: "Berry" },
       { name: "Floral" },
-      { name: "Jasmine" },
     ],
   },
   otherInterests: {
