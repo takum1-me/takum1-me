@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 interface SongData {
@@ -13,8 +13,6 @@ interface StackedSongCardsProps {
 }
 
 export default function StackedSongCards({ songs }: StackedSongCardsProps) {
-  const [selectedSong, setSelectedSong] = useState<SongData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -31,16 +29,6 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
       });
     }
   }, [songs]);
-
-  const handleSongClick = (song: SongData) => {
-    setSelectedSong(song);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedSong(null);
-  };
 
   const handleCardHover = (index: number, isHovering: boolean) => {
     const card = cardRefs.current[index];
@@ -109,7 +97,6 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
                 transform: `translateX(${index * 20}px)`,
                 zIndex: 1,
               }}
-              onClick={() => handleSongClick(song)}
               onMouseEnter={() => handleCardHover(index, true)}
               onMouseLeave={() => handleCardHover(index, false)}
             >
@@ -126,8 +113,6 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
           ))}
         </div>
       </div>
-
-      
     </>
   );
 }
