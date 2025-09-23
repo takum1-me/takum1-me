@@ -1,10 +1,86 @@
 .stacked-songs-container {
   position: relative;
-  height: 240px;
+  height: 300px;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   perspective: 1000px;
+  /* 位置の安定化 */
+  contain: layout style;
+  will-change: auto;
+}
+
+/* 768px以上でのレスポンシブ表示 */
+@media (min-width: 769px) {
+  .stacked-songs-container {
+    max-width: 100%;
+  }
+  
+  /* 1000px未満: 2個表示 */
+  @media (max-width: 999px) {
+    .stacked-songs-container {
+      max-width: 500px;
+    }
+  }
+  
+  /* 1000px-1199px: 3個表示 */
+  @media (min-width: 1000px) and (max-width: 1199px) {
+    .stacked-songs-container {
+      max-width: 700px;
+    }
+  }
+  
+  /* 1200px-1399px: 4個表示 */
+  @media (min-width: 1200px) and (max-width: 1399px) {
+    .stacked-songs-container {
+      max-width: 900px;
+    }
+  }
+  
+  /* 1400px以上: 5個表示 */
+  @media (min-width: 1400px) {
+    .stacked-songs-container {
+      max-width: 1100px;
+    }
+  }
+}
+
+/* 初期状態ではモバイル表示を想定 */
+@media (max-width: 768px) {
+  .stacked-songs-container {
+    height: 400px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 100%;
+  }
+
+  .stacked-songs-container .stacked-songs {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .stacked-songs-container .stacked-song-card {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: default;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 .stacked-songs {
@@ -15,20 +91,60 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
+  /* 位置の安定化 */
+  contain: layout;
 }
 
 .stacked-song-card {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 240px;
+  height: 240px;
   cursor: pointer;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  will-change: transform;
   transform-style: preserve-3d;
   flex-shrink: 0;
   opacity: 1;
+  /* 位置の安定化 */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-origin: center center;
+}
+
+/* 768px以上でのカードサイズ調整 */
+@media (min-width: 769px) {
+  /* 1000px未満: 2個表示 - カードサイズを大きく */
+  @media (max-width: 999px) {
+    .stacked-song-card {
+      width: 280px;
+      height: 280px;
+    }
+  }
+  
+  /* 1000px-1199px: 3個表示 - 標準サイズ */
+  @media (min-width: 1000px) and (max-width: 1199px) {
+    .stacked-song-card {
+      width: 240px;
+      height: 240px;
+    }
+  }
+  
+  /* 1200px-1399px: 4個表示 - 少し小さく */
+  @media (min-width: 1200px) and (max-width: 1399px) {
+    .stacked-song-card {
+      width: 220px;
+      height: 220px;
+    }
+  }
+  
+  /* 1400px以上: 5個表示 - さらに小さく */
+  @media (min-width: 1400px) {
+    .stacked-song-card {
+      width: 200px;
+      height: 200px;
+    }
+  }
 }
 
 .song-artwork {
@@ -66,17 +182,69 @@
   text-overflow: ellipsis;
 }
 
+/* モバイルモード用のスタイル */
+.stacked-songs-container.mobile-mode {
+  height: 400px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+}
+
+.stacked-songs-container.mobile-mode .stacked-songs {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.stacked-song-card.mobile-card {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: default;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.stacked-song-card.mobile-card .song-overlay {
+  transform: translateY(0) !important;
+}
+
+/* インジケーター */
+.song-indicators {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.song-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.6s ease;
+}
+
+.song-indicator.active {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 @media (max-width: 768px) {
-  .stacked-songs-container {
-    height: 180px;
-    max-width: 500px;
-  }
-
-  .stacked-song-card {
-    width: 150px;
-    height: 150px;
-  }
-
   .song-overlay {
     padding: 0.75rem;
   }
@@ -88,19 +256,33 @@
   .song-artist {
     font-size: 0.8rem;
   }
+
+  /* モバイルモードでの調整 */
+  .stacked-song-card.mobile-card {
+    width: 280px;
+    height: 280px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+  }
+
+  .stacked-song-card.mobile-card .song-overlay {
+    transform: translateY(0) !important;
+  }
+
+  .stacked-songs-container.mobile-mode {
+    height: 360px;
+    padding: 0;
+  }
+
+  .stacked-songs-container.mobile-mode .stacked-songs {
+    height: 340px;
+    padding: 0;
+  }
 }
 
 @media (max-width: 480px) {
-  .stacked-songs-container {
-    height: 150px;
-    max-width: 400px;
-  }
-
-  .stacked-song-card {
-    width: 120px;
-    height: 120px;
-  }
-
   .song-overlay {
     padding: 0.5rem;
   }
@@ -111,5 +293,34 @@
 
   .song-artist {
     font-size: 0.75rem;
+  }
+
+  /* モバイルモードでの調整 */
+  .stacked-song-card.mobile-card {
+    width: 240px;
+    height: 240px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+  }
+
+  .stacked-song-card.mobile-card .song-overlay {
+    transform: translateY(0) !important;
+  }
+
+  .stacked-songs-container.mobile-mode {
+    height: 320px;
+    padding: 0;
+  }
+
+  .stacked-songs-container.mobile-mode .stacked-songs {
+    height: 300px;
+    padding: 0;
+  }
+
+  .song-indicator {
+    width: 6px;
+    height: 6px;
   }
 }

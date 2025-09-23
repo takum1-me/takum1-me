@@ -457,7 +457,7 @@ export default function BaseHoverIndicator({
     },
     React.createElement("div", {
       ref: indicatorRef,
-      className: "indicator",
+      className: "hover-indicator",
       "aria-hidden": true,
     }),
     items.map((item) =>

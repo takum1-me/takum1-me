@@ -38,7 +38,7 @@
   box-shadow: none;
 }
 
-.indicator {
+.hover-indicator {
   position: absolute;
   background:
     linear-gradient(

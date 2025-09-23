@@ -27,7 +27,7 @@ const songsData = await loadSongsData();
             <div class="sub-line">Coffee, Programming, Design</div>
           </div>
           <div class="hero-music">
-                   <h3 class="favorite-songs-title">お気に入りの曲</h3>
+                   <h3 class="favorite-songs-title">My Playlist</h3>
                    <StackedSongCards songs={songsData} client:load />
                  </div>
         </div>
@@ -38,7 +38,7 @@ const songsData = await loadSongsData();
   <!-- 最新ブログセクション -->
   <section class="latest-blogs">
     <div class="latest-blogs-inner">
-      <div class="section-header">
+      <div class="blog-section-header">
         <h2 class="section-title">Latest Posts</h2>
         <p class="section-description">最新のブログ投稿</p>
       </div>
@@ -66,9 +66,9 @@ const songsData = await loadSongsData();
   <style>
     
     .hero { 
-      padding: 4rem 0; 
+      padding: 6rem 0; 
       border-bottom: none; 
-      min-height: 80vh;
+      min-height: 90vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,6 +85,13 @@ const songsData = await loadSongsData();
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 0 2rem;
+      box-sizing: border-box;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-inner {
+        padding: 0 1rem;
+      }
     }
     
     .hero-content {
@@ -102,8 +109,8 @@ const songsData = await loadSongsData();
     }
     
     .site-title { 
-      font-size: 4rem; 
-      margin: 0 0 1rem 0; 
+      font-size: 5rem; 
+      margin: 0 0 1.5rem 0; 
       letter-spacing: 0.02em; 
       color: var(--text-primary);
       font-weight: 800;
@@ -111,9 +118,9 @@ const songsData = await loadSongsData();
     }
     
     .site-sub { 
-      margin: 0 0 2rem 0; 
+      margin: 0 0 3rem 0; 
       color: var(--text-secondary);
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       line-height: 1.6;
       font-weight: 500;
     }
@@ -128,14 +135,14 @@ const songsData = await loadSongsData();
     
     
     .favorite-songs-title {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 0;
       color: var(--text-primary);
     }
     
     .hero-music {
-      margin-top: 2rem;
+      margin-top: 3rem;
     }
     
     p {
@@ -157,37 +164,101 @@ const songsData = await loadSongsData();
       }
     }
 
+    @media (max-width: 1024px) {
+      .hero-inner {
+        max-width: var(--max-width);
+        padding: 0 1.5rem;
+      }
+    }
+
     @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 0;
+        min-height: 85vh;
+      }
+      
+      .hero-inner {
+        padding: 0 1rem;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
       .hero-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
         text-align: center;
+        justify-items: center;
       }
       
       .hero-text {
         text-align: center;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       
       .site-title {
-        font-size: 3rem;
+        font-size: 4rem;
+        text-align: center;
       }
       
       .site-sub {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        text-align: center;
+      }
+      
+      .hero-music {
+        margin-top: 3rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .favorite-songs-title {
+        font-size: 1.6rem;
+        text-align: center;
+        margin-bottom: 0;
       }
       
     }
 
     @media (max-width: 480px) {
       .hero {
-        padding: 2rem 0;
-        min-height: 70vh;
+        padding: 3rem 0;
+        min-height: 80vh;
+      }
+      
+      .hero-inner {
+        padding: 0 0.75rem;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .hero-content {
+        gap: 2rem;
       }
       
       .site-title {
-        font-size: 2.5rem;
+        font-size: 3.5rem;
+        text-align: center;
       }
       
       .site-sub {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
+        text-align: center;
+      }
+      
+      .hero-music {
+        margin-top: 2.5rem;
+      }
+      
+      .favorite-songs-title {
+        font-size: 1.5rem;
+        text-align: center;
       }
       
     }
@@ -205,7 +276,7 @@ const songsData = await loadSongsData();
       padding: 0 2rem;
     }
     
-    .section-header {
+    .blog-section-header {
       text-align: center;
       margin-bottom: 3rem;
     }
@@ -262,7 +333,7 @@ const songsData = await loadSongsData();
         gap: 1.5rem;
       }
       
-      .section-header {
+      .blog-section-header {
         margin-bottom: 2rem;
       }
     }
