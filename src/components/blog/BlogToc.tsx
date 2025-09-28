@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { gsap } from "gsap";
 import "./blog-toc.css";
 
 interface TocItem {
@@ -15,6 +16,9 @@ export default function BlogToc() {
   const [activeId, setActiveId] = useState<string>("");
   const [isTocVisible, setIsTocVisible] = useState<boolean>(false);
   const tocRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<gsap.core.Timeline | null>(null);
+  const isTocVisibleRef = useRef<boolean>(false);
+  const tocItemsRef = useRef<TocItem[]>([]);
 
   // TOC項目の生成
   const generateTocItems = useCallback(() => {
@@ -39,6 +43,7 @@ export default function BlogToc() {
       });
     });
 
+    tocItemsRef.current = items; // refにも保存
     setTocItems(items);
   }, []);
 
@@ -92,6 +97,8 @@ export default function BlogToc() {
   // アクティブな見出しの更新
   const updateActiveHeading = useCallback(
     (items: TocItem[]) => {
+      if (items.length === 0) return; // アイテムが空の場合は早期リターン
+      
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
       const windowHeight = window.innerHeight;
@@ -132,21 +139,76 @@ export default function BlogToc() {
     [updateActiveLinks],
   );
 
+  // GSAPアニメーション処理
+  const animateToc = useCallback((shouldShow: boolean) => {
+    if (!tocRef.current) return;
+
+    // 既存のアニメーションを停止
+    if (animationRef.current) {
+      animationRef.current.kill();
+    }
+
+    if (shouldShow) {
+      // 表示アニメーション
+      animationRef.current = gsap.timeline();
+      animationRef.current
+        .set(tocRef.current, {
+          y: "calc(100vh + 50vh - 50%)",
+          opacity: 0,
+          display: "block"
+        })
+        .to(tocRef.current, {
+          y: "-50%",
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out"
+        });
+    } else {
+      // 非表示アニメーション
+      animationRef.current = gsap.timeline();
+      animationRef.current
+        .to(tocRef.current, {
+          y: "calc(100vh + 50vh - 50%)",
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.out",
+          onComplete: () => {
+            if (tocRef.current) {
+              tocRef.current.style.display = "none";
+            }
+          }
+        });
+    }
+  }, []);
+
   // スクロール処理
   const handleScroll = useCallback(() => {
     if (!tocRef.current) return;
 
     const scrollY = window.scrollY;
-    const shouldShow = scrollY > SCROLL_TRIGGER;
-
-    if (shouldShow !== isTocVisible) {
-      tocRef.current.classList.toggle("animate-in", shouldShow);
-      tocRef.current.classList.toggle("animate-out", !shouldShow);
-      setIsTocVisible(shouldShow);
+    
+    // refで現在の状態を取得（同期的）
+    const currentVisible = isTocVisibleRef.current;
+    
+    // 一度表示されたら、上にスクロールしてトリガーポイントを下回った時のみ非表示
+    let shouldShow = currentVisible;
+    
+    if (!currentVisible && scrollY > SCROLL_TRIGGER) {
+      // 初回表示
+      shouldShow = true;
+    } else if (currentVisible && scrollY <= SCROLL_TRIGGER) {
+      // 上にスクロールしてトリガーポイントを下回った時のみ非表示
+      shouldShow = false;
     }
 
-    updateActiveHeading(tocItems);
-  }, [isTocVisible, tocItems, updateActiveHeading]);
+    if (shouldShow !== currentVisible) {
+      isTocVisibleRef.current = shouldShow; // refを即座に更新
+      animateToc(shouldShow);
+      setIsTocVisible(shouldShow); // stateも更新（UI表示用）
+    }
+
+    updateActiveHeading(tocItemsRef.current);
+  }, [updateActiveHeading, animateToc]);
 
   // TOC項目クリック処理
   const handleClick = useCallback((item: TocItem) => {
@@ -180,8 +242,15 @@ export default function BlogToc() {
   );
 
   useEffect(() => {
-    generateTocItems();
+    // DOM要素が完全に読み込まれた後に実行
+    const timer = setTimeout(() => {
+      generateTocItems();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []); // 空の依存配列でマウント時に一度だけ実行
 
+  useEffect(() => {
     const throttledScroll = () => {
       requestAnimationFrame(handleScroll);
     };
@@ -191,7 +260,27 @@ export default function BlogToc() {
     return () => {
       window.removeEventListener("scroll", throttledScroll);
     };
-  }, [generateTocItems, handleScroll]);
+  }, []); // スクロールイベントリスナーは一度だけ登録
+
+  useEffect(() => {
+    return () => {
+      // アニメーションのクリーンアップ
+      if (animationRef.current) {
+        animationRef.current.kill();
+      }
+    };
+  }, []);
+
+  // 初期状態を設定するための別のuseEffect
+  useEffect(() => {
+    if (tocRef.current) {
+      gsap.set(tocRef.current, {
+        y: "calc(100vh + 50vh - 50%)",
+        opacity: 0,
+        display: "none"
+      });
+    }
+  }, []);
 
   if (tocItems.length === 0) return null;
 

@@ -329,6 +329,12 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
     }
   };
 
+  const handleCardClick = (song: SongData) => {
+    if (song.appleMusicUrl) {
+      window.open(song.appleMusicUrl, '_blank');
+    }
+  };
+
   // 初期化が完了するまで待機
   if (!isInitialized) {
     return null;
@@ -361,9 +367,11 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
                 top: isMobile ? "50%" : "auto",
                 position: isMobile ? "absolute" : "relative",
                 margin: isMobile ? "0" : "auto",
+                cursor: "pointer",
               }}
               onMouseEnter={() => handleCardHover(index, true)}
               onMouseLeave={() => handleCardHover(index, false)}
+              onClick={() => handleCardClick(song)}
             >
               <img
                 src={song.artworkUrl}

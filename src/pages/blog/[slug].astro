@@ -114,7 +114,7 @@ const formatDate = (dateString: string) => {
     .article-container { max-width: 760px; padding: 0 2rem; }
   }
   h1 {
-    color: #006367;
+    color: var(--text-primary);
   }
   .article-content {
     h1,
@@ -126,7 +126,7 @@ const formatDate = (dateString: string) => {
 
     }
     .published-date {
-      color: #006367;
+      color: var(--text-primary);
     }
     /* content内の画像にスタイルを適用 */
     img {
@@ -173,7 +173,7 @@ const formatDate = (dateString: string) => {
     margin: 0.5rem 0 1rem;
   }
   .back a {
-    color: #9ca3af;
+    color: var(--text-secondary);
     text-decoration: none;
     font-weight: 600;
     position: relative;
@@ -190,7 +190,7 @@ const formatDate = (dateString: string) => {
     height: 2px;
     bottom: -2px;
     left: 0;
-    background-color: #374151;
+    background-color: var(--text-primary);
     transition: width 0.5s ease;
   }
   .back a:hover {
@@ -224,8 +224,9 @@ const formatDate = (dateString: string) => {
     /* position: absolute;
      を削除 */
     margin: 0;
-    color: #64a19e;
+    color: var(--text-secondary);
     font-size: 0.9rem;
+    font-weight: bold;
     white-space: nowrap;
     /* 日付が改行しないようにする */
     flex-shrink: 0; /* コンテナが狭くなっても日付部分が縮まないようにする */
