@@ -29,9 +29,9 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
       const newIsMobile = width <= 768;
       const prevIsMobile = isMobile;
       const prevDisplayCount = displayCount;
-      
+
       setIsMobile(newIsMobile);
-      
+
       // 768px以上の場合、画面幅に応じて表示数を決定
       let newDisplayCount = 3;
       if (!newIsMobile) {
@@ -46,14 +46,17 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
         }
       }
       setDisplayCount(newDisplayCount);
-      
+
       setIsInitialized(true);
 
       // 画面サイズ変更時にカード位置をリセット
-      if (cardRefs.current.length > 0 && (prevIsMobile !== newIsMobile || prevDisplayCount !== newDisplayCount)) {
+      if (
+        cardRefs.current.length > 0 &&
+        (prevIsMobile !== newIsMobile || prevDisplayCount !== newDisplayCount)
+      ) {
         // すべてのアニメーションを停止
         gsap.killTweensOf(cardRefs.current);
-        
+
         cardRefs.current.forEach((card, index) => {
           if (card) {
             if (newIsMobile) {
@@ -98,7 +101,7 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
 
     // 即座にチェック
     checkIsMobile();
-    
+
     // リサイズイベントにデバウンス処理を追加
     const handleResize = () => {
       if (resizeTimeoutRef.current) {
@@ -114,7 +117,7 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
         }, 50);
       }, 150);
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -178,7 +181,7 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
     if (!isMobile && cardRefs.current.length > 0 && isInitialized) {
       // すべてのアニメーションを停止
       gsap.killTweensOf(cardRefs.current);
-      
+
       cardRefs.current.forEach((card, index) => {
         if (card && index < displayCount) {
           gsap.set(card, {
@@ -224,13 +227,13 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
           const overlay = card.querySelector(".song-overlay") as HTMLElement;
 
           if (index === currentSongIndex) {
-                  // 位置を確実に中央に設定
-                  gsap.set(card, {
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    margin: 0,
-                  });
+            // 位置を確実に中央に設定
+            gsap.set(card, {
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              margin: 0,
+            });
 
             // 縮小から拡大するアニメーション
             gsap.fromTo(
@@ -255,13 +258,13 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
               delay: 0.2,
             });
           } else {
-                  // 非表示カードも位置を中央に設定
-                  gsap.set(card, {
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, calc(-50% + 15px))",
-                    margin: 0,
-                  });
+            // 非表示カードも位置を中央に設定
+            gsap.set(card, {
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, calc(-50% + 15px))",
+              margin: 0,
+            });
 
             // 拡大から縮小するアニメーション
             gsap.to(card, {
@@ -331,7 +334,7 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
 
   const handleCardClick = (song: SongData) => {
     if (song.appleMusicUrl) {
-      window.open(song.appleMusicUrl, '_blank');
+      window.open(song.appleMusicUrl, "_blank");
     }
   };
 

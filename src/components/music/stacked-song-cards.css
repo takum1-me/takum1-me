@@ -15,28 +15,28 @@
   .stacked-songs-container {
     max-width: 100%;
   }
-  
+
   /* 1000px未満: 2個表示 */
   @media (max-width: 999px) {
     .stacked-songs-container {
       max-width: 500px;
     }
   }
-  
+
   /* 1000px-1199px: 3個表示 */
   @media (min-width: 1000px) and (max-width: 1199px) {
     .stacked-songs-container {
       max-width: 700px;
     }
   }
-  
+
   /* 1200px-1399px: 4個表示 */
   @media (min-width: 1200px) and (max-width: 1399px) {
     .stacked-songs-container {
       max-width: 900px;
     }
   }
-  
+
   /* 1400px以上: 5個表示 */
   @media (min-width: 1400px) {
     .stacked-songs-container {
@@ -121,7 +121,7 @@
       height: 280px;
     }
   }
-  
+
   /* 1000px-1199px: 3個表示 - 標準サイズ */
   @media (min-width: 1000px) and (max-width: 1199px) {
     .stacked-song-card {
@@ -129,7 +129,7 @@
       height: 240px;
     }
   }
-  
+
   /* 1200px-1399px: 4個表示 - 少し小さく */
   @media (min-width: 1200px) and (max-width: 1399px) {
     .stacked-song-card {
@@ -137,7 +137,7 @@
       height: 220px;
     }
   }
-  
+
   /* 1400px以上: 5個表示 - さらに小さく */
   @media (min-width: 1400px) {
     .stacked-song-card {

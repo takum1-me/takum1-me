@@ -98,7 +98,7 @@ export default function BlogToc() {
   const updateActiveHeading = useCallback(
     (items: TocItem[]) => {
       if (items.length === 0) return; // アイテムが空の場合は早期リターン
-      
+
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
       const windowHeight = window.innerHeight;
@@ -155,29 +155,28 @@ export default function BlogToc() {
         .set(tocRef.current, {
           y: "calc(100vh + 50vh - 50%)",
           opacity: 0,
-          display: "block"
+          display: "block",
         })
         .to(tocRef.current, {
           y: "-50%",
           opacity: 1,
           duration: 0.6,
-          ease: "power2.out"
+          ease: "power2.out",
         });
     } else {
       // 非表示アニメーション
       animationRef.current = gsap.timeline();
-      animationRef.current
-        .to(tocRef.current, {
-          y: "calc(100vh + 50vh - 50%)",
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.out",
-          onComplete: () => {
-            if (tocRef.current) {
-              tocRef.current.style.display = "none";
-            }
+      animationRef.current.to(tocRef.current, {
+        y: "calc(100vh + 50vh - 50%)",
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.out",
+        onComplete: () => {
+          if (tocRef.current) {
+            tocRef.current.style.display = "none";
           }
-        });
+        },
+      });
     }
   }, []);
 
@@ -186,13 +185,13 @@ export default function BlogToc() {
     if (!tocRef.current) return;
 
     const scrollY = window.scrollY;
-    
+
     // refで現在の状態を取得（同期的）
     const currentVisible = isTocVisibleRef.current;
-    
+
     // 一度表示されたら、上にスクロールしてトリガーポイントを下回った時のみ非表示
     let shouldShow = currentVisible;
-    
+
     if (!currentVisible && scrollY > SCROLL_TRIGGER) {
       // 初回表示
       shouldShow = true;
@@ -246,7 +245,7 @@ export default function BlogToc() {
     const timer = setTimeout(() => {
       generateTocItems();
     }, 100);
-    
+
     return () => clearTimeout(timer);
   }, []); // 空の依存配列でマウント時に一度だけ実行
 
@@ -277,7 +276,7 @@ export default function BlogToc() {
       gsap.set(tocRef.current, {
         y: "calc(100vh + 50vh - 50%)",
         opacity: 0,
-        display: "none"
+        display: "none",
       });
     }
   }, []);
