@@ -1,12 +1,12 @@
 .home-article-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
   aspect-ratio: 1;
   width: 100%;
-  max-width: 240px;
+  max-width: 15rem;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
@@ -63,7 +63,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
+  padding: var(--spacing-md);
   box-sizing: border-box;
   opacity: 0;
   z-index: 1;
@@ -89,7 +89,7 @@
 .home-card-footer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   margin-top: auto;
 }
 
@@ -115,13 +115,13 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .home-article-card {
-    max-width: 220px;
+    max-width: 13.75rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .home-article-card {
     max-width: 100%;
     aspect-ratio: 4/3;
@@ -133,7 +133,7 @@
 
   .home-card-title {
     font-size: 1.4rem;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 var(--spacing-sm) 0;
   }
 
   .home-card-summary {
@@ -147,7 +147,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .home-article-card {
     aspect-ratio: 3/2;
   }

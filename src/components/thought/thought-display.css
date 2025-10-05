@@ -1,12 +1,12 @@
 .thought-display {
-  margin: 2rem 0;
-  padding: 1.5rem;
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-lg);
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0.75rem;
   border: 1px solid rgba(139, 69, 19, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   transition: all 0.3s ease;
-  max-width: 350px;
+  max-width: 21.875rem;
 }
 
 .thought-display.clickable {
@@ -17,12 +17,12 @@
 .thought-display.clickable:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(139, 69, 19, 0.2);
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: 0 0.5rem 1.5rem rgba(139, 69, 19, 0.1);
 }
 
 .thought-display.clickable:active {
-  transform: translateY(-1px);
+  transform: translateY(-0.0625rem);
   box-shadow: 0 0.25rem 0.75rem rgba(139, 69, 19, 0.15);
 }
 
@@ -46,7 +46,7 @@
   color: var(--text-muted);
   opacity: 0.6;
   display: block;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-sm);
   font-style: normal;
   transition: opacity 0.2s ease;
 }
@@ -56,11 +56,11 @@
 }
 
 /* モバイル対応 */
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .thought-display {
-    margin: 1.5rem 0;
+    margin: var(--spacing-lg) 0;
     padding: 1.25rem;
-    max-width: 300px;
+    max-width: 18.75rem;
   }
 
   .thought-content {
@@ -76,11 +76,11 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .thought-display {
-    margin: 1rem 0;
-    padding: 1rem;
-    max-width: 280px;
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-md);
+    max-width: 17.5rem;
   }
 
   .thought-content {

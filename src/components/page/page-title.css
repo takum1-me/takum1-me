@@ -1,7 +1,7 @@
 .page-title {
   position: fixed;
   top: 6.8rem;
-  left: 2rem;
+  left: var(--spacing-xl);
   font-size: 6rem;
   font-weight: 700;
   color: #8b7355;
@@ -13,7 +13,6 @@
   z-index: 50;
   pointer-events: none;
   will-change: transform;
-  /* デフォルト値の設定 */
   --footer-height: 100vh;
   --scroll-translate-y: 0px;
   --scroll-skew-y: 0deg;
@@ -30,13 +29,12 @@
 .page-title::after {
   content: "";
   position: fixed;
-  right: calc(2rem + 5rem);
+  right: calc(var(--spacing-xl) + 5rem);
   bottom: 0;
   height: var(--page-height-90, 93vh);
-  width: 1rem;
+  width: var(--spacing-md);
   background: #8b7355;
   opacity: 0.5;
-  /* 上側は斜め、下側は平ら - clip-pathのみで実現 */
   clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
   will-change: auto;
 }
@@ -44,43 +42,41 @@
 .page-title::before {
   content: "";
   position: fixed;
-  right: calc(2rem + 6.25rem);
+  right: calc(var(--spacing-xl) + 6.25rem);
   bottom: 0;
   height: var(--page-height-90, 93vh);
-  width: 1rem;
+  width: var(--spacing-md);
   background: #8b7355;
   opacity: 0.3;
-  /* 上側は斜め、下側は平ら - clip-pathのみで実現 */
   clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
   will-change: auto;
 }
 
 /* タブレットサイズ */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .page-title {
     font-size: 5rem;
     top: 6rem;
-    left: 1.5rem;
+    left: var(--spacing-lg);
   }
 
   .page-title::after {
-    right: calc(1.5rem + 4rem);
+    right: calc(var(--spacing-lg) + 4rem);
     width: 0.8rem;
   }
 
   .page-title::before {
-    right: calc(1.5rem + 5rem);
+    right: calc(var(--spacing-lg) + 5rem);
     width: 0.8rem;
   }
 }
 
 /* モバイルサイズ */
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .page-title {
     font-size: 4rem;
     top: 5.5rem;
-    left: 1rem;
-    /* モバイルでは固定位置、スクロールアニメーション無効 */
+    left: var(--spacing-md);
     transform: rotate(180deg) !important;
     will-change: auto;
   }
@@ -95,24 +91,22 @@
 }
 
 /* 小さなモバイルサイズ */
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .page-title {
     font-size: 3rem;
     top: 5rem;
     left: 0.75rem;
-    /* モバイルでは固定位置、スクロールアニメーション無効 */
     transform: rotate(180deg) !important;
     will-change: auto;
   }
 }
 
 /* 非常に小さなモバイルサイズ */
-@media (max-width: 320px) {
+@media (max-width: 20rem) {
   .page-title {
     font-size: 2.5rem;
     top: 4.5rem;
-    left: 0.5rem;
-    /* モバイルでは固定位置、スクロールアニメーション無効 */
+    left: var(--spacing-sm);
     transform: rotate(180deg) !important;
     will-change: auto;
   }

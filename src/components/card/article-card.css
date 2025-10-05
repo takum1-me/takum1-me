@@ -6,8 +6,8 @@
   position: relative;
   aspect-ratio: 3 / 1;
   width: 100%;
-  max-width: 900px;
-  min-width: 400px;
+  max-width: 56.25rem;
+  min-width: 25rem;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
@@ -92,9 +92,8 @@
   left: calc(61.8% + 1.5px);
   width: calc(38.2% - 1.5px);
   height: 100%;
-  /* background は JavaScript で動的に設定 */
-  backdrop-filter: blur(10px);
-  padding: 1.5rem;
+  backdrop-filter: blur(0.625rem);
+  padding: var(--spacing-lg);
   border-radius: 0;
   display: flex;
   flex-direction: column;
@@ -106,7 +105,7 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--spacing-md) 0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -145,10 +144,10 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 767px) {
+@media (max-width: 47.9375rem) {
   .blog-card {
     max-width: 100%;
-    min-width: 320px;
+    min-width: 20rem;
     aspect-ratio: 3 / 1;
   }
 
@@ -159,18 +158,18 @@
   .card-content {
     left: calc(61.8% + 1.5px);
     width: calc(38.2% - 1.5px);
-    padding: 1rem;
+    padding: var(--spacing-md);
   }
 
   .card-title {
     font-size: 1.1rem;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 var(--spacing-sm) 0;
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
 
   .card-footer {
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
   }
 
   .card-summary {
@@ -185,10 +184,10 @@
 }
 
 /* 小さなモバイル（480px以下） */
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .blog-card {
     max-width: 100%;
-    min-width: 280px;
+    min-width: 17.5rem;
   }
 
   .card-thumbnail {

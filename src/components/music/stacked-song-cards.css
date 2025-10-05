@@ -1,54 +1,53 @@
 .stacked-songs-container {
   position: relative;
-  height: 300px;
+  height: 18.75rem;
   width: 100%;
-  max-width: 700px;
+  max-width: 43.75rem;
   margin: 0 auto;
   perspective: 1000px;
-  /* 位置の安定化 */
   contain: layout style;
   will-change: auto;
 }
 
 /* 768px以上でのレスポンシブ表示 */
-@media (min-width: 769px) {
+@media (min-width: 48rem) {
   .stacked-songs-container {
     max-width: 100%;
   }
 
   /* 1000px未満: 2個表示 */
-  @media (max-width: 999px) {
+  @media (max-width: 62.4375rem) {
     .stacked-songs-container {
-      max-width: 500px;
+      max-width: 31.25rem;
     }
   }
 
   /* 1000px-1199px: 3個表示 */
-  @media (min-width: 1000px) and (max-width: 1199px) {
+  @media (min-width: 62.5rem) and (max-width: 74.9375rem) {
     .stacked-songs-container {
-      max-width: 700px;
+      max-width: 43.75rem;
     }
   }
 
   /* 1200px-1399px: 4個表示 */
-  @media (min-width: 1200px) and (max-width: 1399px) {
+  @media (min-width: 75rem) and (max-width: 87.4375rem) {
     .stacked-songs-container {
-      max-width: 900px;
+      max-width: 56.25rem;
     }
   }
 
   /* 1400px以上: 5個表示 */
-  @media (min-width: 1400px) {
+  @media (min-width: 87.5rem) {
     .stacked-songs-container {
-      max-width: 1100px;
+      max-width: 68.75rem;
     }
   }
 }
 
 /* 初期状態ではモバイル表示を想定 */
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .stacked-songs-container {
-    height: 400px;
+    height: 25rem;
     max-width: 100%;
     display: flex;
     flex-direction: column;
@@ -61,7 +60,7 @@
   .stacked-songs-container .stacked-songs {
     position: relative;
     width: 100%;
-    height: 380px;
+    height: 23.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,8 +70,8 @@
 
   .stacked-songs-container .stacked-song-card {
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: 18.75rem;
+    height: 18.75rem;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -97,52 +96,51 @@
 
 .stacked-song-card {
   position: relative;
-  width: 240px;
-  height: 240px;
+  width: 15rem;
+  height: 15rem;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.15);
   transform-style: preserve-3d;
   flex-shrink: 0;
   opacity: 1;
-  /* 位置の安定化 */
   will-change: transform;
   backface-visibility: hidden;
   transform-origin: center center;
 }
 
 /* 768px以上でのカードサイズ調整 */
-@media (min-width: 769px) {
+@media (min-width: 48rem) {
   /* 1000px未満: 2個表示 - カードサイズを大きく */
-  @media (max-width: 999px) {
+  @media (max-width: 62.4375rem) {
     .stacked-song-card {
-      width: 280px;
-      height: 280px;
+      width: 17.5rem;
+      height: 17.5rem;
     }
   }
 
   /* 1000px-1199px: 3個表示 - 標準サイズ */
-  @media (min-width: 1000px) and (max-width: 1199px) {
+  @media (min-width: 62.5rem) and (max-width: 74.9375rem) {
     .stacked-song-card {
-      width: 240px;
-      height: 240px;
+      width: 15rem;
+      height: 15rem;
     }
   }
 
   /* 1200px-1399px: 4個表示 - 少し小さく */
-  @media (min-width: 1200px) and (max-width: 1399px) {
+  @media (min-width: 75rem) and (max-width: 87.4375rem) {
     .stacked-song-card {
-      width: 220px;
-      height: 220px;
+      width: 13.75rem;
+      height: 13.75rem;
     }
   }
 
   /* 1400px以上: 5個表示 - さらに小さく */
-  @media (min-width: 1400px) {
+  @media (min-width: 87.5rem) {
     .stacked-song-card {
-      width: 200px;
-      height: 200px;
+      width: 12.5rem;
+      height: 12.5rem;
     }
   }
 }
@@ -161,14 +159,14 @@
   right: 0;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
   color: white;
-  padding: 1rem;
+  padding: var(--spacing-md);
   transform: translateY(100%);
 }
 
 .song-title {
   font-weight: 600;
   font-size: 1rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -184,7 +182,7 @@
 
 /* モバイルモード用のスタイル */
 .stacked-songs-container.mobile-mode {
-  height: 400px;
+  height: 25rem;
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -198,7 +196,7 @@
 .stacked-songs-container.mobile-mode .stacked-songs {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 23.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,8 +206,8 @@
 
 .stacked-song-card.mobile-card {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 18.75rem;
+  height: 18.75rem;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -226,14 +224,14 @@
 /* インジケーター */
 .song-indicators {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
   justify-content: center;
 }
 
 .song-indicator {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
@@ -244,7 +242,7 @@
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .song-overlay {
     padding: 0.75rem;
   }
@@ -259,8 +257,8 @@
 
   /* モバイルモードでの調整 */
   .stacked-song-card.mobile-card {
-    width: 280px;
-    height: 280px;
+    width: 17.5rem;
+    height: 17.5rem;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -272,19 +270,19 @@
   }
 
   .stacked-songs-container.mobile-mode {
-    height: 360px;
+    height: 22.5rem;
     padding: 0;
   }
 
   .stacked-songs-container.mobile-mode .stacked-songs {
-    height: 340px;
+    height: 21.25rem;
     padding: 0;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .song-overlay {
-    padding: 0.5rem;
+    padding: var(--spacing-sm);
   }
 
   .song-title {
@@ -297,8 +295,8 @@
 
   /* モバイルモードでの調整 */
   .stacked-song-card.mobile-card {
-    width: 240px;
-    height: 240px;
+    width: 15rem;
+    height: 15rem;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -310,17 +308,17 @@
   }
 
   .stacked-songs-container.mobile-mode {
-    height: 320px;
+    height: 20rem;
     padding: 0;
   }
 
   .stacked-songs-container.mobile-mode .stacked-songs {
-    height: 300px;
+    height: 18.75rem;
     padding: 0;
   }
 
   .song-indicator {
-    width: 6px;
-    height: 6px;
+    width: 0.375rem;
+    height: 0.375rem;
   }
 }

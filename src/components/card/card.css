@@ -1,8 +1,8 @@
 /* Card component styles */
 .card {
   background: transparent;
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 0.75rem;
+  padding: var(--spacing-xl);
   box-shadow: none;
   border: none;
   position: relative;
@@ -22,12 +22,12 @@
 .card-header {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .card-icon {
-  font-size: 2rem;
+  font-size: var(--spacing-xl);
   color: #8b7355;
 }
 
@@ -39,8 +39,8 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .card {
-    padding: 1.5rem;
+    padding: var(--spacing-lg);
   }
 }

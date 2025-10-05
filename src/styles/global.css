@@ -1,6 +1,12 @@
 :root {
-  --max-width: 1200px; /* index.astroの960pxから1200pxに統一 */
-  --gap: 16px;
+  --max-width: 1200px;
+  --gap: 1rem;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
   --ink: #111827;
   --muted: #6b7280;
   --primary: #8b4513;
@@ -35,13 +41,13 @@ body {
 }
 
 main {
-  padding: 32px 0;
+  padding: var(--spacing-xl) 0;
 }
 
 footer {
-  padding: 16px 0;
-  color: #6b7280;
-  font-size: 14px;
+  padding: var(--spacing-md) 0;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 a {

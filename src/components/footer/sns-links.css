@@ -1,12 +1,12 @@
 /* SnsLinks component styles */
 .sns-section {
   text-align: center;
-  padding: 1 2rem;
+  padding: var(--spacing-md) var(--spacing-xl);
 }
 
 .sns-section h2 {
-  margin: 0 0 2rem 0;
-  font-size: 2rem;
+  margin: 0 0 var(--spacing-xl) 0;
+  font-size: var(--spacing-xl);
   font-weight: 600;
   color: #8b7355;
 }
@@ -14,7 +14,7 @@
 .sns-links {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: var(--spacing-xl);
   flex-wrap: wrap;
 }
 
@@ -22,15 +22,15 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  padding: var(--spacing-md) var(--spacing-lg);
   background: white;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   text-decoration: none;
   color: #374151;
   font-weight: 500;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
-  min-width: 160px;
+  min-width: 10rem;
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -54,8 +54,8 @@
 }
 
 .sns-link:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-0.25rem) scale(1.05);
+  box-shadow: 0 0.5rem 1.5625rem rgba(0, 0, 0, 0.15);
 }
 
 .sns-link:hover::before {
@@ -93,8 +93,8 @@
 }
 
 .sns-link svg {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   flex-shrink: 0;
   transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -108,21 +108,21 @@
 }
 
 .sns-link:hover span {
-  transform: translateX(2px);
+  transform: translateX(0.125rem);
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 47.9375rem) {
   .sns-section {
-    padding: 2rem 1rem;
+    padding: var(--spacing-xl) var(--spacing-md);
   }
 
   .sns-links {
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
 
   .sns-link {
-    min-width: 140px;
+    min-width: 8.75rem;
     padding: 0.875rem 1.25rem;
   }
 
