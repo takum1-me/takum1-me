@@ -301,12 +301,12 @@ export default function BlogToc() {
           .map((item, _index) =>
             React.createElement(
               "li",
-              { key: item.id, className: "toc-h1" },
+              { key: item.id, className: "toc-h1 toc__item" },
               React.createElement(
                 "a",
                 {
                   href: `#${item.id}`,
-                  className: activeId === item.id ? "is-active-link" : "",
+                  className: `toc__link toc__link--h1${activeId === item.id ? " toc__link--active" : ""}`,
                   onClick: (e: React.MouseEvent) => {
                     e.preventDefault();
                     handleClick(item);
@@ -323,13 +323,12 @@ export default function BlogToc() {
                       h2Items.map((h2Item) =>
                         React.createElement(
                           "li",
-                          { key: h2Item.id, className: "toc-h2" },
+                          { key: h2Item.id, className: "toc-h2 toc__item--h2" },
                           React.createElement(
                             "a",
                             {
                               href: `#${h2Item.id}`,
-                              className:
-                                activeId === h2Item.id ? "is-active-link" : "",
+                              className: `toc__link toc__link--h2${activeId === h2Item.id ? " toc__link--active" : ""}`,
                               onClick: (e: React.MouseEvent) => {
                                 e.preventDefault();
                                 handleClick(h2Item);
