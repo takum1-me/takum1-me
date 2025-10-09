@@ -1,16 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Button from "../components/button/Button";
-import HomeArticleCard from "../components/card/HomeArticleCard";
-import { getLatestBlogs } from "../lib/microcms";
+import PhotoGallery from "../components/gallery/PhotoGallery";
+import { getLatestPhotos } from "../lib/microcms";
 import StackedSongCards from "../components/music/StackedSongCards";
 import { loadSongsData } from "../lib/songs-loader";
-import "../components/button/button.css";
-import "../components/card/home-article-card.css";
 import "../components/music/stacked-song-cards.css";
+import "../components/gallery/photo-gallery.css";
 
-// 最新の3件のブログを取得
-const latestBlogs = await getLatestBlogs(3);
+// 最新の写真を取得
+const latestPhotos = await getLatestPhotos(9);
 
 // 楽曲データを動的に取得
 const songsData = await loadSongsData();
@@ -35,31 +33,15 @@ const songsData = await loadSongsData();
     </div>
   </section>
 
-  <!-- 最新ブログセクション -->
-  <section class="latest-blogs">
-    <div class="latest-blogs-inner">
-      <div class="blog-section-header">
-        <h2 class="section-title">Latest Posts</h2>
-        <p class="section-description">最新のブログ投稿</p>
+  <!-- フォトギャラリーセクション -->
+  <section class="photo-gallery-section">
+    <div class="photo-gallery-inner">
+      <div class="gallery-section-header">
+        <h2 class="section-title">Photo Gallery</h2>
+        <p class="section-description">日々の記録</p>
       </div>
       
-      <div class="blog-grid">
-        {latestBlogs.map((blog) => (
-          <HomeArticleCard
-            client:load
-            title={blog.title}
-            summary={blog.summary}
-            publishedAt={blog.publishedAt}
-            thumbnail={blog.thumbnail}
-            slug={blog.slug}
-            category={blog.category}
-          />
-        ))}
-      </div>
-      
-      <div class="section-footer">
-        <Button href="/blog" variant="secondary">すべての記事を見る</Button>
-      </div>
+      <PhotoGallery photos={latestPhotos} client:load />
     </div>
   </section>
 
@@ -263,20 +245,20 @@ const songsData = await loadSongsData();
       
     }
 
-    /* 最新ブログセクションのスタイル */
-    .latest-blogs {
+    /* フォトギャラリーセクションのスタイル */
+    .photo-gallery-section {
       padding: 4rem 0;
       background: var(--background);
       border-top: 1px solid var(--primary-10);
     }
     
-    .latest-blogs-inner {
+    .photo-gallery-inner {
       max-width: var(--max-width);
       margin: 0 auto;
       padding: 0 2rem;
     }
     
-    .blog-section-header {
+    .gallery-section-header {
       text-align: center;
       margin-bottom: 3rem;
     }
@@ -295,32 +277,13 @@ const songsData = await loadSongsData();
       margin: 0;
     }
     
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-      margin-bottom: 3rem;
-    }
-    
-    .section-footer {
-      text-align: center;
-    }
-    
-    /* タブレット対応 */
-    @media (max-width: 1024px) {
-      .blog-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-    }
-    
     /* モバイル対応 */
     @media (max-width: 768px) {
-      .latest-blogs {
+      .photo-gallery-section {
         padding: 3rem 0;
       }
       
-      .latest-blogs-inner {
+      .photo-gallery-inner {
         padding: 0 1rem;
       }
       
@@ -328,12 +291,7 @@ const songsData = await loadSongsData();
         font-size: 2rem;
       }
       
-      .blog-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      
-      .blog-section-header {
+      .gallery-section-header {
         margin-bottom: 2rem;
       }
     }

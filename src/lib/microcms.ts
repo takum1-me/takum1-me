@@ -63,3 +63,47 @@ export async function getLatestBlogs(limit: number = 5): Promise<Blog[]> {
   const data: BlogResponse = await res.json();
   return data.contents;
 }
+
+export interface Photo {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  revisedAt: string;
+  photo: {
+    url: string;
+    height: number;
+    width: number;
+  };
+  otherPhotos: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
+  date: string;
+  place: string;
+}
+
+export interface PhotoResponse {
+  contents: Photo[];
+  totalCount: number;
+  offset: number;
+  limit: number;
+}
+
+export async function getLatestPhotos(limit: number = 10): Promise<Photo[]> {
+  try {
+    const res = await fetchWithAuth(`photos?orders=-date&limit=${limit}`);
+
+    if (!res.ok) {
+      console.error("Failed to fetch photos:", res.statusText);
+      return [];
+    }
+
+    const data: PhotoResponse = await res.json();
+    return data.contents || [];
+  } catch (error) {
+    console.error("Error fetching photos:", error);
+    return [];
+  }
+}

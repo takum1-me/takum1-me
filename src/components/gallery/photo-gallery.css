@@ -1,0 +1,243 @@
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.photo-gallery-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.photo-gallery-empty p {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.photo-item {
+  position: relative;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: var(--background);
+  border: 1px solid var(--primary-10);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.photo-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-item:hover .photo-image {
+  transform: scale(1.05);
+}
+
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.85));
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.photo-item:hover .photo-overlay {
+  transform: translateY(0);
+}
+
+.photo-place {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.photo-date {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* モーダルスタイル */
+.photo-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal-info {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: white;
+}
+
+.modal-place {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.modal-date {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  padding: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.modal-close:hover {
+  opacity: 0.7;
+}
+
+.modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.modal-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-prev {
+  left: -4rem;
+}
+
+.modal-next {
+  right: -4rem;
+}
+
+/* タブレット対応 */
+@media (max-width: 1024px) {
+  .photo-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .modal-prev {
+    left: 1rem;
+  }
+
+  .modal-next {
+    right: 1rem;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .photo-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  /* モバイルではオーバーレイを常に表示 */
+  .photo-overlay {
+    transform: translateY(0);
+  }
+
+  .photo-modal {
+    padding: 1rem;
+  }
+
+  .modal-image {
+    max-height: 70vh;
+  }
+
+  .modal-close {
+    top: -2.5rem;
+    font-size: 2.5rem;
+  }
+
+  .modal-nav {
+    font-size: 2rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .modal-prev {
+    left: 0.5rem;
+  }
+
+  .modal-next {
+    right: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-nav {
+    font-size: 1.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
