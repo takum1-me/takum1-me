@@ -119,9 +119,15 @@ export default function Header() {
             "aria-label": "メニューを開く",
             "aria-expanded": isMobileMenuOpen,
           },
-          React.createElement("span", { className: "hamburger-line" }),
-          React.createElement("span", { className: "hamburger-line" }),
-          React.createElement("span", { className: "hamburger-line" }),
+          React.createElement("span", {
+            className: `hamburger-line hamburger-line--first${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+          }),
+          React.createElement("span", {
+            className: `hamburger-line hamburger-line--second${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+          }),
+          React.createElement("span", {
+            className: `hamburger-line hamburger-line--third${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+          }),
         ),
         React.createElement(
           "div",
