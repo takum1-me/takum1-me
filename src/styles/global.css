@@ -1,32 +1,32 @@
 :root {
-  --max-width: 1200px;
-  --gap: 1rem;
+  --max-content-width: 1200px;
+  --spacing-gap: 1rem;
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  --ink: #111827;
-  --muted: #6b7280;
-  --primary: #8b4513;
-  --primary-10: rgba(139, 69, 19, 0.1);
-  --primary-15: rgba(139, 69, 19, 0.15);
-  --secondary: #e66305;
-  --accent: #d4af37;
-  --background: #faf8f5;
-  --surface: rgba(255, 255, 255, 0.1);
-  --surface-hover: rgba(255, 255, 255, 0.15);
-  --text-primary: #2d3748;
-  --text-secondary: #4a5568;
-  --text-muted: #2d3748;
+  --color-ink: #111827;
+  --color-muted: #6b7280;
+  --color-primary: #8b4513;
+  --color-primary-10: rgb(139 69 19 / 10%);
+  --color-primary-15: rgb(139 69 19 / 15%);
+  --color-secondary: #e66305;
+  --color-accent: #d4af37;
+  --color-background: #faf8f5;
+  --color-surface: rgb(255 255 255 / 10%);
+  --color-surface-hover: rgb(255 255 255 / 15%);
+  --color-text-primary: #2d3748;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #2d3748;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  background: var(--background);
+  background: var(--color-background);
   min-height: 100vh;
   overflow-x: hidden;
   font-family:
@@ -35,9 +35,9 @@ body {
 }
 
 .container {
-  max-width: var(--max-width);
+  max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: 0 var(--gap);
+  padding: 0 var(--spacing-gap);
 }
 
 main {
@@ -46,7 +46,7 @@ main {
 
 footer {
   padding: var(--spacing-md) 0;
-  color: var(--muted);
+  color: var(--color-muted);
   font-size: 0.875rem;
 }
 
