@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import HeaderHoverIndicator from "../hoverindicator/HeaderHoverIndicator";
-import FooterSnsLinks from "../footer/FooterSnsLinks";
+import HeaderHoverIndicator from "../../shared/hoverindicator/HeaderHoverIndicator";
+import SnsLinks from "../../shared/sns-links/SnsLinks";
 import "./header.css";
 
 const HOVER_THRESHOLD = 120;
@@ -147,7 +147,7 @@ export default function Header() {
           React.createElement(
             "div",
             { className: "mobile-sns-section" },
-            React.createElement(FooterSnsLinks, {
+            React.createElement(SnsLinks, {
               className: "mobile-sns-links",
             }),
           ),

@@ -1,11 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PhotoGallery from "../components/gallery/PhotoGallery";
+import PhotoGallery from "../components/features/gallery/PhotoGallery";
 import { getLatestPhotos } from "../lib/microcms";
-import StackedSongCards from "../components/music/StackedSongCards";
+import StackedSongCards from "../components/features/music/StackedSongCards";
 import { loadSongsData } from "../lib/songs-loader";
-import "../components/music/stacked-song-cards.css";
-import "../components/gallery/photo-gallery.css";
+import "../components/features/music/stacked-song-cards.css";
+import "../components/features/gallery/photo-gallery.css";
 
 // 最新の写真を取得
 const latestPhotos = await getLatestPhotos(9);

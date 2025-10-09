@@ -1,5 +1,5 @@
-import { coffeeFlavors } from "../../data/coffee-flavor";
-import type { CoffeeFlavor as CoffeeFlavorType } from "../../data/coffee-flavor";
+import { coffeeFlavors } from "../../../data/coffee-flavor";
+import type { CoffeeFlavor as CoffeeFlavorType } from "../../../data/coffee-flavor";
 
 interface CoffeeFlavorTagProps {
   flavorName: string;

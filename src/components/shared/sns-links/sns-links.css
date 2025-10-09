@@ -1,12 +1,12 @@
-/* FooterSnsLinks component styles */
-.footer-sns-links {
+/* SnsLinks component styles */
+.sns-links {
   display: flex;
   justify-content: center;
   gap: var(--spacing-md);
   align-items: center;
 }
 
-.footer-sns-link {
+.sns-link {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,7 +21,7 @@
   overflow: hidden;
 }
 
-.footer-sns-link::before {
+.sns-link::before {
   content: "";
   position: absolute;
   top: 0;
@@ -37,34 +37,34 @@
   transition: left 0.5s;
 }
 
-.footer-sns-link:hover {
+.sns-link:hover {
   transform: translateY(-0.125rem) scale(1.1);
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 }
 
-.footer-sns-link:hover::before {
+.sns-link:hover::before {
   left: 100%;
 }
 
-.footer-sns-link {
+.sns-link {
   color: var(--muted); /* ベースカラー（統一されたグレー） */
 }
 
-.footer-sns-link:hover {
+.sns-link:hover {
   background: transparent;
   border-color: #d1d5db;
 }
 
-.footer-sns-link.twitter:hover {
+.sns-link.twitter:hover {
   color: #1da1f2; /* Twitter/X ブランドカラー */
 }
 
-.footer-sns-link.instagram:hover {
+.sns-link.instagram:hover {
   color: #e4405f; /* Instagram ブランドカラー */
 }
 
 /* Instagramアイコンの色制御 */
-.footer-sns-link.instagram .instagram-icon {
+.sns-link.instagram .instagram-icon {
   filter: grayscale(100%) brightness(0.6) saturate(0); /* 通常時：他のアイコンと同じグレー */
   opacity: 0.7; /* 他のアイコンと同じ透明度 */
   transition:
@@ -72,38 +72,38 @@
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.footer-sns-link.instagram:hover .instagram-icon {
+.sns-link.instagram:hover .instagram-icon {
   filter: none; /* ホバー時：元の色（グラデーション） */
   opacity: 1; /* ホバー時：完全に不透明 */
 }
 
-.footer-sns-link.github:hover {
+.sns-link.github:hover {
   color: #333; /* GitHub ブランドカラー */
 }
 
-.footer-sns-link svg {
+.sns-link svg {
   width: 1.25rem;
   height: 1.25rem;
   flex-shrink: 0;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.footer-sns-link:hover svg {
+.sns-link:hover svg {
   transform: scale(1.1);
 }
 
 /* Responsive adjustments */
 @media (max-width: 47.9375rem) {
-  .footer-sns-links {
+  .sns-links {
     gap: 0.75rem;
   }
 
-  .footer-sns-link {
+  .sns-link {
     width: 2.25rem;
     height: 2.25rem;
   }
 
-  .footer-sns-link svg {
+  .sns-link svg {
     width: 1.125rem;
     height: 1.125rem;
   }

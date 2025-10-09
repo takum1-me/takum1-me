@@ -1,6 +1,6 @@
-import InstagramIcon from "../assets/Instagram_Glyph_Gradient.svg?url";
+import InstagramIcon from "../../../assets/Instagram_Glyph_Gradient.svg?url";
 
-interface FooterSnsLinksProps {
+interface SnsLinksProps {
   className?: string;
 }
 
@@ -59,16 +59,14 @@ const renderIcon = (variant: "twitter" | "instagram" | "github") => {
   }
 };
 
-export default function FooterSnsLinks({
-  className = "",
-}: FooterSnsLinksProps) {
+export default function SnsLinks({ className = "" }: SnsLinksProps) {
   return (
-    <div className={`footer-sns-links ${className}`}>
+    <div className={`sns-links ${className}`}>
       {snsData.map((sns) => (
         <a
           key={sns.name}
           href={sns.href}
-          className={`footer-sns-link ${sns.variant}`}
+          className={`sns-link ${sns.variant}`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={sns.name}
