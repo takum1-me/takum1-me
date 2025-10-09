@@ -39,7 +39,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .card {
     padding: var(--spacing-lg);
   }

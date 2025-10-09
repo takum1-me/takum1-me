@@ -5,7 +5,7 @@
   font-size: 6rem;
   font-weight: 700;
   color: #8b7355;
-  opacity: 0.7;
+  opacity: 70%;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
@@ -13,8 +13,9 @@
   z-index: 50;
   pointer-events: none;
   will-change: transform;
+
   --footer-height: 100vh;
-  --scroll-translate-y: 0px;
+  --scroll-translate-y: 0;
   --scroll-skew-y: 0deg;
   --page-height-90: 93vh;
 }
@@ -23,6 +24,7 @@
 .typing-cursor {
   color: #8b7355;
   font-weight: 300;
+
   /* CSSアニメーションは無効化、GSAPで制御 */
 }
 
@@ -34,7 +36,7 @@
   height: var(--page-height-90, 93vh);
   width: var(--spacing-md);
   background: #8b7355;
-  opacity: 0.5;
+  opacity: 50%;
   clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
   will-change: auto;
 }
@@ -47,13 +49,13 @@
   height: var(--page-height-90, 93vh);
   width: var(--spacing-md);
   background: #8b7355;
-  opacity: 0.3;
+  opacity: 30%;
   clip-path: polygon(100% calc(100% - 15px), 0 100%, 0 0, 100% 0);
   will-change: auto;
 }
 
 /* タブレットサイズ */
-@media (max-width: 64rem) {
+@media (width <= 64rem) {
   .page-title {
     font-size: 5rem;
     top: 6rem;
@@ -72,11 +74,12 @@
 }
 
 /* モバイルサイズ */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .page-title {
     font-size: 4rem;
     top: 5.5rem;
     left: var(--spacing-md);
+
     /* モバイルビューでは縦書きのため180度回転 */
     transform: rotate(180deg);
     will-change: auto;
@@ -92,11 +95,12 @@
 }
 
 /* 小さなモバイルサイズ */
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .page-title {
     font-size: 3rem;
     top: 5rem;
     left: 0.75rem;
+
     /* モバイルビューでは縦書きのため180度回転 */
     transform: rotate(180deg);
     will-change: auto;
@@ -104,11 +108,12 @@
 }
 
 /* 非常に小さなモバイルサイズ */
-@media (max-width: 20rem) {
+@media (width <= 20rem) {
   .page-title {
     font-size: 2.5rem;
     top: 4.5rem;
     left: var(--spacing-sm);
+
     /* モバイルビューでは縦書きのため180度回転 */
     transform: rotate(180deg);
     will-change: auto;

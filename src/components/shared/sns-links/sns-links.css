@@ -19,6 +19,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  color: var(--color-muted); /* ベースカラー（統一されたグレー） */
 }
 
 .sns-link::before {
@@ -28,31 +29,19 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 0, 0, 0.05),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgb(0 0 0 / 5%), transparent);
   transition: left 0.5s;
 }
 
 .sns-link:hover {
   transform: translateY(-0.125rem) scale(1.1);
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);
+  background: transparent;
+  border-color: #d1d5db;
 }
 
 .sns-link:hover::before {
   left: 100%;
-}
-
-.sns-link {
-  color: var(--muted); /* ベースカラー（統一されたグレー） */
-}
-
-.sns-link:hover {
-  background: transparent;
-  border-color: #d1d5db;
 }
 
 .sns-link.twitter:hover {
@@ -64,17 +53,17 @@
 }
 
 /* Instagramアイコンの色制御 */
-.sns-link.instagram .instagram-icon {
+.sns-link__icon {
   filter: grayscale(100%) brightness(0.6) saturate(0); /* 通常時：他のアイコンと同じグレー */
-  opacity: 0.7; /* 他のアイコンと同じ透明度 */
+  opacity: 70%; /* 他のアイコンと同じ透明度 */
   transition:
     filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sns-link.instagram:hover .instagram-icon {
+.sns-link__icon:hover {
   filter: none; /* ホバー時：元の色（グラデーション） */
-  opacity: 1; /* ホバー時：完全に不透明 */
+  opacity: 100%; /* ホバー時：完全に不透明 */
 }
 
 .sns-link.github:hover {
@@ -93,7 +82,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .sns-links {
     gap: 0.75rem;
   }

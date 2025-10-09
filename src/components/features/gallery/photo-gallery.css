@@ -8,7 +8,7 @@
 .photo-gallery-empty {
   text-align: center;
   padding: 4rem 2rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .photo-gallery-empty p {
@@ -22,8 +22,8 @@
   border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 4/3;
-  background: var(--background);
-  border: 1px solid var(--primary-10);
+  background: var(--color-background);
+  border: 1px solid var(--color-primary-10);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -31,7 +31,7 @@
 
 .photo-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
 }
 
 .photo-image {
@@ -47,12 +47,9 @@
 
 .photo-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.85));
-  color: white;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgb(0 0 0 / 85%));
+  color: #fff;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -68,24 +65,21 @@
 .photo-place {
   font-size: 1rem;
   font-weight: 600;
-  color: white;
-  margin: 0 0 0.5rem 0;
+  color: #fff;
+  margin: 0 0 0.5rem;
 }
 
 .photo-date {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgb(255 255 255 / 90%);
   margin: 0;
 }
 
 /* モーダルスタイル */
 .photo-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  inset: 0;
+  background: rgb(0 0 0 / 90%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,18 +106,18 @@
 .modal-info {
   margin-top: 1.5rem;
   text-align: center;
-  color: white;
+  color: #fff;
 }
 
 .modal-place {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
 }
 
 .modal-date {
   font-size: 1rem;
-  opacity: 0.8;
+  opacity: 80%;
   margin: 0;
 }
 
@@ -133,7 +127,7 @@
   right: 0;
   background: none;
   border: none;
-  color: white;
+  color: #fff;
   font-size: 3rem;
   cursor: pointer;
   padding: 0;
@@ -146,16 +140,16 @@
 }
 
 .modal-close:hover {
-  opacity: 0.7;
+  opacity: 70%;
 }
 
 .modal-nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255 255 255 / 10%);
   border: none;
-  color: white;
+  color: #fff;
   font-size: 3rem;
   cursor: pointer;
   padding: 1rem 1.5rem;
@@ -165,7 +159,7 @@
 }
 
 .modal-nav:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(255 255 255 / 20%);
 }
 
 .modal-prev {
@@ -177,7 +171,7 @@
 }
 
 /* タブレット対応 */
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .photo-gallery {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.25rem;
@@ -193,7 +187,7 @@
 }
 
 /* モバイル対応 */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .photo-gallery {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
@@ -231,7 +225,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .photo-gallery {
     grid-template-columns: 1fr;
   }

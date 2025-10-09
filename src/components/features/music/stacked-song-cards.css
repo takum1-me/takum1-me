@@ -10,34 +10,34 @@
 }
 
 /* 768px以上でのレスポンシブ表示 */
-@media (min-width: 48rem) {
+@media (width >= 48rem) {
   .stacked-songs-container {
     max-width: 100%;
   }
 
   /* 1000px未満: 2個表示 */
-  @media (max-width: 62.4375rem) {
+  @media (width <= 62.4375rem) {
     .stacked-songs-container {
       max-width: 31.25rem;
     }
   }
 
   /* 1000px-1199px: 3個表示 */
-  @media (min-width: 62.5rem) and (max-width: 74.9375rem) {
+  @media (width >= 62.5rem) and (width <= 74.9375rem) {
     .stacked-songs-container {
       max-width: 43.75rem;
     }
   }
 
   /* 1200px-1399px: 4個表示 */
-  @media (min-width: 75rem) and (max-width: 87.4375rem) {
+  @media (width >= 75rem) and (width <= 87.4375rem) {
     .stacked-songs-container {
       max-width: 56.25rem;
     }
   }
 
   /* 1400px以上: 5個表示 */
-  @media (min-width: 87.5rem) {
+  @media (width >= 87.5rem) {
     .stacked-songs-container {
       max-width: 68.75rem;
     }
@@ -45,7 +45,7 @@
 }
 
 /* 初期状態ではモバイル表示を想定 */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .stacked-songs-container {
     height: 25rem;
     max-width: 100%;
@@ -90,6 +90,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
+
   /* 位置の安定化 */
   contain: layout;
 }
@@ -101,19 +102,19 @@
   cursor: pointer;
   border-radius: 0.75rem;
   overflow: hidden;
-  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.25rem 1.25rem rgb(0 0 0 / 15%);
   transform-style: preserve-3d;
   flex-shrink: 0;
-  opacity: 1;
+  opacity: 100%;
   will-change: transform;
   backface-visibility: hidden;
   transform-origin: center center;
 }
 
 /* 768px以上でのカードサイズ調整 */
-@media (min-width: 48rem) {
+@media (width >= 48rem) {
   /* 1000px未満: 2個表示 - カードサイズを大きく */
-  @media (max-width: 62.4375rem) {
+  @media (width <= 62.4375rem) {
     .stacked-song-card {
       width: 17.5rem;
       height: 17.5rem;
@@ -121,7 +122,7 @@
   }
 
   /* 1000px-1199px: 3個表示 - 標準サイズ */
-  @media (min-width: 62.5rem) and (max-width: 74.9375rem) {
+  @media (width >= 62.5rem) and (width <= 74.9375rem) {
     .stacked-song-card {
       width: 15rem;
       height: 15rem;
@@ -129,7 +130,7 @@
   }
 
   /* 1200px-1399px: 4個表示 - 少し小さく */
-  @media (min-width: 75rem) and (max-width: 87.4375rem) {
+  @media (width >= 75rem) and (width <= 87.4375rem) {
     .stacked-song-card {
       width: 13.75rem;
       height: 13.75rem;
@@ -137,7 +138,7 @@
   }
 
   /* 1400px以上: 5個表示 - さらに小さく */
-  @media (min-width: 87.5rem) {
+  @media (width >= 87.5rem) {
     .stacked-song-card {
       width: 12.5rem;
       height: 12.5rem;
@@ -157,8 +158,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: white;
+  background: linear-gradient(transparent, rgb(0 0 0 / 80%));
+  color: #fff;
   padding: var(--spacing-md);
   transform: translateY(100%);
 }
@@ -174,7 +175,7 @@
 
 .song-artist {
   font-size: 0.85rem;
-  opacity: 0.9;
+  opacity: 90%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -234,16 +235,16 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgb(255 255 255 / 30%);
   cursor: pointer;
   transition: all 0.6s ease;
 }
 
 .song-indicator.active {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(255 255 255 / 80%);
 }
 
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .song-overlay {
     padding: 0.75rem;
   }
@@ -282,7 +283,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .song-overlay {
     padding: var(--spacing-sm);
   }

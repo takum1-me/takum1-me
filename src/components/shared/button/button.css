@@ -15,8 +15,8 @@
 /* CTA Button styles (from index.astro) */
 .button-primary {
   background: transparent;
-  color: var(--secondary);
-  border: 2px solid var(--secondary);
+  color: var(--color-secondary);
+  border: 2px solid var(--color-secondary);
   position: relative;
   overflow: hidden;
   transition: color 0.2s ease 0.2s;
@@ -29,7 +29,7 @@
   left: 0;
   width: 100%;
   height: 0;
-  background: var(--secondary);
+  background: var(--color-secondary);
   z-index: 0;
   transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -40,7 +40,7 @@
 }
 
 .button-primary:hover {
-  color: white;
+  color: #fff;
 }
 
 .button-primary:hover::before {
@@ -49,8 +49,8 @@
 
 .button-secondary {
   background: transparent;
-  color: var(--text-primary);
-  border-color: var(--text-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
   position: relative;
   overflow: hidden;
   transition: color 0.2s ease 0.2s;
@@ -63,7 +63,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: var(--text-primary);
+  background: var(--color-text-primary);
   z-index: 0;
   transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -74,8 +74,8 @@
 }
 
 .button-secondary:hover {
-  color: white;
-  border-color: var(--text-primary);
+  color: #fff;
+  border-color: var(--color-text-primary);
 }
 
 .button-secondary:hover::before {
@@ -84,12 +84,12 @@
 
 /* Error page button styles (from 404.astro) */
 .button-error-primary {
-  color: var(--secondary);
-  background-color: none;
+  color: var(--color-secondary);
+  background-color: transparent;
 }
 
 .button-error-primary:hover {
-  color: white;
+  color: #fff;
 }
 
 /* Size variants */
@@ -109,14 +109,14 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .button {
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
   }
 }
 
-@media (max-width: 40rem) {
+@media (width <= 40rem) {
   .button {
     width: 100%;
     max-width: 12.5rem;

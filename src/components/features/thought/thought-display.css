@@ -1,9 +1,9 @@
 .thought-display {
   margin: var(--spacing-xl) 0;
   padding: var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255 255 255 / 10%);
   border-radius: 0.75rem;
-  border: 1px solid rgba(139, 69, 19, 0.1);
+  border: 1px solid rgb(139 69 19 / 10%);
   backdrop-filter: blur(0.625rem);
   transition: all 0.3s ease;
   max-width: 21.875rem;
@@ -15,48 +15,48 @@
 }
 
 .thought-display.clickable:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(139, 69, 19, 0.2);
+  background: rgb(255 255 255 / 15%);
+  border-color: rgb(139 69 19 / 20%);
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.5rem 1.5rem rgba(139, 69, 19, 0.1);
+  box-shadow: 0 0.5rem 1.5rem rgb(139 69 19 / 10%);
 }
 
 .thought-display.clickable:active {
   transform: translateY(-0.0625rem);
-  box-shadow: 0 0.25rem 0.75rem rgba(139, 69, 19, 0.15);
+  box-shadow: 0 0.25rem 0.75rem rgb(139 69 19 / 15%);
 }
 
 .thought-content {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: var(--text-secondary);
-  margin: 0 0 0.75rem 0;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
   font-weight: 400;
   font-style: italic;
 }
 
 .thought-date {
   font-size: 0.875rem;
-  color: var(--text-muted);
-  opacity: 0.8;
+  color: var(--color-text-muted);
+  opacity: 80%;
 }
 
 .thought-hint {
   font-size: 0.75rem;
-  color: var(--text-muted);
-  opacity: 0.6;
+  color: var(--color-text-muted);
+  opacity: 60%;
   display: block;
   margin-top: var(--spacing-sm);
   font-style: normal;
   transition: opacity 0.2s ease;
 }
 
-.thought-display.clickable:hover .thought-hint {
-  opacity: 0.8;
+.thought-hint--clickable:hover {
+  opacity: 80%;
 }
 
 /* モバイル対応 */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .thought-display {
     margin: var(--spacing-lg) 0;
     padding: 1.25rem;
@@ -76,7 +76,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .thought-display {
     margin: var(--spacing-md) 0;
     padding: var(--spacing-md);

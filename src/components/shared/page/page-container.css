@@ -49,7 +49,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 64rem) {
+@media (width <= 64rem) {
   .page-container-default,
   .page-container-blog,
   .page-container-about {
@@ -67,7 +67,7 @@
   }
 }
 
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .page-container-default,
   .page-container-about {
     max-width: calc(100vw - var(--spacing-xl));
@@ -90,7 +90,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .page-container-works {
     margin-left: 3.5rem;
   }
@@ -100,7 +100,7 @@
   }
 }
 
-@media (max-width: 20rem) {
+@media (width <= 20rem) {
   .page-container-works {
     margin-left: 2.5rem;
   }

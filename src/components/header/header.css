@@ -7,7 +7,7 @@
   z-index: 150;
   display: block;
   transition: opacity 0.4s ease;
-  opacity: 0;
+  opacity: 0%;
   pointer-events: auto;
   max-width: 100%;
   width: 100%;
@@ -15,22 +15,22 @@
 }
 
 .header-wrap.show {
-  opacity: 1;
+  opacity: 100%;
   transform: translateX(-50%);
 }
 
 .header-wrap.hide {
-  opacity: 0;
+  opacity: 0%;
   transform: translateX(-50%);
   pointer-events: auto;
 }
 
 .nav {
   position: relative;
-  background: rgba(250, 248, 245, 1);
+  background: rgb(250 248 245 / 100%);
   border: none;
   border-bottom: 0.0625rem solid #e5e7eb;
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 10%);
   border-radius: 0;
   display: flex;
   align-items: center;
@@ -47,7 +47,8 @@
   top: auto;
   left: auto;
   transform: none;
-  opacity: 1;
+  opacity: 100%;
+
   /* at-topクラスが付与された時はアニメーションを無効化 */
   transition: none;
 }
@@ -109,16 +110,16 @@
   transform-origin: 1px;
 }
 
-.hamburger-menu.active .hamburger-line:first-child {
+.hamburger-line--first.hamburger-line--active {
   transform: rotate(45deg);
 }
 
-.hamburger-menu.active .hamburger-line:nth-child(2) {
-  opacity: 0;
+.hamburger-line--second.hamburger-line--active {
+  opacity: 0%;
   transform: translateX(1.25rem);
 }
 
-.hamburger-menu.active .hamburger-line:nth-child(3) {
+.hamburger-line--third.hamburger-line--active {
   transform: rotate(-45deg);
 }
 
@@ -131,12 +132,12 @@
   width: 17.5rem;
   height: 100vh;
   max-height: 100vh;
-  background: rgba(250, 248, 245, 0.98);
+  background: rgb(250 248 245 / 98%);
   backdrop-filter: blur(0.625rem) saturate(140%);
   border-left: 0.0625rem solid #e5e7eb;
-  box-shadow: -0.125rem 0 0.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: -0.125rem 0 0.5rem rgb(0 0 0 / 10%);
   padding: var(--spacing-xl) var(--spacing-md);
-  opacity: 0;
+  opacity: 0%;
   transform: translateX(0);
   transition: all 0.3s ease;
   pointer-events: none;
@@ -148,7 +149,7 @@
 
 .mobile-menu.open {
   display: flex;
-  opacity: 1;
+  opacity: 100%;
   right: 0;
   transform: translateX(0);
   pointer-events: auto;
@@ -162,15 +163,15 @@
   left: -100vw;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
+  background: rgb(0 0 0 / 50%);
+  opacity: 0%;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: -1;
 }
 
 .mobile-menu.open::before {
-  opacity: 1;
+  opacity: 100%;
   pointer-events: auto;
 }
 
@@ -189,7 +190,7 @@ body.mobile-menu-open::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgb(0 0 0 / 30%);
   z-index: 150;
   pointer-events: none;
 }
@@ -213,12 +214,12 @@ body.mobile-menu-open::before {
 }
 
 .mobile-menu-close:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgb(0 0 0 / 10%);
 }
 
 .close-icon {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 700;
   color: #111827;
   line-height: 1;
 }
@@ -242,30 +243,6 @@ body.mobile-menu-open::before {
   position: relative;
 }
 
-/* モバイルメニューのホバーインジケーターの文字拡大を制限 */
-.mobile-header-links .indicator-button:hover {
-  transform: scale(1.03);
-  transition:
-    transform 0.2s ease-out,
-    color 0.2s ease-out;
-}
-
-.mobile-header-links .button-content:hover {
-  transform: scale(1.05);
-  transition: transform 0.2s ease-out;
-}
-
-/* BlogFilterと同じ背景付きスタイル */
-.mobile-header-links.with-background {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
-  padding: 0.75rem 0.75rem 0.75rem var(--spacing-lg);
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
 /* モバイルメニューのボタンコンテナ */
 .mobile-header-links .button-container {
   display: flex;
@@ -281,16 +258,40 @@ body.mobile-menu-open::before {
   padding: var(--spacing-md) 0 var(--spacing-md) var(--spacing-lg);
   text-align: left;
   width: 100%;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+  border-bottom: 1px solid rgb(229 231 235 / 30%);
   overflow: hidden;
   white-space: nowrap;
+}
+
+/* モバイルメニューのホバーインジケーターの文字拡大を制限 */
+.mobile-header-links .indicator-button:hover {
+  transform: scale(1.03);
+  transition:
+    transform 0.2s ease-out,
+    color 0.2s ease-out;
+}
+
+.mobile-header-links .button-content:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-out;
+}
+
+/* BlogFilterと同じ背景付きスタイル */
+.mobile-header-links.with-background {
+  background: rgb(255 255 255 / 95%);
+  box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 15%);
+  padding: 0.75rem 0.75rem 0.75rem var(--spacing-lg);
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* モバイルメニューのSNSセクション */
 .mobile-sns-section {
   margin-top: auto;
   padding-top: var(--spacing-md);
-  border-top: 1px solid rgba(229, 231, 235, 0.3);
+  border-top: 1px solid rgb(229 231 235 / 30%);
   position: relative;
 }
 
@@ -304,7 +305,7 @@ body.mobile-menu-open::before {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(229, 231, 235, 0.5),
+    rgb(229 231 235 / 50%),
     transparent
   );
 }
@@ -325,7 +326,7 @@ body.mobile-menu-open::before {
 }
 
 /* タブレットサイズ */
-@media (max-width: 64rem) {
+@media (width <= 64rem) {
   .header-wrap {
     margin-left: 0;
     max-width: 100%;
@@ -358,7 +359,7 @@ body.mobile-menu-open::before {
     top: auto;
     left: auto;
     transform: none;
-    opacity: 1;
+    opacity: 100%;
   }
 
   .header-wrap.at-top .container {
@@ -375,7 +376,7 @@ body.mobile-menu-open::before {
 }
 
 /* モバイルサイズ */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .header-wrap {
     margin-left: 0;
     max-width: 100%;
@@ -408,7 +409,7 @@ body.mobile-menu-open::before {
     top: auto;
     left: auto;
     transform: none;
-    opacity: 1;
+    opacity: 100%;
   }
 
   .header-wrap.at-top .container {
@@ -425,7 +426,7 @@ body.mobile-menu-open::before {
 }
 
 /* 小さなモバイルサイズ */
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .header-wrap {
     margin-left: 0;
     max-width: 100%;
@@ -458,7 +459,7 @@ body.mobile-menu-open::before {
     top: auto;
     left: auto;
     transform: none;
-    opacity: 1;
+    opacity: 100%;
   }
 
   .header-wrap.at-top .container {
@@ -475,7 +476,7 @@ body.mobile-menu-open::before {
 }
 
 /* 非常に小さなモバイルサイズ */
-@media (max-width: 20rem) {
+@media (width <= 20rem) {
   .header-wrap {
     margin-left: 0;
     max-width: 100%;
@@ -508,7 +509,7 @@ body.mobile-menu-open::before {
     top: auto;
     left: auto;
     transform: none;
-    opacity: 1;
+    opacity: 100%;
   }
 
   .header-wrap.at-top .container {

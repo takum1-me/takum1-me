@@ -1,7 +1,7 @@
 /* Footer component styles */
 .site-footer {
-  background: var(--background); /* サイトの背景色と同じ */
-  color: var(--muted);
+  background: var(--color-background); /* サイトの背景色と同じ */
+  color: var(--color-muted);
   padding: var(--spacing-xl) 0;
   margin-top: auto;
   border-top: 1px solid #e5e7eb;
@@ -10,7 +10,7 @@
 .footer-content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--gap);
+  padding: 0 var(--spacing-gap);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,12 +29,12 @@
 .footer-copyright p {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--muted);
+  color: var(--color-muted);
   font-weight: 400;
 }
 
 /* Responsive adjustments */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .site-footer {
     padding: var(--spacing-lg) 0;
   }
@@ -48,7 +48,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .site-footer {
     padding: 1.25rem 0;
   }

@@ -1,10 +1,7 @@
 .thought-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,14 +11,14 @@
 }
 
 .thought-modal {
-  background: var(--background);
+  background: var(--color-background);
   border-radius: var(--spacing-md);
-  box-shadow: 0 var(--spacing-md) var(--spacing-2xl) rgba(0, 0, 0, 0.3);
+  box-shadow: 0 var(--spacing-md) var(--spacing-2xl) rgb(0 0 0 / 30%);
   max-width: 37.5rem;
   width: 100%;
   max-height: 80vh;
   overflow: hidden;
-  border: 1px solid rgba(139, 69, 19, 0.1);
+  border: 1px solid rgb(139 69 19 / 10%);
 }
 
 .thought-modal-header {
@@ -29,14 +26,14 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg) var(--spacing-xl);
-  border-bottom: 1px solid rgba(139, 69, 19, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgb(139 69 19 / 10%);
+  background: rgb(255 255 255 / 5%);
 }
 
 .thought-modal-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -44,7 +41,7 @@
   background: none;
   border: none;
   font-size: var(--spacing-xl);
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 0;
   width: var(--spacing-xl);
@@ -57,8 +54,8 @@
 }
 
 .thought-modal-close:hover {
-  background: rgba(139, 69, 19, 0.1);
-  color: var(--text-primary);
+  background: rgb(139 69 19 / 10%);
+  color: var(--color-text-primary);
 }
 
 .thought-modal-content {
@@ -68,10 +65,11 @@
 }
 
 .thought-item {
+  position: relative;
   padding: 1.25rem;
   margin-bottom: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(139, 69, 19, 0.1);
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(139 69 19 / 10%);
   border-radius: 0.75rem;
   transition: all 0.2s ease;
 }
@@ -81,14 +79,14 @@
 }
 
 .thought-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(139, 69, 19, 0.15);
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(139 69 19 / 15%);
   transform: translateY(-0.0625rem);
 }
 
 .thought-item.active {
-  background: rgba(139, 69, 19, 0.1);
-  border-color: rgba(139, 69, 19, 0.2);
+  background: rgb(139 69 19 / 10%);
+  border-color: rgb(139 69 19 / 20%);
 }
 
 .thought-item.active::before {
@@ -96,30 +94,26 @@
   position: absolute;
   top: var(--spacing-sm);
   right: 0.75rem;
-  background: var(--primary);
-  color: white;
+  background: var(--color-primary);
+  color: #fff;
   font-size: 0.75rem;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--spacing-xs);
   font-weight: 500;
 }
 
-.thought-item {
-  position: relative;
-}
-
 .thought-item-content {
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--text-secondary);
-  margin: 0 0 0.75rem 0;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
   font-style: italic;
 }
 
 .thought-item-date {
   font-size: 0.875rem;
-  color: var(--text-muted);
-  opacity: 0.8;
+  color: var(--color-text-muted);
+  opacity: 80%;
 }
 
 /* スクロールバーのスタイリング */
@@ -128,21 +122,21 @@
 }
 
 .thought-modal-content::-webkit-scrollbar-track {
-  background: rgba(139, 69, 19, 0.1);
+  background: rgb(139 69 19 / 10%);
   border-radius: 3px;
 }
 
 .thought-modal-content::-webkit-scrollbar-thumb {
-  background: rgba(139, 69, 19, 0.3);
+  background: rgb(139 69 19 / 30%);
   border-radius: 3px;
 }
 
 .thought-modal-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 69, 19, 0.5);
+  background: rgb(139 69 19 / 50%);
 }
 
 /* モバイル対応 */
-@media (max-width: 47.9375rem) {
+@media (width <= 47.9375rem) {
   .thought-modal-overlay {
     padding: var(--spacing-sm);
   }
@@ -176,7 +170,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@media (width <= 30rem) {
   .thought-modal-header {
     padding: var(--spacing-md);
   }
