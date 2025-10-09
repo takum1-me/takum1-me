@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import PageTitle from "../components/shared/page/PageTitle";
 import PageContainer from "../components/shared/page/PageContainer";
 import Card, { CardHeader } from "../components/shared/card/Card";
-import SnsLinks from "../components/shared/sns-links/SnsLinks";
+import AboutSnsLinks from "../components/features/about/AboutSnsLinks";
 import CoffeeFlavorTag from "../components/features/coffee/CoffeeFlavorTag";
 import { aboutData } from "../data/about";
 import { organizations } from "../data/organizations";
@@ -11,7 +11,7 @@ import { qualifications } from "../data/qualifications";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
 import "../components/shared/card/card.css";
-import "../components/shared/sns-links/sns-links.css";
+import "../components/features/about/about-sns-links.css";
 import "../components/features/coffee/coffee-flavor-tag.css";
 ---
 
@@ -102,7 +102,7 @@ import "../components/features/coffee/coffee-flavor-tag.css";
             </Card>
         </div>
 
-        <SnsLinks />
+        <AboutSnsLinks client:load />
     </PageContainer>
 </Layout>
 

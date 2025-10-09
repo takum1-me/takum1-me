@@ -1,0 +1,132 @@
+/* AboutSnsLinks component styles - 四角いデザインでロゴが回転 */
+.about-sns-section {
+  text-align: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+
+.about-sns-section h2 {
+  margin: 0 0 var(--spacing-xl);
+  font-size: var(--spacing-xl);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.about-sns-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.about-sns-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: #fff;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  border: 1px solid #e2e8f0;
+  min-width: 10rem;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-sns-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 20%),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.about-sns-link:hover {
+  transform: translateY(-0.25rem) scale(1.05);
+  box-shadow: 0 0.5rem 1.5625rem rgb(0 0 0 / 15%);
+}
+
+.about-sns-link:hover::before {
+  left: 100%;
+}
+
+.about-sns-link--twitter {
+  color: var(--color-primary);
+}
+
+.about-sns-link--twitter:hover {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 0.5rem 1.5625rem var(--color-primary-15);
+}
+
+.about-sns-link--instagram {
+  color: #a68b5b;
+}
+
+.about-sns-link--instagram:hover {
+  background: #a68b5b;
+  color: #fff;
+  box-shadow: 0 0.5rem 1.5625rem rgb(166 139 91 / 30%);
+}
+
+.about-sns-link--github {
+  color: #6b5b47;
+}
+
+.about-sns-link--github:hover {
+  background: #6b5b47;
+  color: #fff;
+  box-shadow: 0 0.5rem 1.5625rem rgb(107 91 71 / 30%);
+}
+
+.about-sns-link svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-sns-link:hover svg {
+  transform: rotate(360deg) scale(1.1);
+}
+
+.about-sns-link span {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-sns-link:hover span {
+  transform: translateX(0.125rem);
+}
+
+/* Responsive adjustments */
+@media (width <= 47.9375rem) {
+  .about-sns-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .about-sns-links {
+    gap: var(--spacing-md);
+  }
+
+  .about-sns-link {
+    min-width: 8.75rem;
+    padding: 0.875rem 1.25rem;
+  }
+
+  .about-sns-link span {
+    font-size: 0.9rem;
+  }
+}
