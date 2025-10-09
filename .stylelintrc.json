@@ -1,0 +1,60 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "comment-empty-line-before": [
+      "always",
+      {
+        "except": ["first-nested"],
+        "ignore": ["stylelint-commands"]
+      }
+    ],
+    "custom-property-pattern": "^(color|font|spacing|transition|max|icon|scroll|page|footer)-[a-z0-9-]+$",
+    "declaration-no-important": true,
+    "declaration-property-value-no-unknown": true,
+    "length-zero-no-unit": true,
+    "max-nesting-depth": 3,
+    "no-descending-specificity": true,
+    "no-duplicate-selectors": true,
+    "selector-class-pattern": "^[a-z][a-z0-9-]*(__[a-z0-9-]+)?(--[a-z0-9-]+)?$",
+    "selector-max-id": 0,
+    "selector-max-specificity": "0,3,0",
+    "unit-allowed-list": [
+      "rem",
+      "em",
+      "%",
+      "vw",
+      "vh",
+      "vmin",
+      "vmax",
+      "dvw",
+      "dvh",
+      "lvw",
+      "lvh",
+      "svw",
+      "svh",
+      "deg",
+      "turn",
+      "grad",
+      "rad",
+      "s",
+      "ms",
+      "px",
+      "fr"
+    ],
+    "color-named": "never",
+    "color-no-hex": null,
+    "font-weight-notation": "numeric",
+    "alpha-value-notation": "percentage",
+    "color-function-notation": "modern",
+    "shorthand-property-no-redundant-values": true,
+    "declaration-block-no-redundant-longhand-properties": true,
+    "declaration-block-no-duplicate-properties": true,
+    "property-no-vendor-prefix": true,
+    "value-no-vendor-prefix": true,
+    "selector-no-vendor-prefix": true,
+    "media-feature-name-no-vendor-prefix": true,
+    "at-rule-no-vendor-prefix": true,
+    "media-feature-range-notation": "context",
+    "number-max-precision": 4
+  }
+}

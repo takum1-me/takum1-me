@@ -12,7 +12,10 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
-    "c-all": "npm run typecheck && npm run format && npm run lint",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
+    "lint:css:astro": "node check-astro-styles.js",
+    "c-all": "npm run typecheck && npm run format && npm run lint && npm run lint:css && npm run lint:css:astro",
     "prepare": "husky"
   },
   "dependencies": {
@@ -31,10 +34,13 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.3",
+    "postcss": "^8.5.6",
     "prettier": "3.6.2",
     "prettier-plugin-astro": "0.14.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "stylelint": "^16.25.0",
+    "stylelint-config-standard": "^39.0.1",
     "vite-plugin-svgr": "^4.5.0",
     "wrangler": "^4.32.0"
   }
