@@ -30,57 +30,54 @@ const { categories } = Astro.props;
     z-index: 1000;
     display: flex;
     justify-content: flex-start;
-    max-width: rem; /* PageTitleの幅に合わせる */
   }
 
-  .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 0.75rem 10rem 0.75rem 30xrem;
-    border-radius: 8px;
+  .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    background: rgb(255 255 255 / 95%);
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 15%);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
     max-width: 100%;
     overflow: hidden;
   }
 
-  .category-filter .blog-filter-hover-indicator .button-container {
-    padding: 0.15rem 0.3rem 0rem 0;
+  .blog-filter-hover-indicator .button-container {
+    padding: 0.15rem 0.3rem 0 0;
   }
 
-  .category-filter .blog-filter-hover-indicator .indicator-button {
+  .blog-filter-hover-indicator .indicator-button {
     padding: 0.3rem 0.5rem;
     white-space: nowrap;
   }
 
   /* タブレットサイズ */
-  @media (max-width: 1024px) {
+  @media (width <= 64rem) {
     .category-filter {
       bottom: 8rem; /* 画面の上部に移動 */
       left: 1.5rem;
-      max-width: 12rem; /* 横幅を広げる */
     }
     
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
       padding: 0.4rem 0.3rem;
       gap: 0.2rem;
     }
   }
 
-  @media (max-width: 47.9375rem) {
+  @media (width <= 47.9375rem) {
     .category-filter {
       bottom: 1rem;
       left: 1rem;
-      max-width: 8rem; /* 横幅を広げる */
     }
     
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.2rem;
       padding: 0.4rem 0.3rem;
     }
 
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.2rem;
@@ -88,14 +85,13 @@ const { categories } = Astro.props;
   }
 
   /* スマホサイズ */
-  @media (max-width: 768px) {
+  @media (width <= 48rem) {
     .category-filter {
       bottom: 0.75rem;
       left: 1rem;
-      max-width: 10rem; /* 横幅を広げる */
     }
     
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
       flex-direction: row;
       align-items: center;
       justify-content: center;
@@ -105,7 +101,7 @@ const { categories } = Astro.props;
       white-space: nowrap;
     }
 
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
       flex-direction: row;
       align-items: center;
       justify-content: center;
@@ -115,50 +111,48 @@ const { categories } = Astro.props;
   }
 
   /* 小さなスマホサイズ */
-  @media (max-width: 480px) {
+  @media (width <= 30rem) {
     .category-filter {
       bottom: 0.5rem;
       left: 0.75rem;
-      max-width: 8rem; /* 横幅を広げる */
     }
     
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
       gap: 0.1rem;
       padding: 0.3rem 0.15rem;
     }
 
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
       gap: 0.1rem;
     }
   }
 
   /* 非常に小さなスマホサイズ */
-  @media (max-width: 320px) {
+  @media (width <= 20rem) {
     .category-filter {
       bottom: 0.25rem;
       left: 0.5rem;
-      max-width: 6rem; /* 横幅を広げる */
     }
     
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.with-background {
       gap: 0.05rem;
       padding: 0.25rem 0.1rem;
     }
 
-    .category-filter .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
+    .blog-filter-hover-indicator.base-hover-indicator-nav.vertical {
       gap: 0.05rem;
     }
   }
 
-  @media (max-width: 767px) {
+  @media (width <= 47.9375rem) {
     .blog-filter-hover-indicator.filter-nav {
       flex-direction: column;
       gap: 0.3rem;
     }
 
     .blog-filter-hover-indicator .filter-button {
-      padding: 2px 12px;
-      font-size: 13px;
+      padding: 0.125rem 0.75rem;
+      font-size: 0.8125rem;
     }
   }
 </style>

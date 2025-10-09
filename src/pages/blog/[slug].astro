@@ -66,9 +66,9 @@ const formatDate = (dateString: string) => {
   
   .blog-container {
     display: flex;
-    gap: 40px;
+    gap: 2.5rem;
     align-items: flex-start;
-    max-width: var(--max-width);
+    max-width: var(--max-content-width);
     margin: 0 auto;
     padding: 0 2rem;
   }
@@ -91,10 +91,10 @@ const formatDate = (dateString: string) => {
     padding: 0;
   }
   
-  @media (max-width: 1024px) { 
+  @media (width <= 64rem) { 
     .blog-container { 
       flex-direction: column; 
-      gap: 20px;
+      gap: 1.25rem;
       max-width: none;
       padding: 0 1rem;
     }
@@ -110,56 +110,20 @@ const formatDate = (dateString: string) => {
       display: none; /* 小さい画面ではTOCを非表示 */
     }
   }
-  @media (min-width: 768px) {
-    .article-container { max-width: 760px; padding: 0 2rem; }
+  
+  @media (width >= 48rem) {
+    .article-container {
+      max-width: 47.5rem;
+      padding: 0 2rem;
+    }
   }
+  
   h1 {
-    color: var(--text-primary);
-  }
-  .article-content {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-
-    }
-    .published-date {
-      color: var(--text-primary);
-    }
-    /* content内の画像にスタイルを適用 */
-    img {
-      width: 100%;
-      height: auto;
-      max-width: 100%;
-      display: block;
-      margin: 1rem 0;
-    }
+    color: var(--color-text-primary);
   }
 
-  @media (max-width: 768px) {
-    .blog-container {
-      max-width: calc(100vw - 2rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 2rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
-  }
-
-  @media (max-width: 480px) {
-    .blog-container {
-      max-width: calc(100vw - 1.5rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 1.5rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
-  }
-
-  @media (max-width: 320px) {
-    .blog-container {
-      max-width: calc(100vw - 1rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 1rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
+  .article-content .published-date {
+    color: var(--color-text-primary);
   }
 
   /* サムネイル画像のレスポンシブ対応 */
@@ -169,36 +133,62 @@ const formatDate = (dateString: string) => {
     max-width: 100%;
   }
 
+  /* content内の画像にスタイルを適用 */
+  .article-content img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+    margin: 1rem 0;
+  }
+
+  @media (width <= 48rem) {
+    .blog-container {
+      max-width: calc(100vw - 2rem); /* 左マージンを小さくして右に伸ばす */
+      margin-left: 2rem;
+      margin-right: 0; /* 右マージンを削除 */
+    }
+  }
+
+  @media (width <= 30rem) {
+    .blog-container {
+      max-width: calc(100vw - 1.5rem); /* 左マージンを小さくして右に伸ばす */
+      margin-left: 1.5rem;
+      margin-right: 0; /* 右マージンを削除 */
+    }
+  }
+
+  @media (width <= 20rem) {
+    .blog-container {
+      max-width: calc(100vw - 1rem); /* 左マージンを小さくして右に伸ばす */
+      margin-left: 1rem;
+      margin-right: 0; /* 右マージンを削除 */
+    }
+  }
+
   .back {
     margin: 0.5rem 0 1rem;
   }
+
   .back a {
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
     text-decoration: none;
     font-weight: 600;
     position: relative;
-    background: linear-gradient(90deg, #374151 0%, #374151 0%, #9ca3af 0%, #9ca3af 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     transition: background 0.6s ease;
   }
+  
   .back a::after {
     content: '';
     position: absolute;
     width: 0;
-    height: 2px;
-    bottom: -2px;
+    height: 0.125rem;
+    bottom: -0.125rem;
     left: 0;
-    background-color: var(--text-primary);
+    background-color: var(--color-text-primary);
     transition: width 0.5s ease;
   }
-  .back a:hover {
-    background: linear-gradient(90deg, #374151 0%, #374151 100%, #374151 100%, #374151 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+
   .back a:hover::after {
     width: 100%;
   }
@@ -206,9 +196,11 @@ const formatDate = (dateString: string) => {
   /* ▼▼▼ ここから変更 ▼▼▼ */
   .title-date {
     display: flex;
+
     /* Flexboxを有効にする */
     justify-content: space-between; /* 両端に配置する */
     align-items: flex-end;
+
     /* 下端で揃える */
     gap: 1rem; /* タイトルと日付の間に最低限の隙間を設ける */
     margin-bottom: 1rem;
@@ -216,18 +208,20 @@ const formatDate = (dateString: string) => {
 
   .title-date h1 {
     margin: 0; /* h1のデフォルトマージンをリセット */
-    margin-bottom: 0;
+
     /* 元のmargin-bottomを削除 */
+    margin-bottom: 0;
   }
 
   .title-date p {
     /* position: absolute;
      を削除 */
     margin: 0;
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 700;
     white-space: nowrap;
+
     /* 日付が改行しないようにする */
     flex-shrink: 0; /* コンテナが狭くなっても日付部分が縮まないようにする */
     margin-bottom: 0.4rem;

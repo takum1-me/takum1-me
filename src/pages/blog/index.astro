@@ -95,13 +95,14 @@ const categories = [
     margin: 0 auto;
     margin-left: 5rem;
     padding: 0 1rem;
+
     /* background: #f8fafc; より落ち着いたグレー背景 */
     position: relative;
   }
 
 
   .blog-page h1 {
-    color: #8b7355;
+    color: var(--color-primary);
     margin-bottom: 2rem;
     text-align: center;
   }
@@ -115,13 +116,13 @@ const categories = [
     position: relative;
     z-index: 0;
     align-items: center;
-    max-width: 1000px;
+    max-width: 62.5rem;
     margin-left: auto;
     margin-right: auto;
   }
 
   /* すべての画面サイズで縦並びレイアウト */
-  @media (max-width: 767px) {
+  @media (width <= 47.9375rem) {
     .blog-grid {
       gap: 1.5rem;
       max-width: 100%;
@@ -143,21 +144,21 @@ const categories = [
   .no-blogs-content {
     text-align: center;
     padding: 3rem 2rem;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
     border: 1px solid #e2e8f0;
   }
 
   .no-blogs-content h3 {
-    color: #374151;
+    color: var(--color-text-primary);
     font-size: 1.5rem;
     font-weight: 600;
-    margin: 0 0 1rem 0;
+    margin: 0 0 1rem;
   }
 
   .no-blogs-content p {
-    color: var(--muted);
+    color: var(--color-muted);
     font-size: 1rem;
     margin: 0;
     line-height: 1.5;
@@ -189,17 +190,17 @@ const categories = [
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: #ffffff;
+    background: #fff;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
     border: 1px solid #e2e8f0;
   }
 
   .current-page {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #8b7355;
+    color: var(--color-primary);
     min-width: 1.5rem;
     text-align: center;
   }
@@ -207,13 +208,13 @@ const categories = [
   .separator {
     font-size: 1.2rem;
     font-weight: 300;
-    color: #9ca3af;
+    color: var(--color-muted);
   }
 
   .total-pages {
     font-size: 1.2rem;
     font-weight: 500;
-    color: var(--muted);
+    color: var(--color-muted);
     min-width: 1.5rem;
     text-align: center;
   }
@@ -224,22 +225,22 @@ const categories = [
     align-items: center;
     gap: 0.25rem;
     font-size: 0.9rem;
-    color: var(--muted);
+    color: var(--color-muted);
   }
 
   .count-number {
     font-size: 1.8rem;
     font-weight: 600;
-    color: #8b7355;
+    color: var(--color-primary);
     line-height: 1;
   }
 
   .count-label {
     font-size: 0.75rem;
     font-weight: 500;
-    color: #9ca3af;
+    color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.0313rem;
   }
 
 
@@ -250,21 +251,17 @@ const categories = [
     padding: 0.8rem 1.5rem;
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--color-muted);
     font-size: 1.4rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    border-radius: 8px;
-  }
-
-  .pagination-btn:hover:not(:disabled) {
-    color: #374151;
+    border-radius: 0.5rem;
   }
 
   .pagination-btn:disabled {
-    opacity: 0.3;
+    opacity: 30%;
     cursor: not-allowed;
     transform: none;
   }
@@ -273,39 +270,43 @@ const categories = [
     display: none;
   }
 
+  .pagination-btn:hover:not(:disabled) {
+    color: var(--color-text-primary);
+  }
+
   .next-btn {
     margin-left: 4rem;
   }
 
 
   /* タブレットサイズ */
-  @media (max-width: 1024px) {
+  @media (width <= 64rem) {
     .blog-page {
       margin-left: 5rem;
     }
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 48rem) {
     .blog-page {
       margin-left: 7rem;
     }
   }
 
   /* 小さなモバイルサイズ */
-  @media (max-width: 480px) {
+  @media (width <= 30rem) {
     .blog-page {
       margin-left: 3.5rem;
     }
   }
 
   /* 非常に小さなモバイルサイズ */
-  @media (max-width: 320px) {
+  @media (width <= 20rem) {
     .blog-page {
       margin-left: 2.5rem;
     }
   }
 
-  @media (max-width: 767px) {
+  @media (width <= 47.9375rem) {
     .pagination-container {
       display: none;
     }

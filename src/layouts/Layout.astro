@@ -100,21 +100,20 @@ const jsonldStringfy = JSON.stringify({
   </body>
   
   <style>
-    :root {
+    html {
       /* カラーパレット - より重い青系 */
-      --primary-blue: #0d31aa;      /* メインの青（より重い） */
-      --secondary-blue: #2563eb;    /* セカンダリの青 */
-      --accent-blue: #3b82f6;       /* アクセントの青 */
-      --light-blue: #60a5fa;        /* ライトブルー */
+      --color-primary-blue: #0d31aa;      /* メインの青（より重い） */
+      --color-secondary-blue: #2563eb;    /* セカンダリの青 */
+      --color-accent-blue: #3b82f6;       /* アクセントの青 */
+      --color-light-blue: #60a5fa;        /* ライトブルー */
     }
 
     html, body {
-      background: var(--background); /* クリーム色の背景 */
+      background: var(--color-background); /* クリーム色の背景 */
       min-height: 100vh;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      overflow-y: visible;
+      overflow: hidden visible;
     }
 
     body {
@@ -126,14 +125,15 @@ const jsonldStringfy = JSON.stringify({
     }
 
     .container {
-      max-width: var(--max-width);
+      max-width: var(--max-content-width);
       margin: 0 auto;
-      padding: 0 var(--gap);
+      padding: 0 var(--spacing-gap);
     }
 
     main {
-      padding: 32px 0 0 0;
+      padding: 2rem 0 0;
       flex: 1;
+
       /* PageTitleの右端とページコンテンツの左端を合わせ、ヘッダーの右端まで伸ばす */
       max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
       margin: 0 auto;
@@ -142,7 +142,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* 中程度のデスクトップサイズ */
-    @media (min-width: 1025px) and (max-width: 1399px) {
+    @media (64.0625rem <= width <= 87.4375rem) {
       main {
         flex: 1;
         max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
@@ -152,7 +152,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* 大きなデスクトップサイズ */
-    @media (min-width: 1400px) {
+    @media (width >= 87.5rem) {
       main {
         flex: 1;
         max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
@@ -162,7 +162,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* タブレットサイズ */
-    @media (max-width: 1024px) {
+    @media (width <= 64rem) {
       main {
         flex: 1;
         max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
@@ -172,7 +172,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* モバイルサイズ */
-    @media (max-width: 768px) {
+    @media (width <= 48rem) {
       main {
         flex: 1;
         max-width: calc(100vw - 2.5rem); /* 少し左に調整 */
@@ -182,7 +182,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* 小さなモバイルサイズ */
-    @media (max-width: 480px) {
+    @media (width <= 30rem) {
       main {
         flex: 1;
         max-width: calc(100vw - 2rem); /* 少し左に調整 */
@@ -192,7 +192,7 @@ const jsonldStringfy = JSON.stringify({
     }
 
     /* 非常に小さなモバイルサイズ */
-    @media (max-width: 320px) {
+    @media (width <= 20rem) {
       main {
         flex: 1;
         max-width: calc(100vw - 1.5rem); /* 少し左に調整 */
@@ -210,13 +210,13 @@ const jsonldStringfy = JSON.stringify({
     
     .main-content {
       /* padding-top: 5rem; ヘッダーの高さ分のマージンを追加 */
-      margin-right:0rem;
+      margin-right: 0;
       border-bottom: 1px solid #e5e7eb;
       padding-bottom: 1rem;
-      padding-top: 0rem;
+      padding-top: 0;
     }
     
-    @media (max-width: 768px) {
+    @media (width <= 48rem) {
       .main-content {
         /* padding-top: 4.5rem; モバイルでは少し小さく */
       }

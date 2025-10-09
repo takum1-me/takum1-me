@@ -33,7 +33,7 @@ import "../components/shared/button/button.css";
   .error-title {
     font-size: 8rem;
     font-weight: 900;
-    color: #333;
+    color: var(--color-text-primary);
     margin: 0;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -42,18 +42,18 @@ import "../components/shared/button/button.css";
   .error-subtitle {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #666;
-    margin: 1rem 0 0 0;
+    color: var(--color-text-secondary);
+    margin: 1rem 0 0;
     line-height: 1.3;
   }
 
   .error-message {
-    color: #888;
+    color: var(--color-muted);
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.6;
-    margin: 1.5rem 0 3rem 0;
-    max-width: 400px;
+    margin: 1.5rem 0 3rem;
+    max-width: 25rem;
   }
 
   .error-actions {
@@ -67,8 +67,8 @@ import "../components/shared/button/button.css";
     transition: all 0.3s ease;
     animation: pulse-button 2s ease-in-out infinite;
     background-color: transparent;
-    border: 2px solid var(--muted);
-    color: var(--muted);
+    border: 2px solid var(--color-muted);
+    color: var(--color-muted);
   }
 
   .button-error-primary::before {
@@ -78,7 +78,7 @@ import "../components/shared/button/button.css";
     left: 0;
     width: 0;
     height: 100%;
-    background-color: var(--muted);
+    background-color: var(--color-muted);
     transition: width 0.5s ease-in-out;
     z-index: -1;
     transform-origin: left center;
@@ -89,22 +89,23 @@ import "../components/shared/button/button.css";
   }
 
   .button-error-primary:hover {
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+    color: #fff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.5rem 1.5625rem rgb(107 114 128 / 30%);
   }
 
   @keyframes pulse-button {
     0%, 100% {
       transform: scale(1);
     }
+    
     50% {
       transform: scale(1.05);
     }
   }
 
   /* レスポンシブデザイン */
-  @media (max-width: 768px) {
+  @media (width <= 48rem) {
     .error-content {
       min-height: 50vh;
       padding: 1rem 0.5rem;
@@ -120,11 +121,11 @@ import "../components/shared/button/button.css";
 
     .error-message {
       font-size: 0.9rem;
-      margin: 1rem 0 2rem 0;
+      margin: 1rem 0 2rem;
     }
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 30rem) {
     .error-title {
       font-size: 4rem;
     }
