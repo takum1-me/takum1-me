@@ -196,6 +196,7 @@ export default function ArticleCard({
               ref: thumbnailRef,
               src: thumbnail.url,
               alt: title,
+              className: "card-thumbnail__img",
             })
           : React.createElement("div", {
               className: "card-thumbnail-placeholder",

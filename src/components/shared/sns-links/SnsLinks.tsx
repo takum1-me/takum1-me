@@ -41,7 +41,7 @@ const renderIcon = (variant: "twitter" | "instagram" | "github") => {
         <img
           src={InstagramIcon}
           alt="Instagram"
-          className="instagram-icon"
+          className="instagram-icon sns-link__icon"
           style={{
             width: "20px",
             height: "20px",

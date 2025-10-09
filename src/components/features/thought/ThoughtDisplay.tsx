@@ -49,7 +49,9 @@ export default function ThoughtDisplay({
       >
         <p className="thought-content">{currentThought.content}</p>
         <span className="thought-date">{currentThought.date}</span>
-        <span className="thought-hint">クリックして過去の一言を見る</span>
+        <span className="thought-hint thought-hint--clickable">
+          クリックして過去の一言を見る
+        </span>
       </div>
 
       {/* モーダルを直接ここに実装 */}

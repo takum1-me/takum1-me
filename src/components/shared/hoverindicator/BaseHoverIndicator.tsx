@@ -473,7 +473,7 @@ export default function BaseHoverIndicator({
             ref: (el: HTMLButtonElement | null) => {
               if (el) buttonRefs.current.set(item.id, el);
             },
-            className: "indicator-button",
+            className: `indicator-button${className.includes("vertical") ? " indicator-button--mobile-vertical" : ""}`,
             onClick: () => handleItemClick(item.id),
           },
           React.createElement(
