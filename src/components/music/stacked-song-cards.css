@@ -217,8 +217,9 @@
   box-sizing: border-box;
 }
 
+/* モバイルカードではオーバーレイを常に表示 */
 .stacked-song-card.mobile-card .song-overlay {
-  transform: translateY(0) !important;
+  transform: translateY(0);
 }
 
 /* インジケーター */
@@ -265,8 +266,9 @@
     box-sizing: border-box;
   }
 
+  /* モバイルカードではオーバーレイを常に表示 */
   .stacked-song-card.mobile-card .song-overlay {
-    transform: translateY(0) !important;
+    transform: translateY(0);
   }
 
   .stacked-songs-container.mobile-mode {
@@ -303,8 +305,9 @@
     box-sizing: border-box;
   }
 
+  /* モバイルカードではオーバーレイを常に表示 */
   .stacked-song-card.mobile-card .song-overlay {
-    transform: translateY(0) !important;
+    transform: translateY(0);
   }
 
   .stacked-songs-container.mobile-mode {

@@ -48,7 +48,8 @@
   left: auto;
   transform: none;
   opacity: 1;
-  transition: none !important; /* 切り替え時のアニメーションを無効化 */
+  /* at-topクラスが付与された時はアニメーションを無効化 */
+  transition: none;
 }
 
 .header-wrap.at-top .container {

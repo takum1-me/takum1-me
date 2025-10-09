@@ -77,7 +77,8 @@
     font-size: 4rem;
     top: 5.5rem;
     left: var(--spacing-md);
-    transform: rotate(180deg) !important;
+    /* モバイルビューでは縦書きのため180度回転 */
+    transform: rotate(180deg);
     will-change: auto;
   }
 
@@ -96,7 +97,8 @@
     font-size: 3rem;
     top: 5rem;
     left: 0.75rem;
-    transform: rotate(180deg) !important;
+    /* モバイルビューでは縦書きのため180度回転 */
+    transform: rotate(180deg);
     will-change: auto;
   }
 }
@@ -107,7 +109,8 @@
     font-size: 2.5rem;
     top: 4.5rem;
     left: var(--spacing-sm);
-    transform: rotate(180deg) !important;
+    /* モバイルビューでは縦書きのため180度回転 */
+    transform: rotate(180deg);
     will-change: auto;
   }
 }
