@@ -109,21 +109,22 @@ const categories = [
 
 
   .blog-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: 2rem;
     margin-top: 2rem;
     position: relative;
     z-index: 0;
-    align-items: center;
-    max-width: 62.5rem;
+    max-width: 75rem;
     margin-left: auto;
     margin-right: auto;
+    padding: 0 2rem;
   }
 
-  /* すべての画面サイズで縦並びレイアウト */
+  /* モバイル対応 */
   @media (width <= 47.9375rem) {
     .blog-grid {
+      grid-template-columns: 1fr;
       gap: 1.5rem;
       max-width: 100%;
       padding: 0 1rem;

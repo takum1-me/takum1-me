@@ -79,14 +79,39 @@ export default function ArticleCard({
   slug,
   category,
 }: ArticleCardProps) {
-  const [backgroundOpacity, setBackgroundOpacity] = React.useState(0.7);
+  const [overlayOpacity, setOverlayOpacity] = React.useState(0);
   const cardRef = useRef<HTMLElement>(null);
   const thumbnailRef = useRef<HTMLImageElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
+  // 初期ロードアニメーション
+  React.useEffect(() => {
+    if (cardRef.current && overlayRef.current) {
+      // オーバーレイの初期状態を設定
+      gsap.set(overlayRef.current, { y: "100%" });
+      
+      gsap.fromTo(
+        cardRef.current,
+        {
+          y: 50,
+          opacity: 0,
+          scale: 0.9,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          delay: Math.random() * 0.3, // ランダムな遅延で自然な表示
+        },
+      );
+    }
+  }, []);
+
   const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !contentRef.current)
+    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
       return;
 
     // 既存のアニメーションを停止
@@ -96,37 +121,39 @@ export default function ArticleCard({
 
     const card = cardRef.current;
     const thumbnail = thumbnailRef.current;
-    const content = contentRef.current;
+    const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
     tlRef.current
       .to(card, {
-        y: -4,
-        duration: 0.4,
+        y: -12,
+        scale: 1.02,
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        duration: 0.3,
         ease: "power2.out",
       })
       .to(
         thumbnail,
         {
-          scale: 1.05,
-          duration: 0.4,
+          scale: 1.15,
+          duration: 0.3,
           ease: "power2.out",
         },
         0,
       )
       .to(
-        content,
+        overlay,
         {
-          y: -2,
-          duration: 0.3,
+          y: 0,
+          duration: 0.4,
           ease: "power2.out",
         },
-        0.1,
+        0,
       );
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !contentRef.current)
+    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
       return;
 
     // 既存のアニメーションを停止
@@ -136,12 +163,14 @@ export default function ArticleCard({
 
     const card = cardRef.current;
     const thumbnail = thumbnailRef.current;
-    const content = contentRef.current;
+    const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
     tlRef.current
       .to(card, {
         y: 0,
+        scale: 1,
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         duration: 0.4,
         ease: "power2.out",
       })
@@ -155,10 +184,10 @@ export default function ArticleCard({
         0,
       )
       .to(
-        content,
+        overlay,
         {
-          y: 0,
-          duration: 0.3,
+          y: "100%",
+          duration: 0.4,
           ease: "power2.out",
         },
         0,
@@ -168,10 +197,10 @@ export default function ArticleCard({
   React.useEffect(() => {
     if (thumbnail?.url) {
       calculateImageBrightness(thumbnail.url).then((brightness) => {
-        // 明度が低い（暗い）場合は背景を白く（opacity: 1）
-        // 明度が高い（明るい）場合は背景を半透明（opacity: 0.7）
-        const opacity = brightness < 0.9 ? 1.0 : 0.7;
-        setBackgroundOpacity(opacity);
+        // 明度が低い（暗い）場合は背景を薄く（opacity: 0.8）
+        // 明度が高い（明るい）場合は背景を濃く（opacity: 0.9）
+        const opacity = brightness < 0.5 ? 0.8 : 0.9;
+        setOverlayOpacity(opacity);
       });
     }
   }, [thumbnail?.url]);
@@ -201,26 +230,26 @@ export default function ArticleCard({
           : React.createElement("div", {
               className: "card-thumbnail-placeholder",
             }),
-      ),
-      React.createElement(
-        "div",
-        {
-          ref: contentRef,
-          className: "card-content",
-          style: {
-            background: `rgba(255, 255, 255, ${backgroundOpacity})`,
-          },
-        },
-        React.createElement("h2", { className: "card-title" }, title),
         React.createElement(
           "div",
-          { className: "card-footer" },
-          summary &&
-            React.createElement("p", { className: "card-summary" }, summary),
+          {
+            ref: overlayRef,
+            className: "card-content",
+            style: {
+              background: `linear-gradient(transparent, rgba(0, 0, 0, ${overlayOpacity}))`,
+            },
+          },
+          React.createElement("h2", { className: "card-title" }, title),
           React.createElement(
-            "time",
-            { className: "card-date" },
-            formatDate(publishedAt),
+            "div",
+            { className: "card-footer" },
+            summary &&
+              React.createElement("p", { className: "card-summary" }, summary),
+            React.createElement(
+              "time",
+              { className: "card-date" },
+              formatDate(publishedAt),
+            ),
           ),
         ),
       ),
