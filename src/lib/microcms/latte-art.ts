@@ -47,9 +47,8 @@ export async function getLatteArtById(id: string): Promise<LatteArt> {
 }
 
 export async function getLatestLatteArts(
-  limit: number = 10
+  limit: number = 10,
 ): Promise<LatteArt[]> {
   const data = await fetchAll<LatteArt>("latte-bot?orders=-date");
   return data.contents.slice(0, limit);
 }
-

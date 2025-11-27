@@ -30,4 +30,3 @@ export async function getLatestSongs(limit: number = 10): Promise<Song[]> {
   const data = await fetchAll<Song>("songs?orders=-publishedAt");
   return data.contents.slice(0, limit);
 }
-

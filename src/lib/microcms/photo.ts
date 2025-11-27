@@ -31,4 +31,3 @@ export async function getLatestPhotos(limit: number = 10): Promise<Photo[]> {
   const data = await fetchAll<Photo>("photos?orders=-date");
   return data.contents.slice(0, limit);
 }
-

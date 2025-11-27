@@ -16,7 +16,7 @@ export interface MicroCMSResponse<T> {
 }
 
 export async function fetchAll<T>(
-  endpoint: string
+  endpoint: string,
 ): Promise<MicroCMSResponse<T>> {
   // 最初に1つだけのアイテムをフェッチしてtotalCountを取得
   const firstRes = await fetchWithAuth(`${endpoint}?limit=1`);
@@ -39,7 +39,7 @@ export async function fetchAll<T>(
 
   while (offset < totalCount) {
     const res = await fetchWithAuth(
-      `${endpoint}?limit=${limit}&offset=${offset}`
+      `${endpoint}?limit=${limit}&offset=${offset}`,
     );
     const data: MicroCMSResponse<T> = await res.json();
     allContents.push(...data.contents);

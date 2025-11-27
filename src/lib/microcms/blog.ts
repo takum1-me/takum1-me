@@ -47,4 +47,3 @@ export async function getLatestBlogs(limit: number = 5): Promise<Blog[]> {
   const data = await fetchAll<Blog>("blog?orders=-publishedAt");
   return data.contents.slice(0, limit);
 }
-
