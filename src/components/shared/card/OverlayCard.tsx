@@ -33,7 +33,7 @@ const calculateImageBrightness = (imageUrl: string): Promise<number> => {
       const ratio = Math.min(maxSize / img.width, maxSize / img.height);
       canvas.width = img.width * ratio;
       canvas.height = img.height * ratio;
-      
+
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // サンプリング：全てのピクセルではなく一部をサンプリング
@@ -98,7 +98,7 @@ export default function OverlayCard({
     if (cardRef.current && overlayRef.current) {
       // オーバーレイの初期状態を設定
       gsap.set(overlayRef.current, { y: "100%" });
-      
+
       gsap.fromTo(
         cardRef.current,
         {
@@ -143,7 +143,7 @@ export default function OverlayCard({
       .to(
         thumbnail,
         {
-          scale: 1.15,
+          scale: 1.05,
           duration: 0.3,
           ease: "power2.out",
         },
@@ -256,7 +256,11 @@ export default function OverlayCard({
             "div",
             { className: "card-footer" },
             subtitle &&
-              React.createElement("p", { className: "card-subtitle" }, subtitle),
+              React.createElement(
+                "p",
+                { className: "card-subtitle" },
+                subtitle,
+              ),
             date &&
               React.createElement(
                 "time",
