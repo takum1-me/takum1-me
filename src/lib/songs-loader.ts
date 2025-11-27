@@ -1,5 +1,5 @@
 // 楽曲データの動的読み込み
-import favoriteSongsUrls from "../data/favorite-songs-urls.json";
+import { getAllSongs } from "./microcms/song";
 
 export interface SongData {
   title: string;
@@ -57,6 +57,17 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
   }
 }
 
+// URLを正規化（https://がない場合は追加）
+function normalizeUrl(url: string): string {
+  if (!url) return url;
+  // 既にhttp://またはhttps://で始まっている場合はそのまま
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  // https://を追加
+  return `https://${url}`;
+}
+
 // 複数のApple Music URLから楽曲データを並列取得
 async function fetchMultipleSongs(urls: string[]): Promise<SongData[]> {
   const promises = urls.map((url) => fetchAppleMusicOGP(url));
@@ -66,6 +77,17 @@ async function fetchMultipleSongs(urls: string[]): Promise<SongData[]> {
 // 楽曲データを動的に取得
 export async function loadSongsData(): Promise<SongData[]> {
   try {
+    // microCMSから楽曲のリンクを取得
+    const songsResponse = await getAllSongs();
+    const favoriteSongsUrls = songsResponse.contents
+      .map((song) => song.link)
+      .filter((link): link is string => link !== undefined)
+      .map(normalizeUrl);
+
+    if (favoriteSongsUrls.length === 0) {
+      return [];
+    }
+
     return await fetchMultipleSongs(favoriteSongsUrls);
   } catch (error) {
     console.error("楽曲データの取得に失敗しました:", error);
