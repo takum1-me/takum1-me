@@ -1,0 +1,265 @@
+.latte-art-progress {
+  width: 100%;
+}
+
+.latte-art-progress-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-text-secondary);
+}
+
+.latte-art-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.latte-art-item {
+  background: var(--color-background);
+  border: 1px solid var(--color-primary-10);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.latte-art-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+}
+
+.latte-art-item.expanded {
+  border-color: var(--color-primary);
+}
+
+.latte-art-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.latte-art-item-main {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.latte-art-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--color-primary-5);
+}
+
+.latte-art-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.latte-art-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.latte-art-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.latte-art-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.latte-art-date {
+  font-weight: 500;
+}
+
+.latte-art-designs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.latte-art-design-tag {
+  background: var(--color-primary-10);
+  color: var(--color-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.latte-art-practice-count {
+  font-weight: 500;
+}
+
+.latte-art-expand-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: transform 0.6s ease;
+}
+
+.latte-art-item.expanded .latte-art-expand-icon {
+  transform: rotate(180deg);
+}
+
+.latte-art-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-primary-10);
+  overflow: hidden;
+  will-change: max-height, opacity, padding, margin;
+}
+
+.latte-art-details.opening {
+  animation: slide-down 0.6s ease forwards;
+}
+
+.latte-art-details.closing {
+  animation: slide-up 0.6s ease forwards;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0%;
+    max-height: 0;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  to {
+    opacity: 100%;
+    max-height: 2000px;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 100%;
+    max-height: 2000px;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  to {
+    opacity: 0%;
+    max-height: 0;
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
+.latte-art-detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.latte-art-detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.latte-art-detail-section h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.latte-art-detail-section p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.latte-art-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.latte-art-photo-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--color-primary-5);
+}
+
+.latte-art-photo-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary-5);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 100%;
+  }
+
+  50% {
+    opacity: 50%;
+  }
+}
+
+.latte-art-photos-grid img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+@media (width <= 48rem) {
+  .latte-art-item {
+    padding: 0.75rem;
+  }
+
+  .latte-art-photo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .latte-art-title {
+    font-size: 1rem;
+  }
+
+  .latte-art-meta {
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .latte-art-photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+  }
+}

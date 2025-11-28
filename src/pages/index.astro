@@ -1,18 +1,23 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PhotoGallery from "../components/features/gallery/PhotoGallery";
-import { getLatestPhotos } from "../lib/microcms";
+import { getLatestPhotos, getLatestLatteArts } from "../lib/microcms";
 import StackedSongCards from "../components/features/music/StackedSongCards";
+import LatteArtProgress from "../components/features/latte-art/LatteArtProgress";
 import { loadSongsData } from "../lib/songs-loader";
 import "../components/shared/card/overlay-card.css";
 import "../components/features/music/stacked-song-cards.css";
 import "../components/features/gallery/photo-gallery.css";
+import "../components/features/latte-art/latte-art-progress.css";
 
 // 最新の写真を取得
 const latestPhotos = await getLatestPhotos(9);
 
 // 楽曲データを動的に取得
 const songsData = await loadSongsData();
+
+// ラテアートの直近5件を取得
+const latestLatteArts = await getLatestLatteArts(5);
 ---
 
 <Layout title="takum1.me">
@@ -31,6 +36,18 @@ const songsData = await loadSongsData();
                  </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ラテアート進捗報告botセクション -->
+  <section class="latte-art-section">
+    <div class="latte-art-inner">
+      <div class="section-header">
+        <h2 class="section-title">ラテアート進捗報告bot</h2>
+        <p class="section-description">練習の記録</p>
+      </div>
+      
+      <LatteArtProgress latteArts={latestLatteArts} client:load />
     </div>
   </section>
 
@@ -244,6 +261,19 @@ const songsData = await loadSongsData();
       
     }
 
+    /* ラテアート進捗報告botセクションのスタイル */
+    .latte-art-section {
+      padding: 4rem 0;
+      background: var(--color-background);
+      border-top: 1px solid var(--color-primary-10);
+    }
+    
+    .latte-art-inner {
+      max-width: var(--max-content-width);
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
     /* フォトギャラリーセクションのスタイル */
     .photo-gallery-section {
       padding: 4rem 0;
@@ -278,6 +308,14 @@ const songsData = await loadSongsData();
     
     /* モバイル対応 */
     @media (width <= 48rem) {
+      .latte-art-section {
+        padding: 3rem 0;
+      }
+      
+      .latte-art-inner {
+        padding: 0 1rem;
+      }
+      
       .photo-gallery-section {
         padding: 3rem 0;
       }
@@ -290,7 +328,8 @@ const songsData = await loadSongsData();
         font-size: 2rem;
       }
       
-      .gallery-section-header {
+      .gallery-section-header,
+      .section-header {
         margin-bottom: 2rem;
       }
     }
