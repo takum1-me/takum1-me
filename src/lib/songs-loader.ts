@@ -60,15 +60,15 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
 // URLを正規化（https://がない場合は追加）
 function normalizeUrl(url: string): string {
   if (!url) return url;
-  
+
   // スペースをトリム
   let normalized = url.trim();
-  
+
   // 既にhttp://またはhttps://で始まっている場合はそのまま
   if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
     return normalized;
   }
-  
+
   // https://を追加
   return `https://${normalized}`;
 }
@@ -84,7 +84,7 @@ async function fetchMultipleSongs(urls: string[]): Promise<SongData[]> {
       return null;
     }
   });
-  
+
   const results = await Promise.all(promises);
   // nullを除外して返す
   return results.filter((result): result is SongData => result !== null);
@@ -95,7 +95,7 @@ export async function loadSongsData(): Promise<SongData[]> {
   try {
     // microCMSから楽曲のリンクを取得
     const songsResponse = await getAllSongs();
-    
+
     const favoriteSongsUrls = songsResponse.contents
       .map((song) => song.link)
       .filter((link): link is string => link !== undefined)

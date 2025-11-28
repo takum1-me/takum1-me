@@ -14,7 +14,6 @@ const SCROLL_TRIGGER = 200;
 export default function BlogToc() {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
-  const [isTocVisible, setIsTocVisible] = useState<boolean>(false);
   const tocRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Timeline | null>(null);
   const isTocVisibleRef = useRef<boolean>(false);
@@ -203,7 +202,6 @@ export default function BlogToc() {
     if (shouldShow !== currentVisible) {
       isTocVisibleRef.current = shouldShow; // refを即座に更新
       animateToc(shouldShow);
-      setIsTocVisible(shouldShow); // stateも更新（UI表示用）
     }
 
     updateActiveHeading(tocItemsRef.current);

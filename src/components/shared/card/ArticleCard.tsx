@@ -1,4 +1,3 @@
-import React from "react";
 import OverlayCard from "./OverlayCard";
 
 interface ArticleCardProps {

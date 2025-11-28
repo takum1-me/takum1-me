@@ -1,4 +1,3 @@
-import React from "react";
 import OverlayCard from "../../shared/card/OverlayCard";
 
 interface SongData {
