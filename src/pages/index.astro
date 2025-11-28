@@ -14,7 +14,15 @@ import "../components/features/latte-art/latte-art-progress.css";
 const latestPhotos = await getLatestPhotos(9);
 
 // 楽曲データを動的に取得
-const songsData = await loadSongsData();
+console.log("[index.astro] 楽曲データの取得を開始します");
+let songsData: Awaited<ReturnType<typeof loadSongsData>> = [];
+try {
+  songsData = await loadSongsData();
+  console.log("[index.astro] 楽曲データ取得完了:", songsData);
+} catch (error) {
+  console.error("[index.astro] 楽曲データの取得に失敗しました:", error);
+  songsData = [];
+}
 
 // ラテアートの直近5件を取得
 const latestLatteArts = await getLatestLatteArts(5);

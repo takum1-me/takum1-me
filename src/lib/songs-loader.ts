@@ -14,7 +14,7 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
     const response = await fetch(url);
     const html = await response.text();
 
-    // OGPタグを抽出
+    // OGPタグを抽出（元々動作していたシンプルな正規表現）
     const ogTitle = html.match(
       /<meta property="og:title" content="([^"]*)"\/?>/,
     )?.[1];
@@ -41,7 +41,7 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
       }
     }
 
-    // 画像URLを適切なサイズに調整（アスペクト比1.9:1を維持）
+    // 画像URLを適切なサイズに調整
     const artworkUrl =
       ogImage?.replace(/1200x630wp-60\.jpg$/, "600x315bb.jpg") || "";
 
@@ -60,18 +60,34 @@ async function fetchAppleMusicOGP(url: string): Promise<SongData> {
 // URLを正規化（https://がない場合は追加）
 function normalizeUrl(url: string): string {
   if (!url) return url;
+  
+  // スペースをトリム
+  let normalized = url.trim();
+  
   // 既にhttp://またはhttps://で始まっている場合はそのまま
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return normalized;
   }
+  
   // https://を追加
-  return `https://${url}`;
+  return `https://${normalized}`;
 }
 
 // 複数のApple Music URLから楽曲データを並列取得
 async function fetchMultipleSongs(urls: string[]): Promise<SongData[]> {
-  const promises = urls.map((url) => fetchAppleMusicOGP(url));
-  return Promise.all(promises);
+  const promises = urls.map(async (url) => {
+    try {
+      return await fetchAppleMusicOGP(url);
+    } catch (error) {
+      console.error(`[songs-loader] 楽曲データ取得エラー (${url}):`, error);
+      // エラーが発生してもnullを返して続行
+      return null;
+    }
+  });
+  
+  const results = await Promise.all(promises);
+  // nullを除外して返す
+  return results.filter((result): result is SongData => result !== null);
 }
 
 // 楽曲データを動的に取得
@@ -79,6 +95,7 @@ export async function loadSongsData(): Promise<SongData[]> {
   try {
     // microCMSから楽曲のリンクを取得
     const songsResponse = await getAllSongs();
+    
     const favoriteSongsUrls = songsResponse.contents
       .map((song) => song.link)
       .filter((link): link is string => link !== undefined)
