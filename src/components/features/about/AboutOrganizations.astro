@@ -1,0 +1,137 @@
+---
+import Card, { CardHeader } from "../../shared/card/Card";
+import type { AboutItem } from "../../../lib/microcms";
+import { formatPeriod, formatRolePeriod } from "./date-utils";
+import "../../shared/card/card.css";
+
+interface Props {
+  organizations: AboutItem[];
+}
+
+const { organizations } = Astro.props;
+---
+
+<Card variant="organizations">
+  <CardHeader>
+    <h2>所属</h2>
+  </CardHeader>
+  <div class="organizations-list">
+    {organizations.map(organization => (
+      <div class="organization-item">
+        <h3>
+          {organization.link ? (
+            <a href={organization.link} target="_blank" rel="noopener noreferrer">
+              <span>{organization.title}</span>
+            </a>
+          ) : (
+            <span>{organization.title}</span>
+          )}
+        </h3>
+        {organization.beginDate && (
+          <span class="organization-period">
+            {formatPeriod(organization.beginDate, organization.finishDate)}
+          </span>
+        )}
+        {organization.specific && (
+          <div class="role">
+            {organization.specific}
+            {organization.specificBeiginDate && (
+              `（${formatRolePeriod(organization.specificBeiginDate, organization.specificFinishDate)}）`
+            )}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</Card>
+
+<style>
+  .organizations-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .organization-item {
+    padding: 1.5rem;
+    background: transparent;
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--color-primary);
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .organization-item h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .organization-item h3 a {
+    color: #1e293b;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 0.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+
+  .organization-item h3 a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--color-primary);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+  }
+
+  .organization-item h3 a span {
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  .organization-item h3 a:hover {
+    color: #fff;
+  }
+
+  .organization-item h3 a:hover span {
+    color: #fff;
+  }
+
+  .organization-item h3 a:hover::before {
+    width: 100%;
+  }
+
+  .organization-period {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+
+  .role {
+    color: var(--color-primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    background: var(--color-primary-10);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1.25rem;
+    display: inline-block;
+  }
+
+  @media (width <= 48rem) {
+    .organizations-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

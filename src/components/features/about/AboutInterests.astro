@@ -1,0 +1,182 @@
+---
+import Card, { CardHeader } from "../../shared/card/Card";
+import CoffeeFlavorTag from "../coffee/CoffeeFlavorTag";
+import { aboutData } from "../../../data/about";
+import type { AboutItem } from "../../../lib/microcms";
+import "../../shared/card/card.css";
+import "../coffee/coffee-flavor-tag.css";
+
+interface Props {
+  favoriteItems: AboutItem[];
+  favoriteCoffees: AboutItem[];
+  favoriteFlavors: AboutItem[];
+  interests: AboutItem[];
+}
+
+const { favoriteItems, favoriteCoffees, favoriteFlavors, interests } = Astro.props;
+---
+
+<Card variant="interests">
+  <CardHeader>
+    <h2>趣味・関心</h2>
+  </CardHeader>
+  
+  <div class="coffee-section">
+    <h3>{aboutData.coffee.title}</h3>
+    <p class="coffee-description">
+      {aboutData.coffee.description}
+    </p>
+    
+    <div class="coffee-equipment">
+      <h4>使用器具</h4>
+      <div class="equipment-tags">
+        {favoriteItems.length > 0 ? (
+          favoriteItems.map(item => (
+            <span class="equipment-tag">{item.title}</span>
+          ))
+        ) : (
+          aboutData.coffee.equipment.map(equipment => (
+            <span class="equipment-tag">{equipment.name}</span>
+          ))
+        )}
+      </div>
+    </div>
+
+    <div class="coffee-preferences">
+      <h4>お気に入りの産地・品種</h4>
+      <div class="preference-tags">
+        {favoriteCoffees.length > 0 ? (
+          favoriteCoffees.map(item => (
+            <span class="preference-tag">{item.title}</span>
+          ))
+        ) : (
+          aboutData.coffee.preferences.map(preference => (
+            <span class="preference-tag">{preference.name}</span>
+          ))
+        )}
+      </div>
+    </div>
+
+    <div class="coffee-flavors">
+      <h4>好きなフレーバー</h4>
+      <div class="flavor-tags-container">
+        {favoriteFlavors.length > 0 ? (
+          favoriteFlavors.map(item => (
+            <CoffeeFlavorTag flavorName={item.title} client:load />
+          ))
+        ) : (
+          aboutData.coffee.favoriteFlavors.map(flavor => (
+            <CoffeeFlavorTag flavorName={flavor.name} client:load />
+          ))
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="other-interests">
+    <h3>{aboutData.otherInterests.title}</h3>
+    <div class="interest-tags">
+      {interests.length > 0 ? (
+        interests.map(item => (
+          <span class="interest-tag">{item.title}</span>
+        ))
+      ) : (
+        aboutData.otherInterests.interests.map(interest => (
+          <span class="interest-tag">{interest.name}</span>
+        ))
+      )}
+    </div>
+  </div>
+</Card>
+
+<style>
+  .coffee-section {
+    margin-bottom: 2rem;
+  }
+
+  .coffee-section h3 {
+    color: var(--color-primary);
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .coffee-description {
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .coffee-equipment,
+  .coffee-preferences,
+  .coffee-flavors {
+    margin-bottom: 1.5rem;
+  }
+
+  .coffee-equipment h4,
+  .coffee-preferences h4,
+  .coffee-flavors h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .equipment-tags,
+  .preference-tags,
+  .flavor-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .equipment-tag,
+  .preference-tag {
+    background: transparent;
+    color: var(--color-text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 2px solid #e2e8f0;
+  }
+
+  .preference-tag {
+    background: transparent;
+    color: var(--color-primary);
+    border-color: #d4c4a8;
+  }
+
+  .other-interests h3 {
+    color: var(--color-primary);
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .interest-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .interest-tag {
+    background: transparent;
+    color: #475569;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 2px solid #e2e8f0;
+  }
+
+  @media (width <= 48rem) {
+    .equipment-tags,
+    .preference-tags,
+    .interest-tags,
+    .flavor-tags-container {
+      justify-content: center;
+    }
+  }
+</style>
+

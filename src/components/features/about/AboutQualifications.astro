@@ -1,0 +1,72 @@
+---
+import Card, { CardHeader } from "../../shared/card/Card";
+import type { AboutItem } from "../../../lib/microcms";
+import { formatDate } from "./date-utils";
+import "../../shared/card/card.css";
+
+interface Props {
+  certifications: AboutItem[];
+}
+
+const { certifications } = Astro.props;
+---
+
+<Card variant="qualifications">
+  <CardHeader>
+    <h2>資格</h2>
+  </CardHeader>
+  <div class="qualifications-list">
+    {certifications.map(certification => (
+      <div class="qualification-item">
+        <span class="qualification-name">{certification.title}</span>
+        {certification.beginDate && (
+          <span class="qualification-date">{formatDate(certification.beginDate)}</span>
+        )}
+      </div>
+    ))}
+  </div>
+</Card>
+
+<style>
+  .qualifications-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+    gap: 1rem;
+  }
+
+  .qualification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: transparent;
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--color-primary);
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .qualification-name {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .qualification-date {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.25rem 0;
+  }
+
+  @media (width <= 48rem) {
+    .qualifications-list {
+      grid-template-columns: 1fr;
+    }
+    
+    .qualification-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
