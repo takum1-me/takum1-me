@@ -6,13 +6,58 @@ import Card, { CardHeader } from "../components/shared/card/Card";
 import AboutSnsLinks from "../components/features/about/AboutSnsLinks";
 import CoffeeFlavorTag from "../components/features/coffee/CoffeeFlavorTag";
 import { aboutData } from "../data/about";
-import { organizations } from "../data/organizations";
-import { qualifications } from "../data/qualifications";
+import { getAllAbout, type AboutItem } from "../lib/microcms";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
 import "../components/shared/card/card.css";
 import "../components/features/about/about-sns-links.css";
 import "../components/features/coffee/coffee-flavor-tag.css";
+
+// microCMSからデータを取得
+let aboutItems: AboutItem[] = [];
+try {
+  const response = await getAllAbout();
+  aboutItems = response.contents;
+} catch (error) {
+  // 環境変数が設定されていない場合は空配列を使用
+  console.error("Failed to fetch about data:", error);
+}
+
+// genreで分類
+const favoriteItems = aboutItems.filter(item => item.genre.includes("favorite-item"));
+const favoriteCoffees = aboutItems.filter(item => item.genre.includes("favorite-coffee"));
+const favoriteFlavors = aboutItems.filter(item => item.genre.includes("favorite-flavor"));
+const interests = aboutItems.filter(item => item.genre.includes("interest"));
+const organizations = aboutItems.filter(item => item.genre.includes("organization"));
+const certifications = aboutItems.filter(item => item.genre.includes("certification"));
+
+// 日付フォーマット関数
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  return `${year}年${month}月`;
+};
+
+const formatPeriod = (beginDate?: string, finishDate?: string): string => {
+  if (!beginDate) return "";
+  const begin = formatDate(beginDate);
+  if (finishDate) {
+    const finish = formatDate(finishDate);
+    return `${begin}〜${finish}`;
+  }
+  return `${begin}〜`;
+};
+
+const formatRolePeriod = (specificBeginDate?: string, specificFinishDate?: string): string => {
+  if (!specificBeginDate) return "";
+  const begin = formatDate(specificBeginDate);
+  if (specificFinishDate) {
+    const finish = formatDate(specificFinishDate);
+    return `${begin}〜${finish}`;
+  }
+  return `${begin}〜`;
+};
 ---
 
 <Layout title="About">
@@ -33,27 +78,45 @@ import "../components/features/coffee/coffee-flavor-tag.css";
                     <div class="coffee-equipment">
                         <h4>使用器具</h4>
                         <div class="equipment-tags">
-                            {aboutData.coffee.equipment.map(equipment => (
-                                <span class="equipment-tag">{equipment.name}</span>
-                            ))}
+                            {favoriteItems.length > 0 ? (
+                                favoriteItems.map(item => (
+                                    <span class="equipment-tag">{item.title}</span>
+                                ))
+                            ) : (
+                                aboutData.coffee.equipment.map(equipment => (
+                                    <span class="equipment-tag">{equipment.name}</span>
+                                ))
+                            )}
                         </div>
                     </div>
 
                     <div class="coffee-preferences">
                         <h4>お気に入りの産地・品種</h4>
                         <div class="preference-tags">
-                            {aboutData.coffee.preferences.map(preference => (
-                                <span class="preference-tag">{preference.name}</span>
-                            ))}
+                            {favoriteCoffees.length > 0 ? (
+                                favoriteCoffees.map(item => (
+                                    <span class="preference-tag">{item.title}</span>
+                                ))
+                            ) : (
+                                aboutData.coffee.preferences.map(preference => (
+                                    <span class="preference-tag">{preference.name}</span>
+                                ))
+                            )}
                         </div>
                     </div>
 
                     <div class="coffee-flavors">
                         <h4>好きなフレーバー</h4>
                         <div class="flavor-tags-container">
-                            {aboutData.coffee.favoriteFlavors.map(flavor => (
-                                <CoffeeFlavorTag flavorName={flavor.name} client:load />
-                            ))}
+                            {favoriteFlavors.length > 0 ? (
+                                favoriteFlavors.map(item => (
+                                    <CoffeeFlavorTag flavorName={item.title} client:load />
+                                ))
+                            ) : (
+                                aboutData.coffee.favoriteFlavors.map(flavor => (
+                                    <CoffeeFlavorTag flavorName={flavor.name} client:load />
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
@@ -61,9 +124,15 @@ import "../components/features/coffee/coffee-flavor-tag.css";
                 <div class="other-interests">
                     <h3>{aboutData.otherInterests.title}</h3>
                     <div class="interest-tags">
-                        {aboutData.otherInterests.interests.map(interest => (
-                            <span class="interest-tag">{interest.name}</span>
-                        ))}
+                        {interests.length > 0 ? (
+                            interests.map(item => (
+                                <span class="interest-tag">{item.title}</span>
+                            ))
+                        ) : (
+                            aboutData.otherInterests.interests.map(interest => (
+                                <span class="interest-tag">{interest.name}</span>
+                            ))
+                        )}
                     </div>
                 </div>
             </Card>
@@ -76,12 +145,27 @@ import "../components/features/coffee/coffee-flavor-tag.css";
                     {organizations.map(organization => (
                         <div class="organization-item">
                             <h3>
-                                <a href={organization.url} target="_blank" rel="noopener noreferrer">
-                                    <span>{organization.name}</span>
-                                </a>
+                                {organization.link ? (
+                                    <a href={organization.link} target="_blank" rel="noopener noreferrer">
+                                        <span>{organization.title}</span>
+                                    </a>
+                                ) : (
+                                    <span>{organization.title}</span>
+                                )}
                             </h3>
-                            <span class="organization-period">{organization.period}</span>
-                            {organization.role && <div class="role">{organization.role}</div>}
+                            {organization.beginDate && (
+                                <span class="organization-period">
+                                    {formatPeriod(organization.beginDate, organization.finishDate)}
+                                </span>
+                            )}
+                            {organization.specific && (
+                                <div class="role">
+                                    {organization.specific}
+                                    {organization.specificBeiginDate && (
+                                        `（${formatRolePeriod(organization.specificBeiginDate, organization.specificFinishDate)}）`
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -92,10 +176,12 @@ import "../components/features/coffee/coffee-flavor-tag.css";
                     <h2>資格</h2>
                 </CardHeader>
                 <div class="qualifications-list">
-                    {qualifications.map(qualification => (
+                    {certifications.map(certification => (
                         <div class="qualification-item">
-                            <span class="qualification-name">{qualification.name}</span>
-                            <span class="qualification-date">{qualification.date}</span>
+                            <span class="qualification-name">{certification.title}</span>
+                            {certification.beginDate && (
+                                <span class="qualification-date">{formatDate(certification.beginDate)}</span>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -132,7 +218,7 @@ import "../components/features/coffee/coffee-flavor-tag.css";
     }
 
     .qualification-name {
-        font-weight: 500;
+        font-weight: 600;
         color: #1e293b;
     }
 

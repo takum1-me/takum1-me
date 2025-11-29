@@ -9,3 +9,6 @@ export * from "./microcms/latte-art";
 
 // Song API
 export * from "./microcms/song";
+
+// About API
+export * from "./microcms/about";
