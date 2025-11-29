@@ -34,4 +34,3 @@ export interface AboutResponse {
 export async function getAllAbout(): Promise<AboutResponse> {
   return fetchAll<AboutItem>("about");
 }
-

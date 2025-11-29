@@ -5,7 +5,10 @@ export const formatDate = (dateString: string): string => {
   return `${year}年${month}月`;
 };
 
-export const formatPeriod = (beginDate?: string, finishDate?: string): string => {
+export const formatPeriod = (
+  beginDate?: string,
+  finishDate?: string,
+): string => {
   if (!beginDate) return "";
   const begin = formatDate(beginDate);
   if (finishDate) {
@@ -15,7 +18,10 @@ export const formatPeriod = (beginDate?: string, finishDate?: string): string =>
   return `${begin}〜`;
 };
 
-export const formatRolePeriod = (specificBeginDate?: string, specificFinishDate?: string): string => {
+export const formatRolePeriod = (
+  specificBeginDate?: string,
+  specificFinishDate?: string,
+): string => {
   if (!specificBeginDate) return "";
   const begin = formatDate(specificBeginDate);
   if (specificFinishDate) {
@@ -24,4 +30,3 @@ export const formatRolePeriod = (specificBeginDate?: string, specificFinishDate?
   }
   return `${begin}〜`;
 };
-

@@ -1,7 +1,6 @@
 ---
 import Card, { CardHeader } from "../../shared/card/Card";
 import CoffeeFlavorTag from "../coffee/CoffeeFlavorTag";
-import { aboutData } from "../../../data/about";
 import type { AboutItem } from "../../../lib/microcms";
 import "../../shared/card/card.css";
 import "../coffee/coffee-flavor-tag.css";
@@ -22,69 +21,45 @@ const { favoriteItems, favoriteCoffees, favoriteFlavors, interests } = Astro.pro
   </CardHeader>
   
   <div class="coffee-section">
-    <h3>{aboutData.coffee.title}</h3>
+    <h3>コーヒー</h3>
     <p class="coffee-description">
-      {aboutData.coffee.description}
+      ドリップにはCT62を使用しています。ローストにも挑戦しており、特に浅煎りが好きです。
     </p>
     
     <div class="coffee-equipment">
       <h4>使用器具</h4>
       <div class="equipment-tags">
-        {favoriteItems.length > 0 ? (
-          favoriteItems.map(item => (
-            <span class="equipment-tag">{item.title}</span>
-          ))
-        ) : (
-          aboutData.coffee.equipment.map(equipment => (
-            <span class="equipment-tag">{equipment.name}</span>
-          ))
-        )}
+        {favoriteItems.map(item => (
+          <span class="equipment-tag">{item.title}</span>
+        ))}
       </div>
     </div>
 
     <div class="coffee-preferences">
       <h4>お気に入りの産地・品種</h4>
       <div class="preference-tags">
-        {favoriteCoffees.length > 0 ? (
-          favoriteCoffees.map(item => (
-            <span class="preference-tag">{item.title}</span>
-          ))
-        ) : (
-          aboutData.coffee.preferences.map(preference => (
-            <span class="preference-tag">{preference.name}</span>
-          ))
-        )}
+        {favoriteCoffees.map(item => (
+          <span class="preference-tag">{item.title}</span>
+        ))}
       </div>
     </div>
 
     <div class="coffee-flavors">
       <h4>好きなフレーバー</h4>
       <div class="flavor-tags-container">
-        {favoriteFlavors.length > 0 ? (
-          favoriteFlavors.map(item => (
-            <CoffeeFlavorTag flavorName={item.title} client:load />
-          ))
-        ) : (
-          aboutData.coffee.favoriteFlavors.map(flavor => (
-            <CoffeeFlavorTag flavorName={flavor.name} client:load />
-          ))
-        )}
+        {favoriteFlavors.map(item => (
+          <CoffeeFlavorTag flavorName={item.title} client:load />
+        ))}
       </div>
     </div>
   </div>
 
   <div class="other-interests">
-    <h3>{aboutData.otherInterests.title}</h3>
+    <h3>その他の関心分野</h3>
     <div class="interest-tags">
-      {interests.length > 0 ? (
-        interests.map(item => (
-          <span class="interest-tag">{item.title}</span>
-        ))
-      ) : (
-        aboutData.otherInterests.interests.map(interest => (
-          <span class="interest-tag">{interest.name}</span>
-        ))
-      )}
+      {interests.map(item => (
+        <span class="interest-tag">{item.title}</span>
+      ))}
     </div>
   </div>
 </Card>
