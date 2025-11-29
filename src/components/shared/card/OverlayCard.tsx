@@ -9,6 +9,7 @@ interface OverlayCardProps {
   imageAlt?: string;
   onClick?: () => void;
   href?: string;
+  isExternal?: boolean;
   className?: string;
   dataCategory?: string;
 }
@@ -84,6 +85,7 @@ export default function OverlayCard({
   imageAlt,
   onClick,
   href,
+  isExternal = false,
   className = "",
   dataCategory,
 }: OverlayCardProps) {
@@ -119,7 +121,7 @@ export default function OverlayCard({
   }, []);
 
   const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
+    if (!cardRef.current || !overlayRef.current)
       return;
 
     // 既存のアニメーションを停止
@@ -132,15 +134,19 @@ export default function OverlayCard({
     const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
-    tlRef.current
-      .to(card, {
-        y: -12,
-        scale: 1.02,
-        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-        duration: 0.3,
-        ease: "power2.out",
-      })
-      .to(
+    
+    // カードのアニメーション
+    tlRef.current.to(card, {
+      y: -12,
+      scale: 1.02,
+      boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+      duration: 0.3,
+      ease: "power2.out",
+    });
+    
+    // サムネイルがある場合のみスケールアニメーション
+    if (thumbnail) {
+      tlRef.current.to(
         thumbnail,
         {
           scale: 1.05,
@@ -148,20 +154,23 @@ export default function OverlayCard({
           ease: "power2.out",
         },
         0,
-      )
-      .to(
-        overlay,
-        {
-          y: 0,
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        0,
       );
+    }
+    
+    // オーバーレイのアニメーション
+    tlRef.current.to(
+      overlay,
+      {
+        y: 0,
+        duration: 0.4,
+        ease: "power2.out",
+      },
+      0,
+    );
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !thumbnailRef.current || !overlayRef.current)
+    if (!cardRef.current || !overlayRef.current)
       return;
 
     // 既存のアニメーションを停止
@@ -174,15 +183,19 @@ export default function OverlayCard({
     const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
-    tlRef.current
-      .to(card, {
-        y: 0,
-        scale: 1,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-        duration: 0.4,
-        ease: "power2.out",
-      })
-      .to(
+    
+    // カードのアニメーション
+    tlRef.current.to(card, {
+      y: 0,
+      scale: 1,
+      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+      duration: 0.4,
+      ease: "power2.out",
+    });
+    
+    // サムネイルがある場合のみスケールアニメーション
+    if (thumbnail) {
+      tlRef.current.to(
         thumbnail,
         {
           scale: 1,
@@ -190,16 +203,19 @@ export default function OverlayCard({
           ease: "power2.out",
         },
         0,
-      )
-      .to(
-        overlay,
-        {
-          y: "100%",
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        0,
       );
+    }
+    
+    // オーバーレイのアニメーション
+    tlRef.current.to(
+      overlay,
+      {
+        y: "100%",
+        duration: 0.4,
+        ease: "power2.out",
+      },
+      0,
+    );
   }, []);
 
   useEffect(() => {
@@ -215,6 +231,9 @@ export default function OverlayCard({
       }, 100);
 
       return () => clearTimeout(timeoutId);
+    } else {
+      // サムネイルがない場合はデフォルトのオーバーレイ不透明度を設定
+      setOverlayOpacity(0.85);
     }
   }, [imageUrl]);
 
@@ -276,7 +295,14 @@ export default function OverlayCard({
   if (href) {
     return React.createElement(
       "a",
-      { href, className: "card-link" },
+      {
+        href,
+        className: "card-link",
+        ...(isExternal && {
+          target: "_blank",
+          rel: "noopener noreferrer",
+        }),
+      },
       cardContent,
     );
   }

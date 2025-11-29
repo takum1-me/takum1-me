@@ -1,27 +1,39 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getAllBlog } from "../../lib/microcms";
+import { fetchNoteRSS, fetchThumbnailsForArticles, type NoteArticle } from "../../lib/note-rss";
 import BlogFilter from "../../components/features/blog/BlogFilter.astro";
 import ArticleCard from "../../components/shared/card/ArticleCard";
 import PageTitle from "../../components/shared/page/PageTitle";
 import "../../components/shared/card/overlay-card.css";
 import "../../components/shared/page/page-title.css";
 
-let blogs;
+// note.comのRSSから記事を取得
+let noteArticles: NoteArticle[];
 try {
-  blogs = await getAllBlog();
+  // RSSフィードから直接サムネイル画像も取得する
+  noteArticles = await fetchNoteRSS();
+  
+  // RSSにサムネイルが含まれていない場合は、OGP画像を取得（フォールバック）
+  const articlesWithoutThumbnail = noteArticles.filter(article => !article.thumbnail);
+  
+  if (articlesWithoutThumbnail.length > 0) {
+    const articlesWithOGPThumbnails = await fetchThumbnailsForArticles(articlesWithoutThumbnail.slice(0, 5));
+    // OGPから取得したサムネイルをマージ
+    articlesWithOGPThumbnails.forEach(articleWithThumb => {
+      const index = noteArticles.findIndex(a => a.link === articleWithThumb.link);
+      if (index !== -1 && articleWithThumb.thumbnail) {
+        noteArticles[index].thumbnail = articleWithThumb.thumbnail;
+      }
+    });
+  }
 } catch (error) {
-  // 環境変数が設定されていない場合は空のデータを返す
-  blogs = { contents: [], totalCount: 0, offset: 0, limit: 0 };
+  console.error('Error fetching Note articles:', error);
+  noteArticles = [];
 }
 
-
+// カテゴリーフィルターはnote記事では使用しないため、Allのみ
 const categories = [
   { id: "all", label: "All" },
-  { id: "Programming", label: "Programming" },
-  { id: "Coffee", label: "Coffee" },
-  { id: "Design", label: "Design" },
-  { id: "DailyLife", label: "Daily Life" }
 ];
 
 ---
@@ -33,25 +45,24 @@ const categories = [
     <BlogFilter categories={categories} />
 
     {
-      blogs === null && (
+      noteArticles.length === 0 && (
         <p>
-          記事の取得に失敗しました。環境変数やネットワークを確認してください。
+          記事の取得に失敗しました。ネットワークを確認してください。
         </p>
       )
     }
-    {blogs && blogs.totalCount === 0 && <p>投稿はまだありません。</p>}
-    {blogs && blogs.totalCount > 0 && (
+    {noteArticles.length > 0 && (
       <>
         <div class="blog-grid">
-          {blogs.contents.map((blog) => (
+          {noteArticles.map((article) => (
             <ArticleCard
               client:load
-              title={blog.title}
-              summary={blog.summary}
-              publishedAt={blog.publishedAt}
-              thumbnail={blog.thumbnail}
-              slug={blog.slug}
-              category={blog.category}
+              title={article.title}
+              summary={article.description}
+              publishedAt={article.pubDate}
+              thumbnail={article.thumbnail ? { url: article.thumbnail } : undefined}
+              link={article.link}
+              category="all"
             />
           ))}
         </div>
@@ -66,13 +77,8 @@ const categories = [
           </button>
           
           <div class="pagination-center">
-            <!-- <div class="page-indicator">
-              <span class="current-page" id="current-page">1</span>
-              <span class="separator">/</span>
-              <span class="total-pages" id="total-pages">1</span>
-            </div> -->
             <div class="items-count">
-              <span class="count-number" id="total-items">{blogs.totalCount}</span>
+              <span class="count-number" id="total-items">{noteArticles.length}</span>
               <span class="count-label">articles</span>
             </div>
           </div>

@@ -14,15 +14,7 @@ import "../components/features/latte-art/latte-art-progress.css";
 const latestPhotos = await getLatestPhotos(9);
 
 // 楽曲データを動的に取得
-console.log("[index.astro] 楽曲データの取得を開始します");
-let songsData: Awaited<ReturnType<typeof loadSongsData>> = [];
-try {
-  songsData = await loadSongsData();
-  console.log("[index.astro] 楽曲データ取得完了:", songsData);
-} catch (error) {
-  console.error("[index.astro] 楽曲データの取得に失敗しました:", error);
-  songsData = [];
-}
+const songsData = await loadSongsData();
 
 // ラテアートの直近5件を取得
 const latestLatteArts = await getLatestLatteArts(5);
@@ -50,7 +42,7 @@ const latestLatteArts = await getLatestLatteArts(5);
   <!-- ラテアート進捗報告botセクション -->
   <section class="latte-art-section">
     <div class="latte-art-inner">
-      <div class="section-header">
+      <div class="gallery-section-header">
         <h2 class="section-title">ラテアート進捗報告bot</h2>
         <p class="section-description">練習の記録</p>
       </div>
@@ -336,8 +328,7 @@ const latestLatteArts = await getLatestLatteArts(5);
         font-size: 2rem;
       }
       
-      .gallery-section-header,
-      .section-header {
+      .gallery-section-header {
         margin-bottom: 2rem;
       }
     }

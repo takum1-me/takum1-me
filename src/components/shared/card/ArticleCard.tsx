@@ -7,7 +7,8 @@ interface ArticleCardProps {
   thumbnail?: {
     url: string;
   };
-  slug: string;
+  slug?: string;
+  link?: string;
   category: string;
 }
 
@@ -17,8 +18,13 @@ export default function ArticleCard({
   publishedAt,
   thumbnail,
   slug,
+  link,
   category,
 }: ArticleCardProps) {
+  // linkが指定されている場合は外部リンク（note記事）、slugが指定されている場合は内部リンク
+  const href = link || (slug ? `/blog/${slug}` : undefined);
+  const isExternal = !!link;
+
   return (
     <OverlayCard
       title={title}
@@ -26,7 +32,8 @@ export default function ArticleCard({
       date={publishedAt}
       imageUrl={thumbnail?.url}
       imageAlt={title}
-      href={`/blog/${slug}`}
+      href={href}
+      isExternal={isExternal}
       className="blog-card"
       dataCategory={category}
     />

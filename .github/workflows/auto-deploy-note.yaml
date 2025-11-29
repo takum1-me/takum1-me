@@ -1,0 +1,32 @@
+name: Auto Deploy Note Articles
+
+# このワークフローは、定期的にnote.comの記事をチェックして
+# 新しい記事があれば自動的に再ビルド＆デプロイを行います
+
+on:
+  schedule:
+    # 毎時0分に実行（必要に応じて調整可能）
+    - cron: '0 * * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+        env:
+          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL || '' }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || '' }}
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
