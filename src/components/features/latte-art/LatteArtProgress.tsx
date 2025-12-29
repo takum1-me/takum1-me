@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import type { LatteArt, LatteArtDesign } from "../../../lib/microcms/latte-art";
 import "./latte-art-progress.css";
 
@@ -31,9 +32,31 @@ function formatDate(dateString?: string): string {
   }
 }
 
+// プレースホルダーコンポーネント（pulseアニメーション用）
+function PhotoPlaceholder() {
+  const placeholderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (placeholderRef.current) {
+      gsap.to(placeholderRef.current, {
+        opacity: 0.5,
+        duration: 1.5,
+        ease: "power1.inOut",
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+  }, []);
+
+  return <div ref={placeholderRef} className="latte-art-photo-placeholder" />;
+}
+
 export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set());
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const modalTlRef = useRef<gsap.core.Timeline | null>(null);
 
   // 画像URLを最適化（サイズを指定）
   const optimizeImageUrl = (url: string, width: number = 400): string => {
@@ -62,8 +85,69 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
   };
 
   const handleCloseModal = () => {
-    setSelectedIndex(null);
+    // 閉じるアニメーション
+    if (modalTlRef.current) {
+      modalTlRef.current.kill();
+    }
+    if (overlayRef.current && modalRef.current) {
+      modalTlRef.current = gsap.timeline({
+        onComplete: () => {
+          setSelectedIndex(null);
+        },
+      });
+      modalTlRef.current
+        .to(modalRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.3,
+          ease: "power2.out",
+        })
+        .to(
+          overlayRef.current,
+          {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          0,
+        );
+    } else {
+      setSelectedIndex(null);
+    }
   };
+
+  // モーダルの開閉アニメーション
+  useEffect(() => {
+    if (selectedIndex !== null && overlayRef.current && modalRef.current) {
+      // 既存のアニメーションを停止
+      if (modalTlRef.current) {
+        modalTlRef.current.kill();
+      }
+
+      // 初期状態を設定
+      gsap.set(overlayRef.current, { opacity: 0 });
+      gsap.set(modalRef.current, { opacity: 0, y: 20 });
+
+      // 開くアニメーション
+      modalTlRef.current = gsap.timeline();
+      modalTlRef.current
+        .to(overlayRef.current, {
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        })
+        .to(
+          modalRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          0,
+        );
+    }
+  }, [selectedIndex]);
 
   // ESCキーでモーダルを閉じる
   useEffect(() => {
@@ -141,6 +225,7 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
       {/* モーダル */}
       {selectedLatteArt && (
         <div
+          ref={overlayRef}
           className="latte-art-modal-overlay"
           onClick={handleCloseModal}
           onKeyDown={(e) => {
@@ -150,6 +235,7 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
           tabIndex={-1}
         >
           <div
+            ref={modalRef}
             className="latte-art-modal"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => {
@@ -257,10 +343,17 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
                                 key={photoIndex}
                                 className="latte-art-modal-photo-wrapper"
                               >
-                                {!isLoaded && (
-                                  <div className="latte-art-photo-placeholder" />
-                                )}
+                                {!isLoaded && <PhotoPlaceholder />}
                                 <img
+                                  ref={(img) => {
+                                    if (img && isLoaded) {
+                                      gsap.to(img, {
+                                        opacity: 1,
+                                        duration: 0.3,
+                                        ease: "power2.out",
+                                      });
+                                    }
+                                  }}
                                   src={optimizeImageUrl(photo.url, 600)}
                                   alt={`${selectedLatteArt.title || "ラテアート"} ${photoIndex + 2}`}
                                   loading="lazy"
@@ -271,8 +364,7 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
                                     );
                                   }}
                                   style={{
-                                    opacity: isLoaded ? 1 : 0,
-                                    transition: "opacity 0.3s ease",
+                                    opacity: 0,
                                   }}
                                 />
                               </div>

@@ -21,14 +21,7 @@
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
   aspect-ratio: 4/3;
-}
-
-.latte-art-item:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
-  transform: translateY(-4px);
 }
 
 .latte-art-card-wrapper {
@@ -47,7 +40,6 @@
   height: 100%;
   overflow: hidden;
   background: var(--color-primary-5);
-  transition: transform 0.3s ease;
 }
 
 .latte-art-card-image img {
@@ -104,18 +96,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  animation: fade-in 0.3s ease;
   overflow-y: auto;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0%;
-  }
-
-  to {
-    opacity: 100%;
-  }
 }
 
 .latte-art-modal {
@@ -127,19 +108,6 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
-  animation: modal-slide-up 0.3s ease;
-}
-
-@keyframes modal-slide-up {
-  from {
-    opacity: 0%;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 100%;
-    transform: translateY(0);
-  }
 }
 
 .latte-art-modal-close {
@@ -158,7 +126,6 @@
   border: 1px solid var(--color-primary-10);
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 10;
 }
 
@@ -325,18 +292,6 @@
   width: 100%;
   height: 100%;
   background: var(--color-primary-5);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 100%;
-  }
-
-  50% {
-    opacity: 50%;
-  }
 }
 
 .latte-art-photo-wrapper img {
