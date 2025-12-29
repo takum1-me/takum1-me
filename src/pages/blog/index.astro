@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { fetchNoteRSS, fetchThumbnailsForArticles, type NoteArticle } from "../../lib/note-rss";
-import BlogFilter from "../../components/features/blog/BlogFilter.astro";
 import ArticleCard from "../../components/shared/card/ArticleCard";
 import PageTitle from "../../components/shared/page/PageTitle";
 import "../../components/shared/card/overlay-card.css";
@@ -31,18 +30,11 @@ try {
   noteArticles = [];
 }
 
-// カテゴリーフィルターはnote記事では使用しないため、Allのみ
-const categories = [
-  { id: "all", label: "All" },
-];
-
 ---
 
 <Layout title="Blog">
   <div class="blog-page">
     <PageTitle title="BLOG" pageType="blog" client:load />
-    <!-- Category Filter -->
-    <BlogFilter categories={categories} />
 
     {
       noteArticles.length === 0 && (
