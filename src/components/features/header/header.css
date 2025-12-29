@@ -6,23 +6,11 @@
   transform: translateX(-50%);
   z-index: 150;
   display: block;
-  transition: opacity 0.4s ease;
   opacity: 0%;
   pointer-events: auto;
   max-width: 100%;
   width: 100%;
   margin-left: 0;
-}
-
-.header-wrap.show {
-  opacity: 100%;
-  transform: translateX(-50%);
-}
-
-.header-wrap.hide {
-  opacity: 0%;
-  transform: translateX(-50%);
-  pointer-events: auto;
 }
 
 .nav {
@@ -105,27 +93,13 @@
   height: 0.25rem;
   background: #111827;
   border-radius: 0.125rem;
-  transition: all 0.3s linear;
   position: relative;
   transform-origin: 1px;
 }
 
-.hamburger-line--first.hamburger-line--active {
-  transform: rotate(45deg);
-}
-
-.hamburger-line--second.hamburger-line--active {
-  opacity: 0%;
-  transform: translateX(1.25rem);
-}
-
-.hamburger-line--third.hamburger-line--active {
-  transform: rotate(-45deg);
-}
-
 /* モバイルメニュー */
 .mobile-menu {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0;
   right: -100%;
@@ -139,20 +113,11 @@
   padding: var(--spacing-xl) var(--spacing-md);
   opacity: 0%;
   transform: translateX(0);
-  transition: all 0.3s ease;
   pointer-events: none;
   z-index: 200;
   overflow: hidden;
   flex-direction: column;
   box-sizing: border-box;
-}
-
-.mobile-menu.open {
-  display: flex;
-  opacity: 100%;
-  right: 0;
-  transform: translateX(0);
-  pointer-events: auto;
 }
 
 /* 背景オーバーレイ */
@@ -165,7 +130,6 @@
   height: 100vh;
   background: rgb(0 0 0 / 50%);
   opacity: 0%;
-  transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: -1;
 }
@@ -209,7 +173,6 @@ body.mobile-menu-open::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 0.2s ease;
   z-index: 10;
 }
 
@@ -263,18 +226,7 @@ body.mobile-menu-open::before {
   white-space: nowrap;
 }
 
-/* モバイルメニューのホバーインジケーターの文字拡大を制限 */
-.mobile-header-links .indicator-button:hover {
-  transform: scale(1.03);
-  transition:
-    transform 0.2s ease-out,
-    color 0.2s ease-out;
-}
-
-.mobile-header-links .button-content:hover {
-  transform: scale(1.05);
-  transition: transform 0.2s ease-out;
-}
+/* モバイルメニューのホバーインジケーターの文字拡大はGSAPで制御 */
 
 /* BlogFilterと同じ背景付きスタイル */
 .mobile-header-links.with-background {

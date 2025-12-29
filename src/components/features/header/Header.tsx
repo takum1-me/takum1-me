@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { gsap } from "gsap";
 import HeaderHoverIndicator from "../../shared/hoverindicator/HeaderHoverIndicator";
 import SnsLinks from "../../shared/sns-links/SnsLinks";
 import "./header.css";
@@ -11,6 +12,10 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastYRef = useRef<number>(0);
   const hoverRef = useRef<boolean>(false);
+  const headerWrapRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerLinesRef = useRef<HTMLSpanElement[]>([]);
+  const mobileMenuTlRef = useRef<gsap.core.Timeline | null>(null);
 
   const navItems = [
     { id: "about", label: "About", href: "/about" },
@@ -30,6 +35,17 @@ export default function Header() {
     setVisible(shouldShow);
     lastYRef.current = y;
   }, []);
+
+  // ヘッダーの表示/非表示アニメーション
+  useEffect(() => {
+    if (headerWrapRef.current) {
+      gsap.to(headerWrapRef.current, {
+        opacity: visible ? 1 : 0,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    }
+  }, [visible]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const nearTop = e.clientY <= HOVER_THRESHOLD;
@@ -57,14 +73,101 @@ export default function Header() {
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => {
       const newState = !prev;
-      // サイドバー開時にページスクロールを無効化とグレーアウト
+
+      // GSAPアニメーション
+      if (mobileMenuTlRef.current) {
+        mobileMenuTlRef.current.kill();
+      }
+
       if (newState) {
-        // より確実なスクロール制御
+        // 開くアニメーション
+        if (mobileMenuRef.current && hamburgerLinesRef.current.length === 3) {
+          mobileMenuTlRef.current = gsap.timeline();
+          mobileMenuTlRef.current
+            .to(mobileMenuRef.current, {
+              right: 0,
+              opacity: 1,
+              duration: 0.3,
+              ease: "power2.out",
+            })
+            .to(
+              hamburgerLinesRef.current[0],
+              {
+                rotation: 45,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            )
+            .to(
+              hamburgerLinesRef.current[1],
+              {
+                opacity: 0,
+                x: 20,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            )
+            .to(
+              hamburgerLinesRef.current[2],
+              {
+                rotation: -45,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            );
+        }
+        // サイドバー開時にページスクロールを無効化とグレーアウト
         document.body.style.overflow = "hidden";
         document.body.style.position = "fixed";
         document.body.style.width = "100%";
         document.body.classList.add("mobile-menu-open");
       } else {
+        // 閉じるアニメーション
+        if (mobileMenuRef.current && hamburgerLinesRef.current.length === 3) {
+          mobileMenuTlRef.current = gsap.timeline();
+          mobileMenuTlRef.current
+            .to(
+              hamburgerLinesRef.current[0],
+              {
+                rotation: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            )
+            .to(
+              hamburgerLinesRef.current[1],
+              {
+                opacity: 1,
+                x: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            )
+            .to(
+              hamburgerLinesRef.current[2],
+              {
+                rotation: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            )
+            .to(
+              mobileMenuRef.current,
+              {
+                right: "-100%",
+                opacity: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              0,
+            );
+        }
         // スクロール制御を解除
         document.body.style.overflow = "";
         document.body.style.position = "";
@@ -97,7 +200,8 @@ export default function Header() {
   return React.createElement(
     "div",
     {
-      className: `header-wrap${visible ? " show" : " hide"}${isAtTop ? " at-top" : ""}`,
+      ref: headerWrapRef,
+      className: `header-wrap${isAtTop ? " at-top" : ""}`,
       role: "banner",
     },
     React.createElement(
@@ -114,24 +218,40 @@ export default function Header() {
         React.createElement(
           "button",
           {
-            className: `hamburger-menu${isMobileMenuOpen ? " active" : ""}`,
+            className: "hamburger-menu",
             onClick: toggleMobileMenu,
             "aria-label": "メニューを開く",
             "aria-expanded": isMobileMenuOpen,
           },
           React.createElement("span", {
-            className: `hamburger-line hamburger-line--first${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+            ref: (el) => {
+              if (el) hamburgerLinesRef.current[0] = el;
+            },
+            className: "hamburger-line hamburger-line--first",
           }),
           React.createElement("span", {
-            className: `hamburger-line hamburger-line--second${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+            ref: (el) => {
+              if (el) hamburgerLinesRef.current[1] = el;
+            },
+            className: "hamburger-line hamburger-line--second",
           }),
           React.createElement("span", {
-            className: `hamburger-line hamburger-line--third${isMobileMenuOpen ? " hamburger-line--active" : ""}`,
+            ref: (el) => {
+              if (el) hamburgerLinesRef.current[2] = el;
+            },
+            className: "hamburger-line hamburger-line--third",
           }),
         ),
         React.createElement(
           "div",
-          { className: `mobile-menu${isMobileMenuOpen ? " open" : ""}` },
+          {
+            ref: mobileMenuRef,
+            className: "mobile-menu",
+            style: {
+              right: "-100%",
+              opacity: 0,
+            },
+          },
           React.createElement(
             "button",
             {
