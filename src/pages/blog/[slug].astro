@@ -175,7 +175,6 @@ const formatDate = (dateString: string) => {
     text-decoration: none;
     font-weight: 600;
     position: relative;
-    transition: background 0.6s ease;
   }
   
   .back a::after {
@@ -186,11 +185,6 @@ const formatDate = (dateString: string) => {
     bottom: -0.125rem;
     left: 0;
     background-color: var(--color-text-primary);
-    transition: width 0.5s ease;
-  }
-
-  .back a:hover::after {
-    width: 100%;
   }
 
   /* ▼▼▼ ここから変更 ▼▼▼ */
@@ -227,3 +221,46 @@ const formatDate = (dateString: string) => {
     margin-bottom: 0.4rem;
   }
 </style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const backLink = document.querySelector(".back a");
+    if (!backLink) return;
+
+    // ::after疑似要素の代わりにspan要素を作成
+    if (!backLink.querySelector(".back-underline")) {
+      const underlineEl = document.createElement("span");
+      underlineEl.className = "back-underline";
+      underlineEl.style.cssText = `
+        position: absolute;
+        width: 0;
+        height: 0.125rem;
+        bottom: -0.125rem;
+        left: 0;
+        background-color: var(--color-text-primary);
+        pointer-events: none;
+      `;
+      backLink.style.position = "relative";
+      backLink.appendChild(underlineEl);
+    }
+
+    const underlineEl = backLink.querySelector(".back-underline");
+    if (!underlineEl || typeof window.gsap === "undefined") return;
+
+    backLink.addEventListener("mouseenter", () => {
+      window.gsap.to(underlineEl, {
+        width: "100%",
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    });
+
+    backLink.addEventListener("mouseleave", () => {
+      window.gsap.to(underlineEl, {
+        width: "0%",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    });
+  });
+</script>
