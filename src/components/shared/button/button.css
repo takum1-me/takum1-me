@@ -1,111 +1,67 @@
 /* Button component styles */
 .button {
-  display: inline-block;
+  @apply inline-block rounded-lg no-underline font-semibold border-2 border-transparent cursor-pointer relative overflow-hidden text-center;
+
   padding: 0.75rem var(--spacing-lg);
-  border-radius: 0.5rem;
-  text-decoration: none;
-  font-weight: 600;
-  border: 2px solid transparent;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
 }
 
 /* CTA Button styles (from index.astro) */
 .button-primary {
   background: transparent;
-  color: var(--color-secondary);
   border: 2px solid var(--color-secondary);
   position: relative;
   overflow: hidden;
-  transition: color 0.2s ease 0.2s;
-}
-
-.button-primary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0;
-  background: var(--color-secondary);
-  z-index: 0;
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.button-primary span {
-  position: relative;
-  z-index: 1;
-}
-
-.button-primary:hover {
-  color: #fff;
-}
-
-.button-primary:hover::before {
-  height: 100%;
 }
 
 .button-secondary {
   background: transparent;
-  color: var(--color-text-primary);
   border-color: var(--color-text-primary);
   position: relative;
   overflow: hidden;
-  transition: color 0.2s ease 0.2s;
 }
 
-.button-secondary::before {
-  content: "";
+.button-background {
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
-  height: 100%;
-  background: var(--color-text-primary);
   z-index: 0;
-  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.button-secondary span {
+.button-primary .button-background {
+  background: var(--color-secondary);
+}
+
+.button-secondary .button-background {
+  background: var(--color-text-primary);
+}
+
+.button-text {
   position: relative;
   z-index: 1;
 }
 
-.button-secondary:hover {
-  color: #fff;
-  border-color: var(--color-text-primary);
-}
-
-.button-secondary:hover::before {
-  left: 0;
-}
-
 /* Error page button styles (from 404.astro) */
 .button-error-primary {
-  color: var(--color-secondary);
   background-color: transparent;
+  border: 2px solid var(--color-muted);
 }
 
-.button-error-primary:hover {
-  color: #fff;
+.button-error-primary .button-background {
+  background: var(--color-muted);
 }
 
 /* Size variants */
 .button-small {
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: 0.875rem;
+  @apply px-4 py-2 text-sm;
 }
 
 .button-medium {
-  padding: 0.75rem var(--spacing-lg);
-  font-size: 1rem;
+  @apply px-6 py-3 text-base;
 }
 
 .button-large {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: 1.125rem;
+  @apply px-8 py-4 text-lg;
 }
 
 /* Responsive adjustments */
