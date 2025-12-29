@@ -1,0 +1,27 @@
+---
+import OverlayCard from "./OverlayCard";
+import { fetchThumbnailFromOGP } from "../../../lib/ogp";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  url: string;
+}
+
+const { title, subtitle, url } = Astro.props;
+
+// OGP画像を取得
+const thumbnail = await fetchThumbnailFromOGP(url);
+---
+
+<OverlayCard
+  client:load
+  title={title}
+  subtitle={subtitle}
+  href={url}
+  isExternal={true}
+  imageUrl={thumbnail}
+  imageAlt={title}
+  className="works-card"
+/>
+

@@ -2,14 +2,44 @@
 import Layout from "../layouts/Layout.astro";
 import PageTitle from "../components/shared/page/PageTitle";
 import PageContainer from "../components/shared/page/PageContainer";
+import WorksCard from "../components/shared/card/WorksCard.astro";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
+import "../components/shared/card/overlay-card.css";
 ---
 
 <Layout title="Works">
     <PageContainer variant="works">
         <PageTitle title="WORKS" client:load />
+        <div class="works-grid">
+            <WorksCard
+                title="Color Detective"
+                subtitle="AIを活用した色分析ツール - カラーコードの相互変換と類似色の提案"
+                url="https://color-detective.takum1.me"
+            />
+            <WorksCard
+                title="Flavor Flow"
+                subtitle=""
+                url="https://flavor-flow.takum1.me"
+            />
+        </div>
     </PageContainer>
 </Layout>
+
+<style>
+    .works-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    @media (width <= 47.9375rem) {
+        .works-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+</style>
 
 

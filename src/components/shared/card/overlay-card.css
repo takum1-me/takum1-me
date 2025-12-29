@@ -114,6 +114,12 @@
   white-space: nowrap;
 }
 
+/* Blog and Works cards - slightly wider than square */
+.overlay-card.blog-card,
+.overlay-card.works-card {
+  aspect-ratio: 4 / 3;
+}
+
 /* Mobile responsive */
 @media (width <= 64rem) {
   .overlay-card {
@@ -125,6 +131,11 @@
   .overlay-card {
     max-width: 100%;
     aspect-ratio: 4/3;
+  }
+
+  .overlay-card.blog-card,
+  .overlay-card.works-card {
+    aspect-ratio: 4 / 3;
   }
 
   .card-content {
@@ -150,6 +161,11 @@
 @media (width <= 30rem) {
   .overlay-card {
     aspect-ratio: 3/2;
+  }
+
+  .overlay-card.blog-card,
+  .overlay-card.works-card {
+    aspect-ratio: 4 / 3;
   }
 
   .card-content {
