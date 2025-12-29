@@ -1,3 +1,5 @@
+import { useRef, useCallback } from "react";
+import { gsap } from "gsap";
 import InstagramIcon from "../../../assets/Instagram_Glyph_Gradient.svg?url";
 
 interface SnsLinksProps {
@@ -59,20 +61,135 @@ const renderIcon = (variant: "twitter" | "instagram" | "github") => {
   }
 };
 
+function SnsLinkItem({ sns }: { sns: SnsDataItem }) {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const shimmerRef = useRef<HTMLSpanElement>(null);
+  const iconRef = useRef<SVGElement | HTMLImageElement | null>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!linkRef.current || !shimmerRef.current || !iconRef.current) return;
+
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(linkRef.current, {
+        y: -2,
+        scale: 1.1,
+        boxShadow: "0 0.25rem 0.75rem rgba(0, 0, 0, 0.1)",
+        duration: 0.3,
+        ease: "power2.out",
+      })
+      .to(
+        shimmerRef.current,
+        {
+          left: "100%",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        iconRef.current,
+        {
+          scale: 1.1,
+          filter: sns.variant === "instagram" ? "none" : undefined,
+          opacity: sns.variant === "instagram" ? 1 : undefined,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      );
+  }, [sns.variant]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!linkRef.current || !shimmerRef.current || !iconRef.current) return;
+
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(linkRef.current, {
+        y: 0,
+        scale: 1,
+        boxShadow: "none",
+        duration: 0.3,
+        ease: "power2.out",
+      })
+      .to(
+        shimmerRef.current,
+        {
+          left: "-100%",
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        iconRef.current,
+        {
+          scale: 1,
+          filter:
+            sns.variant === "instagram"
+              ? "grayscale(100%) brightness(0.6) saturate(0)"
+              : undefined,
+          opacity: sns.variant === "instagram" ? 0.7 : undefined,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      );
+  }, [sns.variant]);
+
+  return (
+    <a
+      ref={linkRef}
+      href={sns.href}
+      className={`sns-link ${sns.variant}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={sns.name}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span
+        ref={shimmerRef}
+        className="sns-link-shimmer"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "-100%",
+          width: "100%",
+          height: "100%",
+          background:
+            "linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent)",
+        }}
+      />
+      <span
+        ref={(el) => {
+          if (el) {
+            const svg = el.querySelector("svg");
+            const img = el.querySelector("img");
+            iconRef.current = (svg || img) as SVGElement | HTMLImageElement;
+          }
+        }}
+      >
+        {renderIcon(sns.variant)}
+      </span>
+    </a>
+  );
+}
+
 export default function SnsLinks({ className = "" }: SnsLinksProps) {
   return (
     <div className={`sns-links ${className}`}>
       {snsData.map((sns) => (
-        <a
-          key={sns.name}
-          href={sns.href}
-          className={`sns-link ${sns.variant}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={sns.name}
-        >
-          {renderIcon(sns.variant)}
-        </a>
+        <SnsLinkItem key={sns.name} sns={sns} />
       ))}
     </div>
   );

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useCallback } from "react";
+import { gsap } from "gsap";
 
 interface SnsLink {
   name: string;
@@ -45,6 +46,154 @@ const snsData: SnsLink[] = [
   },
 ];
 
+function AboutSnsLinkItem({ sns }: { sns: SnsLink }) {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const shimmerRef = useRef<HTMLSpanElement>(null);
+  const iconRef = useRef<HTMLElement | SVGSVGElement | null>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (
+      !linkRef.current ||
+      !shimmerRef.current ||
+      !iconRef.current ||
+      !textRef.current
+    )
+      return;
+
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(linkRef.current, {
+        y: -4,
+        scale: 1.05,
+        boxShadow: "0 0.5rem 1.5625rem rgba(0, 0, 0, 0.15)",
+        duration: 0.3,
+        ease: "power2.out",
+      })
+      .to(
+        shimmerRef.current,
+        {
+          left: "100%",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        iconRef.current,
+        {
+          rotation: 360,
+          scale: 1.1,
+          duration: 1.2,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        textRef.current,
+        {
+          x: 2,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      );
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (
+      !linkRef.current ||
+      !shimmerRef.current ||
+      !iconRef.current ||
+      !textRef.current
+    )
+      return;
+
+    if (tlRef.current) {
+      tlRef.current.kill();
+    }
+
+    tlRef.current = gsap.timeline();
+    tlRef.current
+      .to(linkRef.current, {
+        y: 0,
+        scale: 1,
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        duration: 0.3,
+        ease: "power2.out",
+      })
+      .to(
+        shimmerRef.current,
+        {
+          left: "-100%",
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        iconRef.current,
+        {
+          rotation: 0,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      )
+      .to(
+        textRef.current,
+        {
+          x: 0,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0,
+      );
+  }, []);
+
+  return (
+    <a
+      ref={linkRef}
+      href={sns.href}
+      className={`about-sns-link about-sns-link--${sns.variant}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span
+        ref={shimmerRef}
+        className="about-sns-link-shimmer"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "-100%",
+          width: "100%",
+          height: "100%",
+          background:
+            "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
+        }}
+      />
+      <span
+        ref={(el) => {
+          if (el) {
+            iconRef.current = el.querySelector("svg") || el;
+          }
+        }}
+      >
+        {sns.icon}
+      </span>
+      <span ref={textRef}>{sns.name}</span>
+    </a>
+  );
+}
+
 export default function AboutSnsLinks({
   className = "",
   title = "SNS",
@@ -54,16 +203,7 @@ export default function AboutSnsLinks({
       <h2>{title}</h2>
       <div className="about-sns-links">
         {snsData.map((sns) => (
-          <a
-            key={sns.name}
-            href={sns.href}
-            className={`about-sns-link about-sns-link--${sns.variant}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {sns.icon}
-            <span>{sns.name}</span>
-          </a>
+          <AboutSnsLinkItem key={sns.name} sns={sns} />
         ))}
       </div>
     </section>

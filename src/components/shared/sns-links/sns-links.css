@@ -16,32 +16,9 @@
   background: transparent;
   border: 1px solid #e5e7eb;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   color: var(--color-muted); /* ベースカラー（統一されたグレー） */
-}
-
-.sns-link::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgb(0 0 0 / 5%), transparent);
-  transition: left 0.5s;
-}
-
-.sns-link:hover {
-  transform: translateY(-0.125rem) scale(1.1);
-  box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 10%);
-  background: transparent;
-  border-color: #d1d5db;
-}
-
-.sns-link:hover::before {
-  left: 100%;
 }
 
 .sns-link.twitter:hover {
@@ -52,18 +29,10 @@
   color: #e4405f; /* Instagram ブランドカラー */
 }
 
-/* Instagramアイコンの色制御 */
+/* Instagramアイコンの色制御はGSAPで制御 */
 .sns-link__icon {
   filter: grayscale(100%) brightness(0.6) saturate(0); /* 通常時：他のアイコンと同じグレー */
   opacity: 70%; /* 他のアイコンと同じ透明度 */
-  transition:
-    filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sns-link__icon:hover {
-  filter: none; /* ホバー時：元の色（グラデーション） */
-  opacity: 100%; /* ホバー時：完全に不透明 */
 }
 
 .sns-link.github:hover {
@@ -74,11 +43,6 @@
   width: 1.25rem;
   height: 1.25rem;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sns-link:hover svg {
-  transform: scale(1.1);
 }
 
 /* Responsive adjustments */
