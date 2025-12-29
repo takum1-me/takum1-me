@@ -47,9 +47,6 @@
   background: rgb(17 24 39 / 20%);
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
 .toc__link--h1 {
@@ -57,7 +54,6 @@
   color: var(--color-muted);
   font-size: 15px;
   text-decoration: none;
-  transition: color 0.18s ease;
 }
 
 .toc__link--h1.toc__link--active {

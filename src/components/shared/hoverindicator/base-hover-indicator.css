@@ -67,9 +67,6 @@
     0 0.125rem 0.5rem rgb(0 0 0 / 4%),
     0 0 0 0.125rem rgb(255 255 255 / 10%),
     0 0 1.5rem rgb(255 255 255 / 5%);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
   z-index: 0;
 }
 
@@ -98,18 +95,9 @@
   color: #0f172a;
 }
 
-/* ホバー時の文字拡大アニメーション */
+/* ホバー時の文字拡大アニメーションはGSAPで制御 */
 .indicator-button:hover {
   color: #0f172a;
-  transform: scale(1.05);
-  transition:
-    transform 0.2s ease-out,
-    color 0.2s ease-out;
-}
-
-.button-content:hover {
-  transform: scale(1.2);
-  transition: transform 0.2s ease-out;
 }
 
 .base-hover-indicator-nav.with-background .indicator-button {
