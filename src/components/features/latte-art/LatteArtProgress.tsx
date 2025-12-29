@@ -220,7 +220,6 @@ export default function LatteArtProgress({ latteArts }: LatteArtProgressProps) {
               </div>
 
               <div className="latte-art-modal-body">
-
                 {selectedLatteArt.goal && (
                   <div className="latte-art-modal-section">
                     <h3>目標</h3>

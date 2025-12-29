@@ -121,8 +121,7 @@ export default function OverlayCard({
   }, []);
 
   const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !overlayRef.current)
-      return;
+    if (!cardRef.current || !overlayRef.current) return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -134,7 +133,7 @@ export default function OverlayCard({
     const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
-    
+
     // カードのアニメーション
     tlRef.current.to(card, {
       y: -12,
@@ -143,7 +142,7 @@ export default function OverlayCard({
       duration: 0.3,
       ease: "power2.out",
     });
-    
+
     // サムネイルがある場合のみスケールアニメーション
     if (thumbnail) {
       tlRef.current.to(
@@ -156,7 +155,7 @@ export default function OverlayCard({
         0,
       );
     }
-    
+
     // オーバーレイのアニメーション
     tlRef.current.to(
       overlay,
@@ -170,8 +169,7 @@ export default function OverlayCard({
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !overlayRef.current)
-      return;
+    if (!cardRef.current || !overlayRef.current) return;
 
     // 既存のアニメーションを停止
     if (tlRef.current) {
@@ -183,7 +181,7 @@ export default function OverlayCard({
     const overlay = overlayRef.current;
 
     tlRef.current = gsap.timeline();
-    
+
     // カードのアニメーション
     tlRef.current.to(card, {
       y: 0,
@@ -192,7 +190,7 @@ export default function OverlayCard({
       duration: 0.4,
       ease: "power2.out",
     });
-    
+
     // サムネイルがある場合のみスケールアニメーション
     if (thumbnail) {
       tlRef.current.to(
@@ -205,7 +203,7 @@ export default function OverlayCard({
         0,
       );
     }
-    
+
     // オーバーレイのアニメーション
     tlRef.current.to(
       overlay,
