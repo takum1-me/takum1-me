@@ -17,7 +17,7 @@ export default function CoffeeFlavorTag({ flavorName }: CoffeeFlavorTagProps) {
 
   return (
     <span
-      className="flavor-tag"
+      className="flavor-tag bg-transparent py-sm px-md rounded-md text-sm font-medium border-2"
       style={{
         borderColor: color,
         color: color,
