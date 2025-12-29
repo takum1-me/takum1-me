@@ -204,48 +204,72 @@ export default function HomeArticleCard({
     "article",
     {
       ref: cardRef,
-      className: "home-article-card",
+      className:
+        "home-article-card bg-white rounded-xl shadow-[0_0.25rem_1.25rem_rgba(0,0,0,0.1)] overflow-hidden relative aspect-square w-full max-w-[15rem] origin-center z-0 border border-gray-200 max-[1024px]:max-w-[13.75rem] max-[768px]:max-w-full max-[768px]:aspect-[4/3]",
       "data-category": category,
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
     },
     React.createElement(
       "a",
-      { href: `/blog/${slug}`, className: "home-card-link" },
+      {
+        href: `/blog/${slug}`,
+        className:
+          "home-card-link block no-underline text-inherit h-full relative z-0",
+      },
       React.createElement(
         "div",
-        { className: "home-card-thumbnail" },
+        {
+          className:
+            "home-card-thumbnail relative w-full h-full overflow-hidden",
+        },
         thumbnail
           ? React.createElement("img", {
               ref: thumbnailRef,
               src: thumbnail.url,
               alt: title,
+              className: "w-full h-full object-cover relative z-0",
             })
           : React.createElement("div", {
-              className: "home-card-thumbnail-placeholder",
+              className:
+                "home-card-thumbnail-placeholder w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 relative z-0 flex items-center justify-center text-gray-400 text-xl font-medium",
             }),
         React.createElement(
           "div",
           {
             ref: overlayRef,
-            className: "home-card-overlay",
+            className:
+              "home-card-overlay absolute top-0 left-0 w-full h-full flex flex-col justify-start p-md box-border opacity-0 z-[1]",
             style: {
               background: `rgba(255, 255, 255, ${overlayOpacity})`,
             },
           },
-          React.createElement("h2", { className: "home-card-title" }, title),
+          React.createElement(
+            "h2",
+            {
+              className:
+                "home-card-title text-2xl font-bold text-gray-900 m-0 mb-3 leading-[1.3] line-clamp-4 break-words max-w-full [text-shadow:0_1px_2px_rgba(255,255,255,0.5)]",
+            },
+            title,
+          ),
           React.createElement(
             "div",
-            { className: "home-card-footer" },
+            { className: "home-card-footer flex flex-col gap-sm mt-auto" },
             summary &&
               React.createElement(
                 "p",
-                { className: "home-card-summary" },
+                {
+                  className:
+                    "home-card-summary text-gray-700 text-sm leading-[1.4] m-0 line-clamp-2 [text-shadow:0_1px_2px_rgba(255,255,255,0.3)]",
+                },
                 summary,
               ),
             React.createElement(
               "time",
-              { className: "home-card-date" },
+              {
+                className:
+                  "home-card-date text-muted text-xs font-medium [text-shadow:0_1px_2px_rgba(255,255,255,0.3)] whitespace-nowrap",
+              },
               formatDate(publishedAt),
             ),
           ),

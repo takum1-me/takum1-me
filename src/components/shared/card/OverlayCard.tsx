@@ -239,7 +239,7 @@ export default function OverlayCard({
     "article",
     {
       ref: cardRef,
-      className: `overlay-card ${className}`,
+      className: `overlay-card bg-white rounded-xl shadow-[0_0.25rem_1.25rem_rgba(0,0,0,0.1)] overflow-hidden relative aspect-video w-full max-w-[25rem] origin-center z-0 border border-gray-200 cursor-pointer max-[1024px]:max-w-[20rem] max-[768px]:max-w-full max-[768px]:aspect-[4/3] ${className}`,
       "data-category": dataCategory,
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
@@ -247,41 +247,57 @@ export default function OverlayCard({
     },
     React.createElement(
       "div",
-      { className: "card-thumbnail" },
+      { className: "card-thumbnail relative w-full h-full overflow-hidden" },
       imageUrl
         ? React.createElement("img", {
             ref: thumbnailRef,
             src: imageUrl,
             alt: imageAlt || title,
-            className: "card-thumbnail__img",
+            className:
+              "card-thumbnail__img w-full h-full object-cover relative z-0",
           })
         : React.createElement("div", {
-            className: "card-thumbnail-placeholder",
+            className:
+              "card-thumbnail-placeholder w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 relative z-0 flex items-center justify-center text-gray-400 text-xl font-medium",
           }),
       React.createElement(
         "div",
         {
           ref: overlayRef,
-          className: "card-content",
+          className:
+            "card-content absolute bottom-0 left-0 w-full p-md box-border z-[1] translate-y-full",
           style: {
             background: `linear-gradient(transparent, rgba(0, 0, 0, ${overlayOpacity}))`,
           },
         },
-        React.createElement("h2", { className: "card-title" }, title),
+        React.createElement(
+          "h2",
+          {
+            className:
+              "card-title text-2xl font-bold text-white m-0 mb-3 leading-[1.3] line-clamp-3 break-words max-w-full [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]",
+          },
+          title,
+        ),
         (subtitle || date) &&
           React.createElement(
             "div",
-            { className: "card-footer" },
+            { className: "card-footer flex flex-col gap-sm mt-auto" },
             subtitle &&
               React.createElement(
                 "p",
-                { className: "card-subtitle" },
+                {
+                  className:
+                    "card-subtitle text-gray-200 text-sm leading-[1.4] m-0 line-clamp-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
+                },
                 subtitle,
               ),
             date &&
               React.createElement(
                 "time",
-                { className: "card-date" },
+                {
+                  className:
+                    "card-date text-gray-400 text-xs font-medium [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] whitespace-nowrap",
+                },
                 formatDate(date),
               ),
           ),
@@ -295,7 +311,8 @@ export default function OverlayCard({
       "a",
       {
         href,
-        className: "card-link",
+        className:
+          "card-link block no-underline text-inherit h-full relative z-0",
         ...(isExternal && {
           target: "_blank",
           rel: "noopener noreferrer",

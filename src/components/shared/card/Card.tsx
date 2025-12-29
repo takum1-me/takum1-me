@@ -11,12 +11,13 @@ export default function Card({
   className = "",
   variant = "default",
 }: CardProps) {
-  const baseClasses = "card";
+  const baseClasses =
+    "bg-transparent rounded-xl py-xl px-xl shadow-none border-none relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-[#8b7355] before:rounded-sm max-[768px]:py-lg max-[768px]:px-lg";
   const variantClasses = {
-    default: "card-default",
-    interests: "card-interests",
-    organizations: "card-organizations",
-    qualifications: "card-qualifications",
+    default: "",
+    interests: "",
+    organizations: "",
+    qualifications: "",
   };
 
   const cardClasses = [baseClasses, variantClasses[variant], className]
@@ -32,5 +33,9 @@ interface CardHeaderProps {
 }
 
 export function CardHeader({ children, className = "" }: CardHeaderProps) {
-  return <div className={`card-header ${className}`}>{children}</div>;
+  return (
+    <div className={`flex items-center mb-lg gap-md ${className}`}>
+      {children}
+    </div>
+  );
 }
