@@ -90,10 +90,10 @@ const jsonldStringfy = JSON.stringify({
     <title>{metadata.title}</title>
     <meta name="description" content={description} />
   </head>
-  <body>
+  <body class="flex flex-col overflow-hidden visible">
     {!hideHeader && <ReactHeader client:load />}
-    <main class="main-content">
-      <div class="container">
+    <main class="main-content flex-1 pt-8 max-w-[calc(95vw-8.25rem)] mx-auto ml-[8.25rem] mr-[2.5vw] max-[1024px]:max-w-[calc(95vw-6.5rem)] max-[1024px]:ml-[6.5rem] max-[1400px]:max-w-[calc(95vw-8.25rem)] max-[1400px]:ml-[8.25rem] min-[1400px]:ml-24 max-[768px]:max-w-[calc(100vw-2.5rem)] max-[768px]:ml-10 max-[768px]:mr-0 max-[480px]:max-w-[calc(100vw-2rem)] max-[480px]:ml-4 max-[320px]:max-w-[calc(100vw-1.5rem)] max-[320px]:ml-4">
+      <div class="max-w-[var(--max-content-width)] mx-auto px-[var(--spacing-gap)]">
         <slot />
       </div>
     </main>
@@ -101,126 +101,19 @@ const jsonldStringfy = JSON.stringify({
   </body>
   
   <style>
-    html {
+    :root {
       /* カラーパレット - より重い青系 */
       --color-primary-blue: #0d31aa;      /* メインの青（より重い） */
       --color-secondary-blue: #2563eb;    /* セカンダリの青 */
       --color-accent-blue: #3b82f6;       /* アクセントの青 */
       --color-light-blue: #60a5fa;        /* ライトブルー */
     }
-
-    html, body {
-      background: var(--color-background); /* クリーム色の背景 */
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      overflow: hidden visible;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      font-family:
-        "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial,
-        sans-serif;
-    }
-
-    .container {
-      max-width: var(--max-content-width);
-      margin: 0 auto;
-      padding: 0 var(--spacing-gap);
-    }
-
-    main {
-      padding: 2rem 0 0;
-      flex: 1;
-
-      /* PageTitleの右端とページコンテンツの左端を合わせ、ヘッダーの右端まで伸ばす */
-      max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
-      margin: 0 auto;
-      margin-left: 8.25rem; /* PageTitleの右端に合わせる */
-      margin-right: 2.5vw; /* より右に伸ばす */
-    }
-
-    /* 中程度のデスクトップサイズ */
-    @media (64.0625rem <= width <= 87.4375rem) {
-      main {
-        flex: 1;
-        max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
-        margin-left: 8.25rem; /* PageTitleの右端に合わせる */
-        margin-right: 2.5vw; /* より右に伸ばす */
-      }
-    }
-
-    /* 大きなデスクトップサイズ */
-    @media (width >= 87.5rem) {
-      main {
-        flex: 1;
-        max-width: calc(95vw - 8.25rem); /* PageTitleの左端からヘッダーの右端まで */
-        margin-left: 6rem; /* PageTitleの右端に合わせる */
-        margin-right: 2.5vw; /* より右に伸ばす */
-      }
-    }
-
-    /* タブレットサイズ */
-    @media (width <= 64rem) {
-      main {
-        flex: 1;
-        max-width: calc(95vw - 6.5rem); /* PageTitleの左端からヘッダーの右端まで */
-        margin-left: 6.5rem; /* PageTitleの右端に合わせる */
-        margin-right: 2.5vw; /* より右に伸ばす */
-      }
-    }
-
-    /* モバイルサイズ */
-    @media (width <= 48rem) {
-      main {
-        flex: 1;
-        max-width: calc(100vw - 2.5rem); /* 少し左に調整 */
-        margin-left: 2.5rem;
-        margin-right: 0; /* 右マージンを削除 */
-      }
-    }
-
-    /* 小さなモバイルサイズ */
-    @media (width <= 30rem) {
-      main {
-        flex: 1;
-        max-width: calc(100vw - 2rem); /* 少し左に調整 */
-        margin-left: 1rem;
-        margin-right: 0; /* 右マージンを削除 */
-      }
-    }
-
-    /* 非常に小さなモバイルサイズ */
-    @media (width <= 20rem) {
-      main {
-        flex: 1;
-        max-width: calc(100vw - 1.5rem); /* 少し左に調整 */
-        margin-left: 1rem;
-        margin-right: 0; /* 右マージンを削除 */
-      }
-    }
-
-    /* Footer styles are now handled by the Footer component */
-    
-
-    a {
-      color: inherit;
-    }
     
     .main-content {
-      /* padding-top: 5rem; ヘッダーの高さ分のマージンを追加 */
       margin-right: 0;
       border-bottom: 1px solid #e5e7eb;
       padding-bottom: 1rem;
       padding-top: 0;
-    }
-    
-    @media (width <= 48rem) {
-      .main-content {
-        /* padding-top: 4.5rem; モバイルでは少し小さく */
-      }
     }
   </style>
 </html>
