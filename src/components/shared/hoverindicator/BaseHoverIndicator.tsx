@@ -1,8 +1,12 @@
 import React, { useRef, useCallback, useEffect } from "react";
 import "./base-hover-indicator.css";
-
-// ホバーの表示範囲設定
-const HOVER_DISPLAY_MARGIN = 100; // ホバーが表示される範囲（px）
+import {
+  HOVER_DISPLAY_MARGIN,
+  calculateVerticalIndicatorPosition,
+  calculateHorizontalIndicatorPosition,
+  calculateVerticalEntryPosition,
+  calculateHorizontalEntryPosition,
+} from "../../../lib/utils/indicator-position";
 
 interface BaseHoverIndicatorProps {
   items: Array<{
@@ -47,107 +51,31 @@ export default function BaseHoverIndicator({
       const navRect = navRef.current.getBoundingClientRect();
       const isVertical = navRef.current.classList.contains("vertical");
 
-      // シンプルにカーソル位置に設定
+      const buttonRefsMap = {
+        get: (id: string) => buttonRefs.current.get(id),
+      };
+
+      let position;
       if (isVertical) {
-        const width = navRect.width - 16;
-        const height = 40;
-
-        // 上下の要素の中心位置を計算
-        const firstButton = buttonRefs.current.get(items[0]?.id);
-        const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
-
-        let top = mouseY - height / 2;
-
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-
-          // ナビゲーション領域に対する相対位置に変換
-          const firstButtonCenter =
-            firstButtonRect.top - navRect.top + firstButtonRect.height / 2;
-          const lastButtonCenter =
-            lastButtonRect.top - navRect.top + lastButtonRect.height / 2;
-
-          // エントリー時の制御（上下の要素の中心を過ぎた場合は適切な位置に設定）
-          if (mouseY < firstButtonCenter) {
-            top = Math.max(0, firstButtonCenter - height / 2);
-          } else if (mouseY > lastButtonCenter) {
-            top = Math.min(
-              navRect.height - height,
-              lastButtonCenter - height / 2,
-            );
-          }
-        }
-
-        // ナビゲーション領域内に制限
-        top = Math.max(0, Math.min(top, navRect.height - height));
-
-        indicator.style.left = "8px";
-        indicator.style.top = `${top}px`;
-        indicator.style.width = `${width}px`;
-        indicator.style.height = `${height}px`;
+        position = calculateVerticalEntryPosition(
+          mouseY,
+          navRect,
+          buttonRefsMap,
+          items,
+        );
       } else {
-        const width = 120;
-        const height = 45;
-        const top = 8;
-
-        // 端の要素の中心位置を計算
-        const firstButton = buttonRefs.current.get(items[0]?.id);
-        const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
-
-        let left = mouseX - width / 2;
-
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-
-          // ナビゲーション領域に対する相対位置に変換
-          const firstButtonCenter =
-            firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
-          const lastButtonCenter =
-            lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
-
-          // エントリー時の制御
-          const hoverDisplayMargin = HOVER_DISPLAY_MARGIN;
-
-          if (mouseX < firstButtonCenter - hoverDisplayMargin) {
-            left = Math.max(
-              -HOVER_DISPLAY_MARGIN,
-              firstButtonCenter - width / 2,
-            );
-          } else if (mouseX > lastButtonCenter + hoverDisplayMargin) {
-            left = Math.min(
-              navRect.width - width + HOVER_DISPLAY_MARGIN,
-              lastButtonCenter - width / 2,
-            );
-          }
-        }
-
-        // 最終的な制限
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-          const firstButtonCenter =
-            firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
-          const lastButtonCenter =
-            lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
-          left = Math.max(
-            firstButtonCenter - width / 2,
-            Math.min(left, lastButtonCenter - width / 2),
-          );
-        } else {
-          left = Math.max(
-            -HOVER_DISPLAY_MARGIN,
-            Math.min(left, navRect.width - width + HOVER_DISPLAY_MARGIN),
-          );
-        }
-
-        indicator.style.left = `${left}px`;
-        indicator.style.top = `${top}px`;
-        indicator.style.width = `${width}px`;
-        indicator.style.height = `${height}px`;
+        position = calculateHorizontalEntryPosition(
+          mouseX,
+          navRect,
+          buttonRefsMap,
+          items,
+        );
       }
 
+      indicator.style.left = `${position.left}px`;
+      indicator.style.top = `${position.top}px`;
+      indicator.style.width = `${position.width}px`;
+      indicator.style.height = `${position.height}px`;
       indicator.style.opacity = "0";
       indicator.style.transform = "scale(0.8)";
     },
@@ -266,116 +194,36 @@ export default function BaseHoverIndicator({
         time: currentTime,
       };
 
-      let targetLeft, targetTop, width, height;
+      const buttonRefsMap = {
+        get: (id: string) => buttonRefs.current.get(id),
+      };
 
+      let position;
       if (isVertical) {
-        width = navRect.width - 16;
-        height = 40;
-        targetLeft = 8;
-
-        const firstButton = buttonRefs.current.get(items[0]?.id);
-        const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
-
-        let calculatedTop = mouseY - height / 2;
-
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-
-          const firstButtonCenter =
-            firstButtonRect.top - navRect.top + firstButtonRect.height / 2;
-          const lastButtonCenter =
-            lastButtonRect.top - navRect.top + lastButtonRect.height / 2;
-
-          if (mouseY < firstButtonCenter) {
-            const currentTop = parseFloat(indicator.style.top) || 0;
-            calculatedTop = Math.max(
-              0,
-              Math.min(currentTop, firstButtonCenter - height / 2),
-            );
-          } else if (mouseY > lastButtonCenter) {
-            const currentTop = parseFloat(indicator.style.top) || 0;
-            calculatedTop = Math.min(
-              navRect.height - height,
-              Math.max(currentTop, lastButtonCenter - height / 2),
-            );
-          }
-        }
-
-        targetTop = Math.max(
-          0,
-          Math.min(calculatedTop, navRect.height - height),
-        );
-
         if (mouseY < 0 || mouseY > navRect.height) {
           hideIndicator();
           isAnimatingRef.current = false;
           return;
         }
-
-        targetPositionRef.current = { x: targetLeft, y: targetTop };
+        position = calculateVerticalIndicatorPosition(
+          mouseY,
+          navRect,
+          buttonRefsMap,
+          items,
+        );
+        targetPositionRef.current = { x: position.left, y: position.top };
       } else {
-        width = 120;
-        height = 45;
-        targetTop = 8;
-
-        const firstButton = buttonRefs.current.get(items[0]?.id);
-        const lastButton = buttonRefs.current.get(items[items.length - 1]?.id);
-
-        let calculatedLeft = mouseX - width / 2;
-
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-
-          const firstButtonCenter =
-            firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
-          const lastButtonCenter =
-            lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
-
-          const hoverDisplayMargin = HOVER_DISPLAY_MARGIN;
-
-          if (mouseX < firstButtonCenter - hoverDisplayMargin) {
-            const currentLeft = parseFloat(indicator.style.left) || 0;
-            calculatedLeft = Math.max(
-              -HOVER_DISPLAY_MARGIN,
-              Math.min(currentLeft, firstButtonCenter - width / 2),
-            );
-          } else if (mouseX > lastButtonCenter + hoverDisplayMargin) {
-            const currentLeft = parseFloat(indicator.style.left) || 0;
-            calculatedLeft = Math.min(
-              navRect.width - width + HOVER_DISPLAY_MARGIN,
-              Math.max(currentLeft, lastButtonCenter - width / 2),
-            );
-          }
-        }
-
-        if (firstButton && lastButton) {
-          const firstButtonRect = firstButton.getBoundingClientRect();
-          const lastButtonRect = lastButton.getBoundingClientRect();
-          const firstButtonCenter =
-            firstButtonRect.left - navRect.left + firstButtonRect.width / 2;
-          const lastButtonCenter =
-            lastButtonRect.left - navRect.left + lastButtonRect.width / 2;
-          targetLeft = Math.max(
-            firstButtonCenter - width / 2,
-            Math.min(calculatedLeft, lastButtonCenter - width / 2),
-          );
-        } else {
-          targetLeft = Math.max(
-            -HOVER_DISPLAY_MARGIN,
-            Math.min(
-              calculatedLeft,
-              navRect.width - width + HOVER_DISPLAY_MARGIN,
-            ),
-          );
-        }
-
-        targetPositionRef.current = { x: targetLeft, y: targetTop };
+        position = calculateHorizontalIndicatorPosition(
+          mouseX,
+          navRect,
+          buttonRefsMap,
+          items,
+        );
+        targetPositionRef.current = { x: position.left, y: position.top };
       }
 
-      indicator.style.width = `${width}px`;
-      indicator.style.height = `${height}px`;
+      indicator.style.width = `${position.width}px`;
+      indicator.style.height = `${position.height}px`;
       indicator.style.opacity = "1";
       indicator.style.transform = "scale(1)";
 
