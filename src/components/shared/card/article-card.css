@@ -6,7 +6,7 @@
   position: relative;
   aspect-ratio: 16 / 9;
   width: 100%;
-  max-width: 25rem;
+  max-width: 100%;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
@@ -70,7 +70,7 @@
 }
 
 .card-title {
-  font-size: 1.6rem;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
   font-weight: 700;
   color: #fff;
   margin: 0 0 0.75rem;
@@ -94,7 +94,7 @@
 
 .card-summary {
   color: #e5e7eb;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
   line-height: 1.4;
   margin: 0;
   display: -webkit-box;
@@ -107,42 +107,25 @@
 
 .card-date {
   color: #9ca3af;
-  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 1.2vw, 0.7rem);
   font-weight: 500;
   text-shadow: 0 1px 2px rgb(0 0 0 / 50%);
   white-space: nowrap;
 }
 
 /* Mobile responsive */
-@media (width <= 64rem) {
-  .blog-card {
-    max-width: 20rem;
-  }
-}
-
 @media (width <= 47.9375rem) {
   .blog-card {
-    max-width: 100%;
     aspect-ratio: 4/3;
   }
 
   .card-content {
-    padding: 0.8rem;
-  }
-
-  .card-title {
-    font-size: 1.4rem;
-    margin: 0 0 var(--spacing-sm) 0;
+    padding: clamp(0.6rem, 2vw, 0.8rem);
   }
 
   .card-summary {
-    font-size: 0.75rem;
     -webkit-line-clamp: 1;
     line-clamp: 1;
-  }
-
-  .card-date {
-    font-size: 0.65rem;
   }
 }
 
@@ -152,20 +135,11 @@
   }
 
   .card-content {
-    padding: 0.7rem;
+    padding: clamp(0.5rem, 1.5vw, 0.7rem);
   }
 
   .card-title {
-    font-size: 1.2rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-  }
-
-  .card-summary {
-    font-size: 0.7rem;
-  }
-
-  .card-date {
-    font-size: 0.6rem;
   }
 }

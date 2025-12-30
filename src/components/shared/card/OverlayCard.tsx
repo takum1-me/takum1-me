@@ -79,7 +79,7 @@ export default function OverlayCard({
     "article",
     {
       ref: cardRef,
-      className: `overlay-card bg-white rounded-xl ${shadowClass} overflow-hidden relative aspect-video w-full max-w-[25rem] origin-center z-0 border border-gray-200 cursor-pointer max-[1024px]:max-w-[20rem] max-[768px]:max-w-full max-[768px]:aspect-[4/3] ${className}`,
+      className: `overlay-card bg-white rounded-xl ${shadowClass} overflow-hidden relative aspect-video w-full max-w-full origin-center z-0 border border-gray-200 cursor-pointer max-[768px]:aspect-[4/3] ${className}`,
       "data-category": dataCategory,
       onMouseEnter: disableHover ? undefined : handleMouseEnter,
       onMouseLeave: disableHover ? undefined : handleMouseLeave,
@@ -114,7 +114,7 @@ export default function OverlayCard({
           "h2",
           {
             className:
-              "card-title text-2xl font-bold text-white m-0 mb-3 leading-[1.3] line-clamp-3 break-words max-w-full [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]",
+              "card-title font-bold text-white m-0 mb-3 leading-[1.3] line-clamp-3 break-words max-w-full [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]",
           },
           title,
         ),
@@ -127,7 +127,7 @@ export default function OverlayCard({
                 "p",
                 {
                   className:
-                    "card-subtitle text-gray-200 text-sm leading-[1.4] m-0 line-clamp-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
+                    "card-subtitle text-gray-200 leading-[1.4] m-0 line-clamp-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
                 },
                 subtitle,
               ),
@@ -136,7 +136,7 @@ export default function OverlayCard({
                 "time",
                 {
                   className:
-                    "card-date text-gray-400 text-xs font-medium [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] whitespace-nowrap",
+                    "card-date text-gray-400 font-medium [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] whitespace-nowrap",
                 },
                 formatDate(date),
               ),
