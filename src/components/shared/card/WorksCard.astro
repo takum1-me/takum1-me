@@ -6,9 +6,10 @@ interface Props {
   title: string;
   subtitle?: string;
   url: string;
+  githubUrl?: string;
 }
 
-const { title, subtitle, url } = Astro.props;
+const { title, subtitle, url, githubUrl } = Astro.props;
 
 // OGP画像を取得
 const thumbnail = await fetchThumbnailFromOGP(url);
@@ -23,5 +24,6 @@ const thumbnail = await fetchThumbnailFromOGP(url);
   imageUrl={thumbnail}
   imageAlt={title}
   className="works-card"
+  githubUrl={githubUrl}
 />
 

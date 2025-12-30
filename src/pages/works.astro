@@ -6,35 +6,117 @@ import WorksCard from "../components/shared/card/WorksCard.astro";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
 import "../components/shared/card/overlay-card.css";
+
+interface Work {
+    title: string;
+    subtitle?: string;
+    url: string;
+    githubUrl?: string;
+    type: "personal" | "organization";
+}
+
+const works: Work[] = [
+    {
+        title: "takum1.me",
+        subtitle: "個人ポートフォリオサイト - AstroとReactで構築したポートフォリオサイト",
+        url: "https://takum1.me",
+        githubUrl: "https://github.com/takum1-me/takum1-me",
+        type: "personal",
+    },
+    {
+        title: "Color Detective",
+        subtitle: "AIを活用した色分析ツール - カラーコードの相互変換と類似色の提案",
+        url: "https://color-detective.takum1.me",
+        type: "personal",
+    },
+    {
+        title: "Flavor Flow",
+        subtitle: "コーヒー感覚情報の視覚化ツール - 3Dアニメーション表現によるコーヒーの味わいの可視化",
+        url: "https://flavor-flow.takum1.me",
+        type: "personal",
+    },
+];
+
+const personalWorks = works.filter(work => work.type === "personal");
+const organizationWorks = works.filter(work => work.type === "organization");
 ---
 
 <Layout title="Works">
     <PageContainer variant="works">
         <PageTitle title="WORKS" client:load />
-        <div class="works-grid">
-            <WorksCard
-                title="Color Detective"
-                subtitle="AIを活用した色分析ツール - カラーコードの相互変換と類似色の提案"
-                url="https://color-detective.takum1.me"
-            />
-            <WorksCard
-                title="Flavor Flow"
-                subtitle="コーヒー感覚情報の視覚化ツール - 3Dアニメーション表現によるコーヒーの味わいの可視化"
-                url="https://flavor-flow.takum1.me"
-            />
-        </div>
+        
+        {personalWorks.length > 0 && (
+            <section class="works-section">
+                <h2 class="works-section-title">個人作品</h2>
+                <div class="works-grid">
+                    {personalWorks.map((work) => (
+                        <WorksCard
+                            title={work.title}
+                            subtitle={work.subtitle}
+                            url={work.url}
+                            githubUrl={work.githubUrl}
+                        />
+                    ))}
+                </div>
+            </section>
+        )}
+
+        {organizationWorks.length > 0 && (
+            <section class="works-section">
+                <h2 class="works-section-title">団体作品</h2>
+                <div class="works-grid">
+                    {organizationWorks.map((work) => (
+                        <WorksCard
+                            title={work.title}
+                            subtitle={work.subtitle}
+                            url={work.url}
+                            githubUrl={work.githubUrl}
+                        />
+                    ))}
+                </div>
+            </section>
+        )}
     </PageContainer>
 </Layout>
 
 <style>
+    .works-section {
+        margin-top: 4rem;
+    }
+
+    .works-section:first-of-type {
+        margin-top: 3rem;
+    }
+
+    .works-section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
     .works-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 2rem;
-        margin-top: 3rem;
     }
 
     @media (width <= 47.9375rem) {
+        .works-section {
+            margin-top: 3rem;
+        }
+
+        .works-section:first-of-type {
+            margin-top: 2rem;
+        }
+
+        .works-section-title {
+            font-size: 1.25rem;
+            margin: 0 0 1.25rem;
+        }
+
         .works-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;

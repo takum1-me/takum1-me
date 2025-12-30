@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Button component styles */
 .button {
   @apply inline-block rounded-lg no-underline font-semibold border-2 border-transparent cursor-pointer relative overflow-hidden text-center;
