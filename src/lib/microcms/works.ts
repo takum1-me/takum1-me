@@ -37,4 +37,3 @@ export async function getWorksByOwner(
   const data = await fetchAll<Work>(`works?filters=owner[equals]${owner}`);
   return data.contents;
 }
-
