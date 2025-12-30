@@ -1,5 +1,8 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import { calculateImageBrightness } from "../../../lib/utils/image-brightness";
+import { formatDate } from "../../../lib/utils/date-format";
+import { useOverlayCardAnimation } from "./hooks/useOverlayCardAnimation";
 
 interface OverlayCardProps {
   title: string;
@@ -15,90 +18,6 @@ interface OverlayCardProps {
   githubUrl?: string;
   disableHover?: boolean;
 }
-
-// 画像の明度を計算する関数（軽量化版）
-const calculateImageBrightness = (imageUrl: string): Promise<number> => {
-  return new Promise((resolve) => {
-    // 同じオリジンかどうかをチェック
-    let isSameOrigin = false;
-    try {
-      const imageUrlObj = new URL(imageUrl, window.location.href);
-      isSameOrigin = imageUrlObj.origin === window.location.origin;
-    } catch {
-      // URLの解析に失敗した場合は外部画像として扱う
-      isSameOrigin = false;
-    }
-
-    // 外部画像の場合は明度計算をスキップしてデフォルト値を返す（CORSエラーを回避）
-    if (!isSameOrigin) {
-      resolve(0.5);
-      return;
-    }
-
-    const img = new Image();
-
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        if (!ctx) {
-          resolve(0.5); // デフォルト値
-          return;
-        }
-
-        // パフォーマンス改善：画像サイズを縮小して計算
-        const maxSize = 100;
-        const ratio = Math.min(maxSize / img.width, maxSize / img.height);
-        canvas.width = img.width * ratio;
-        canvas.height = img.height * ratio;
-
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        // サンプリング：全てのピクセルではなく一部をサンプリング
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        const step = Math.max(1, Math.floor(data.length / 4 / 100)); // 100ピクセル程度サンプリング
-
-        let totalBrightness = 0;
-        let sampleCount = 0;
-
-        for (let i = 0; i < data.length; i += step * 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-
-          // 明度を計算（0-1の範囲）
-          const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-          totalBrightness += brightness;
-          sampleCount++;
-        }
-
-        const averageBrightness = totalBrightness / sampleCount;
-        resolve(averageBrightness);
-      } catch (error) {
-        // Canvas操作でエラーが発生した場合はデフォルト値を返す
-        resolve(0.5);
-      }
-    };
-
-    img.onerror = () => {
-      // エラー時はデフォルト値
-      resolve(0.5);
-    };
-
-    img.src = imageUrl;
-  });
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Asia/Tokyo",
-  });
-};
 
 export default function OverlayCard({
   title,
@@ -118,136 +37,21 @@ export default function OverlayCard({
   const cardRef = useRef<HTMLElement>(null);
   const thumbnailRef = useRef<HTMLImageElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // 初期ロードアニメーション
+  // アニメーションロジックをカスタムフックに分離
+  const { handleMouseEnter, handleMouseLeave } = useOverlayCardAnimation({
+    disableHover,
+    cardRef,
+    thumbnailRef,
+    overlayRef,
+  });
+
+  // 初期ロードアニメーション（disableHover時の処理）
   useEffect(() => {
-    if (disableHover) {
-      // ホバー無効の場合はオーバーレイを常に表示
-      if (overlayRef.current) {
-        gsap.set(overlayRef.current, { y: 0 });
-      }
-      return;
-    }
-
-    if (cardRef.current && overlayRef.current) {
-      // オーバーレイの初期状態を設定
-      gsap.set(overlayRef.current, { y: "100%" });
-
-      gsap.fromTo(
-        cardRef.current,
-        {
-          y: 50,
-          opacity: 0,
-          scale: 0.9,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.7)",
-          delay: Math.random() * 0.3, // ランダムな遅延で自然な表示
-        },
-      );
+    if (disableHover && overlayRef.current) {
+      gsap.set(overlayRef.current, { y: 0 });
     }
   }, [disableHover]);
-
-  const handleMouseEnter = useCallback(() => {
-    if (!cardRef.current || !overlayRef.current) return;
-
-    // 既存のアニメーションを停止
-    if (tlRef.current) {
-      tlRef.current.kill();
-    }
-
-    const card = cardRef.current;
-    const thumbnail = thumbnailRef.current;
-    const overlay = overlayRef.current;
-
-    tlRef.current = gsap.timeline();
-
-    // カードのアニメーション
-    tlRef.current.to(card, {
-      y: -12,
-      scale: 1.02,
-      boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-      duration: 0.3,
-      ease: "power2.out",
-    });
-
-    // サムネイルがある場合のみスケールアニメーション
-    if (thumbnail) {
-      tlRef.current.to(
-        thumbnail,
-        {
-          scale: 1.05,
-          duration: 0.3,
-          ease: "power2.out",
-        },
-        0,
-      );
-    }
-
-    // オーバーレイのアニメーション
-    tlRef.current.to(
-      overlay,
-      {
-        y: 0,
-        duration: 0.4,
-        ease: "power2.out",
-      },
-      0,
-    );
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (!cardRef.current || !overlayRef.current) return;
-
-    // 既存のアニメーションを停止
-    if (tlRef.current) {
-      tlRef.current.kill();
-    }
-
-    const card = cardRef.current;
-    const thumbnail = thumbnailRef.current;
-    const overlay = overlayRef.current;
-
-    tlRef.current = gsap.timeline();
-
-    // カードのアニメーション
-    tlRef.current.to(card, {
-      y: 0,
-      scale: 1,
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-      duration: 0.4,
-      ease: "power2.out",
-    });
-
-    // サムネイルがある場合のみスケールアニメーション
-    if (thumbnail) {
-      tlRef.current.to(
-        thumbnail,
-        {
-          scale: 1,
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        0,
-      );
-    }
-
-    // オーバーレイのアニメーション
-    tlRef.current.to(
-      overlay,
-      {
-        y: "100%",
-        duration: 0.4,
-        ease: "power2.out",
-      },
-      0,
-    );
-  }, []);
 
   useEffect(() => {
     if (imageUrl) {
