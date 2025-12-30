@@ -120,6 +120,24 @@
   aspect-ratio: 4 / 3;
 }
 
+/* Works card specific styles - no shadow, no hover animation */
+.overlay-card.works-card {
+  box-shadow: none;
+}
+
+.overlay-card.works-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.overlay-card.works-card .card-content {
+  transform: translateY(0);
+}
+
+.overlay-card.works-card .card-thumbnail__img {
+  transform: scale(1);
+}
+
 /* Mobile responsive */
 @media (width <= 64rem) {
   .overlay-card {

@@ -13,56 +13,78 @@ interface OverlayCardProps {
   className?: string;
   dataCategory?: string;
   githubUrl?: string;
+  disableHover?: boolean;
 }
 
 // 画像の明度を計算する関数（軽量化版）
 const calculateImageBrightness = (imageUrl: string): Promise<number> => {
   return new Promise((resolve) => {
+    // 同じオリジンかどうかをチェック
+    let isSameOrigin = false;
+    try {
+      const imageUrlObj = new URL(imageUrl, window.location.href);
+      isSameOrigin = imageUrlObj.origin === window.location.origin;
+    } catch {
+      // URLの解析に失敗した場合は外部画像として扱う
+      isSameOrigin = false;
+    }
+
+    // 外部画像の場合は明度計算をスキップしてデフォルト値を返す（CORSエラーを回避）
+    if (!isSameOrigin) {
+      resolve(0.5);
+      return;
+    }
+
     const img = new Image();
-    img.crossOrigin = "anonymous";
 
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-      if (!ctx) {
-        resolve(0.5); // デフォルト値
-        return;
+        if (!ctx) {
+          resolve(0.5); // デフォルト値
+          return;
+        }
+
+        // パフォーマンス改善：画像サイズを縮小して計算
+        const maxSize = 100;
+        const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // サンプリング：全てのピクセルではなく一部をサンプリング
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const step = Math.max(1, Math.floor(data.length / 4 / 100)); // 100ピクセル程度サンプリング
+
+        let totalBrightness = 0;
+        let sampleCount = 0;
+
+        for (let i = 0; i < data.length; i += step * 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          // 明度を計算（0-1の範囲）
+          const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+          totalBrightness += brightness;
+          sampleCount++;
+        }
+
+        const averageBrightness = totalBrightness / sampleCount;
+        resolve(averageBrightness);
+      } catch (error) {
+        // Canvas操作でエラーが発生した場合はデフォルト値を返す
+        resolve(0.5);
       }
-
-      // パフォーマンス改善：画像サイズを縮小して計算
-      const maxSize = 100;
-      const ratio = Math.min(maxSize / img.width, maxSize / img.height);
-      canvas.width = img.width * ratio;
-      canvas.height = img.height * ratio;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      // サンプリング：全てのピクセルではなく一部をサンプリング
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      const step = Math.max(1, Math.floor(data.length / 4 / 100)); // 100ピクセル程度サンプリング
-
-      let totalBrightness = 0;
-      let sampleCount = 0;
-
-      for (let i = 0; i < data.length; i += step * 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-
-        // 明度を計算（0-1の範囲）
-        const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-        totalBrightness += brightness;
-        sampleCount++;
-      }
-
-      const averageBrightness = totalBrightness / sampleCount;
-      resolve(averageBrightness);
     };
 
     img.onerror = () => {
-      resolve(0.5); // エラー時はデフォルト値
+      // エラー時はデフォルト値
+      resolve(0.5);
     };
 
     img.src = imageUrl;
@@ -90,6 +112,7 @@ export default function OverlayCard({
   className = "",
   dataCategory,
   githubUrl,
+  disableHover = false,
 }: OverlayCardProps) {
   const [overlayOpacity, setOverlayOpacity] = React.useState(0.8);
   const cardRef = useRef<HTMLElement>(null);
@@ -99,6 +122,14 @@ export default function OverlayCard({
 
   // 初期ロードアニメーション
   useEffect(() => {
+    if (disableHover) {
+      // ホバー無効の場合はオーバーレイを常に表示
+      if (overlayRef.current) {
+        gsap.set(overlayRef.current, { y: 0 });
+      }
+      return;
+    }
+
     if (cardRef.current && overlayRef.current) {
       // オーバーレイの初期状態を設定
       gsap.set(overlayRef.current, { y: "100%" });
@@ -120,7 +151,7 @@ export default function OverlayCard({
         },
       );
     }
-  }, []);
+  }, [disableHover]);
 
   const handleMouseEnter = useCallback(() => {
     if (!cardRef.current || !overlayRef.current) return;
@@ -237,14 +268,17 @@ export default function OverlayCard({
     }
   }, [imageUrl]);
 
+  const shadowClass = disableHover
+    ? ""
+    : "shadow-[0_0.25rem_1.25rem_rgba(0,0,0,0.1)]";
   const cardContent = React.createElement(
     "article",
     {
       ref: cardRef,
-      className: `overlay-card bg-white rounded-xl shadow-[0_0.25rem_1.25rem_rgba(0,0,0,0.1)] overflow-hidden relative aspect-video w-full max-w-[25rem] origin-center z-0 border border-gray-200 cursor-pointer max-[1024px]:max-w-[20rem] max-[768px]:max-w-full max-[768px]:aspect-[4/3] ${className}`,
+      className: `overlay-card bg-white rounded-xl ${shadowClass} overflow-hidden relative aspect-video w-full max-w-[25rem] origin-center z-0 border border-gray-200 cursor-pointer max-[1024px]:max-w-[20rem] max-[768px]:max-w-full max-[768px]:aspect-[4/3] ${className}`,
       "data-category": dataCategory,
-      onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave,
+      onMouseEnter: disableHover ? undefined : handleMouseEnter,
+      onMouseLeave: disableHover ? undefined : handleMouseLeave,
       onClick: onClick,
     },
     React.createElement(
@@ -304,17 +338,27 @@ export default function OverlayCard({
               ),
             githubUrl &&
               React.createElement(
-                "a",
+                "span",
                 {
-                  href: githubUrl,
-                  target: "_blank",
-                  rel: "noopener noreferrer",
                   className:
-                    "card-github-link text-white text-xs font-medium flex items-center gap-1 mt-1 hover:text-gray-200 transition-colors [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
-                  onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    "card-github-link text-white text-xs font-medium flex items-center gap-1 mt-1 hover:text-gray-200 transition-colors cursor-pointer [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
+                  onClick: (e: React.MouseEvent<HTMLSpanElement>) => {
                     e.stopPropagation();
-                    // 親のリンクのクリックを防ぐためにpreventDefaultは不要
-                    // GitHubリンク自体の動作は維持する
+                    e.preventDefault();
+                    if (githubUrl) {
+                      window.open(githubUrl, "_blank", "noopener,noreferrer");
+                    }
+                  },
+                  role: "button",
+                  tabIndex: 0,
+                  onKeyDown: (e: React.KeyboardEvent<HTMLSpanElement>) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      if (githubUrl) {
+                        window.open(githubUrl, "_blank", "noopener,noreferrer");
+                      }
+                    }
                   },
                 },
                 React.createElement(

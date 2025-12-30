@@ -1,4 +1,29 @@
 /**
+ * 相対パスを絶対URLに変換する
+ */
+function resolveImageUrl(imageUrl: string, baseUrl: string): string {
+  // 既に絶対URLの場合はそのまま返す
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+
+  try {
+    const base = new URL(baseUrl);
+
+    // 相対パス（/で始まる）の場合は、baseのoriginと結合
+    if (imageUrl.startsWith("/")) {
+      return `${base.origin}${imageUrl}`;
+    }
+
+    // 相対パス（./や../で始まる、またはパスだけ）の場合は、baseと結合
+    return new URL(imageUrl, base).href;
+  } catch {
+    // URLの解析に失敗した場合は元のURLを返す
+    return imageUrl;
+  }
+}
+
+/**
  * URLからOGP画像を取得する
  * サーバー側（Astro）で実行されるため、直接fetchできる
  */
@@ -28,7 +53,15 @@ export async function fetchThumbnailFromOGP(
     for (const pattern of ogImagePatterns) {
       const match = html.match(pattern);
       if (match && match[1]) {
-        return match[1];
+        const imageUrl = match[1].trim();
+        // 空文字列や"undefined"などの無効な値をスキップ
+        if (
+          imageUrl &&
+          imageUrl !== "undefined" &&
+          !imageUrl.includes("undefined")
+        ) {
+          return resolveImageUrl(imageUrl, url);
+        }
       }
     }
 
@@ -41,7 +74,15 @@ export async function fetchThumbnailFromOGP(
     for (const pattern of twitterImagePatterns) {
       const match = html.match(pattern);
       if (match && match[1]) {
-        return match[1];
+        const imageUrl = match[1].trim();
+        // 空文字列や"undefined"などの無効な値をスキップ
+        if (
+          imageUrl &&
+          imageUrl !== "undefined" &&
+          !imageUrl.includes("undefined")
+        ) {
+          return resolveImageUrl(imageUrl, url);
+        }
       }
     }
 

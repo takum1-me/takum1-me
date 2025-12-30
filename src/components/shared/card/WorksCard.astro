@@ -7,12 +7,30 @@ interface Props {
   subtitle?: string;
   url: string;
   githubUrl?: string;
+  genre?: "programming" | "design";
+  photos?: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
 }
 
-const { title, subtitle, url, githubUrl } = Astro.props;
+const { title, subtitle, url, githubUrl, genre, photos } = Astro.props;
 
-// OGP画像を取得
-const thumbnail = await fetchThumbnailFromOGP(url);
+// genreに応じて画像URLを決定
+let imageUrl: string;
+
+if (genre === "design" && photos && photos.length > 0) {
+  // designの場合はmedialistの最初の画像を使用
+  imageUrl = photos[0].url;
+} else if (url && url !== "#" && (url.startsWith("http://") || url.startsWith("https://"))) {
+  // programmingの場合はOGP画像を取得（有効なURLの場合のみ）
+  const thumbnail = await fetchThumbnailFromOGP(url);
+  imageUrl = thumbnail || "/works-placeholder.svg";
+} else {
+  // URLが無効な場合はフォールバック画像を使用
+  imageUrl = "/works-placeholder.svg";
+}
 ---
 
 <OverlayCard
@@ -21,9 +39,10 @@ const thumbnail = await fetchThumbnailFromOGP(url);
   subtitle={subtitle}
   href={url}
   isExternal={true}
-  imageUrl={thumbnail}
+  imageUrl={imageUrl}
   imageAlt={title}
   className="works-card"
   githubUrl={githubUrl}
+  disableHover={true}
 />
 

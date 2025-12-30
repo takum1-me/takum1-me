@@ -3,48 +3,83 @@ import Layout from "../layouts/Layout.astro";
 import PageTitle from "../components/shared/page/PageTitle";
 import PageContainer from "../components/shared/page/PageContainer";
 import WorksCard from "../components/shared/card/WorksCard.astro";
+import { getAllWorks, type Work as MicroCMSWork } from "../lib/microcms";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
 import "../components/shared/card/overlay-card.css";
 
-interface Work {
+// microCMSからworksデータを取得
+const worksResponse = await getAllWorks();
+const allWorks = worksResponse.contents;
+
+// 表示用のWork型に変換
+interface DisplayWork {
     title: string;
     subtitle?: string;
     url: string;
     githubUrl?: string;
     type: "personal" | "organization";
+    genre?: "programming" | "design";
+    photos?: {
+        url: string;
+        height: number;
+        width: number;
+    }[];
 }
 
-const works: Work[] = [
-    {
-        title: "takum1.me",
-        subtitle: "個人ポートフォリオサイト - AstroとReactで構築したポートフォリオサイト",
-        url: "https://takum1.me",
-        githubUrl: "https://github.com/takum1-me/takum1-me",
-        type: "personal",
-    },
-    {
-        title: "Color Detective",
-        subtitle: "AIを活用した色分析ツール - カラーコードの相互変換と類似色の提案",
-        url: "https://color-detective.takum1.me",
-        type: "personal",
-    },
-    {
-        title: "Flavor Flow",
-        subtitle: "コーヒー感覚情報の視覚化ツール - 3Dアニメーション表現によるコーヒーの味わいの可視化",
-        url: "https://flavor-flow.takum1.me",
-        type: "personal",
-    },
-];
+// 配列または文字列から最初の値を取得するヘルパー関数
+function getFirstValue<T>(value: T | T[] | undefined): T | undefined {
+    if (value === undefined) return undefined;
+    if (Array.isArray(value)) return value[0];
+    return value;
+}
 
-const personalWorks = works.filter(work => work.type === "personal");
-const organizationWorks = works.filter(work => work.type === "organization");
+const mapToDisplayWork = (work: MicroCMSWork): DisplayWork | null => {
+    // 配列から最初の値を取得
+    const genre = getFirstValue(work.genre);
+    const owner = getFirstValue(work.owner);
+    
+    // programmingの場合はlinkが必須、designの場合はphotosまたはlinkがあればOK
+    if (genre === "programming" && !work.link) {
+        return null;
+    }
+    
+    if (genre === "design" && !work.photos && !work.link) {
+        return null;
+    }
+    
+    // genreが未設定の場合は、linkがあれば表示する
+    if (!genre && !work.link) {
+        return null;
+    }
+    
+    // designでlinkがない場合は、photosの最初の画像のURLをダミーURLとして使用
+    const url = work.link || (work.photos && work.photos.length > 0 ? "#" : "#");
+
+    return {
+        title: work.title,
+        subtitle: work.outline,
+        url: url,
+        githubUrl: work.githuburl,
+        type: owner || "personal",
+        genre: genre,
+        photos: work.photos,
+    };
+};
+
+const displayWorks = allWorks
+    .map(mapToDisplayWork)
+    .filter((work): work is DisplayWork => work !== null);
+
+const personalWorks = displayWorks.filter(work => work.type === "personal");
+const organizationWorks = displayWorks.filter(work => work.type === "organization");
 ---
 
 <Layout title="Works">
     <PageContainer variant="works">
         <PageTitle title="WORKS" client:load />
         
+
         {personalWorks.length > 0 && (
             <section class="works-section">
                 <h2 class="works-section-title">個人作品</h2>
@@ -55,6 +90,8 @@ const organizationWorks = works.filter(work => work.type === "organization");
                             subtitle={work.subtitle}
                             url={work.url}
                             githubUrl={work.githubUrl}
+                            genre={work.genre}
+                            photos={work.photos}
                         />
                     ))}
                 </div>
@@ -71,6 +108,8 @@ const organizationWorks = works.filter(work => work.type === "organization");
                             subtitle={work.subtitle}
                             url={work.url}
                             githubUrl={work.githubUrl}
+                            genre={work.genre}
+                            photos={work.photos}
                         />
                     ))}
                 </div>

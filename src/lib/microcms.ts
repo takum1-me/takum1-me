@@ -12,3 +12,6 @@ export * from "./microcms/song";
 
 // About API
 export * from "./microcms/about";
+
+// Works API
+export * from "./microcms/works";
