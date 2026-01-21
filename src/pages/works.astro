@@ -4,6 +4,8 @@ import PageTitle from "../components/shared/page/PageTitle";
 import PageContainer from "../components/shared/page/PageContainer";
 import WorksCard from "../components/shared/card/WorksCard.astro";
 import { getAllWorks, type Work as MicroCMSWork } from "../lib/microcms";
+import { ZoomableFlavorWheel } from "../components/features/flavor-wheel";
+import { flavorWheelSegments } from "../data/flavor-wheel-segments";
 import "../components/shared/page/page-title.css";
 import "../components/shared/page/page-container.css";
 import "../components/shared/card/overlay-card.css";
@@ -79,10 +81,9 @@ const organizationWorks = displayWorks.filter(work => work.type === "organizatio
     <PageContainer variant="works">
         <PageTitle title="WORKS" client:load />
         
-
         {personalWorks.length > 0 && (
             <section class="works-section">
-                <h2 class="works-section-title">個人作品</h2>
+                <h2 class="works-section-title">Individual Works</h2>
                 <div class="works-grid">
                     {personalWorks.map((work) => (
                         <WorksCard
@@ -115,10 +116,28 @@ const organizationWorks = displayWorks.filter(work => work.type === "organizatio
                 </div>
             </section>
         )}
+        <section class="works-section">
+            <h2 class="works-section-title">Flavor Wheel</h2>
+            <section class="flavor-wheel-section">
+                <ZoomableFlavorWheel
+                    segments={flavorWheelSegments}
+                    client:only="react"
+                />
+            </section>
+        </section>
     </PageContainer>
 </Layout>
 
 <style>
+    .flavor-wheel-section {
+        margin: 4rem auto 2rem;
+        max-width: 600px;
+        min-height: 400px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+    }
+
     .works-section {
         margin-top: 4rem;
     }
@@ -159,6 +178,11 @@ const organizationWorks = displayWorks.filter(work => work.type === "organizatio
         .works-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
+        }
+
+        .flavor-wheel-section {
+            min-height: 300px;
+            margin-top: 3rem;
         }
     }
 </style>

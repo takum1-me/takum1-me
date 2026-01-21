@@ -80,4 +80,3 @@ export const calculateImageBrightness = (imageUrl: string): Promise<number> => {
     img.src = imageUrl;
   });
 };
-
