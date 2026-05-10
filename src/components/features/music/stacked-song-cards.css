@@ -1,8 +1,8 @@
 .stacked-songs-container {
   position: relative;
-  height: 18.75rem;
+  height: 17rem;
   width: 100%;
-  max-width: 43.75rem;
+  max-width: 39.375rem;
   margin: 0 auto;
   perspective: 1000px;
   contain: layout style;
@@ -18,28 +18,30 @@
   /* 1000px未満: 2個表示 */
   @media (width <= 62.4375rem) {
     .stacked-songs-container {
-      max-width: 31.25rem;
+      max-width: 28.125rem;
     }
   }
 
   /* 1000px-1199px: 3個表示 */
   @media (width >= 62.5rem) and (width <= 74.9375rem) {
     .stacked-songs-container {
-      max-width: 43.75rem;
+      max-width: 39.375rem;
     }
   }
 
-  /* 1200px-1399px: 4個表示 */
+  /* 1200px-1399px: 4個表示（横幅・カードは従来どおり） */
   @media (width >= 75rem) and (width <= 87.4375rem) {
     .stacked-songs-container {
       max-width: 56.25rem;
+      height: 18.75rem;
     }
   }
 
-  /* 1400px以上: 5個表示 */
+  /* 1400px以上: 5個表示（同上） */
   @media (width >= 87.5rem) {
     .stacked-songs-container {
       max-width: 68.75rem;
+      height: 18.75rem;
     }
   }
 }
@@ -97,8 +99,8 @@
 
 .stacked-song-card {
   position: relative;
-  width: 15rem;
-  height: 15rem;
+  width: 13.5rem;
+  height: 13.5rem;
   cursor: pointer;
   border-radius: 0.75rem;
   overflow: hidden;
@@ -116,20 +118,20 @@
   /* 1000px未満: 2個表示 - カードサイズを大きく */
   @media (width <= 62.4375rem) {
     .stacked-song-card {
-      width: 17.5rem;
-      height: 17.5rem;
+      width: 15.75rem;
+      height: 15.75rem;
     }
   }
 
   /* 1000px-1199px: 3個表示 - 標準サイズ */
   @media (width >= 62.5rem) and (width <= 74.9375rem) {
     .stacked-song-card {
-      width: 15rem;
-      height: 15rem;
+      width: 13.5rem;
+      height: 13.5rem;
     }
   }
 
-  /* 1200px-1399px: 4個表示 - 少し小さく */
+  /* 1200px-1399px: 4個表示 */
   @media (width >= 75rem) and (width <= 87.4375rem) {
     .stacked-song-card {
       width: 13.75rem;
@@ -137,7 +139,7 @@
     }
   }
 
-  /* 1400px以上: 5個表示 - さらに小さく */
+  /* 1400px以上: 5個表示 */
   @media (width >= 87.5rem) {
     .stacked-song-card {
       width: 12.5rem;

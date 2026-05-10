@@ -35,7 +35,9 @@ interface CardHeaderProps {
 
 export function CardHeader({ children, className = "" }: CardHeaderProps) {
   return (
-    <div className={`card-section-heading flex items-center gap-md ${className}`}>
+    <div
+      className={`card-section-heading flex items-center gap-md ${className}`}
+    >
       {children}
     </div>
   );

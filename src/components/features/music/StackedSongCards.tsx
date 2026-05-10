@@ -290,15 +290,15 @@ export default function StackedSongCards({ songs }: StackedSongCardsProps) {
 
     if (isHovering) {
       gsap.to(card, {
-        y: -12,
-        scale: 1.05,
-        rotation: 2,
+        y: -6,
+        scale: 1.02,
+        rotation: 1,
         duration: 0.4,
         ease: "power2.out",
       });
 
       gsap.to(artwork, {
-        scale: 1.1,
+        scale: 1.03,
         duration: 0.4,
         ease: "power2.out",
       });
