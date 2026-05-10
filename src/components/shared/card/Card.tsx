@@ -1,4 +1,5 @@
 import React from "react";
+import "./card.css";
 
 interface CardProps {
   children: React.ReactNode;
@@ -34,7 +35,7 @@ interface CardHeaderProps {
 
 export function CardHeader({ children, className = "" }: CardHeaderProps) {
   return (
-    <div className={`flex items-center mb-lg gap-md ${className}`}>
+    <div className={`card-section-heading flex items-center gap-md ${className}`}>
       {children}
     </div>
   );
