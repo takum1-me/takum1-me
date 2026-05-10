@@ -4,6 +4,9 @@ import HeaderHoverIndicator from "../../shared/hoverindicator/HeaderHoverIndicat
 import SnsLinks from "../../shared/sns-links/SnsLinks";
 import "./header.css";
 
+/** false の間はマウス位置でヘッダーの表示を切り替えない（再有効化するときは true に） */
+const HEADER_CURSOR_REVEAL_ENABLED = false;
+
 const HOVER_THRESHOLD = 120;
 
 export default function Header() {
@@ -30,8 +33,9 @@ export default function Header() {
     // 常にトップ固定
     setIsAtTop(true);
 
-    // 上スクロール時またはホバー時のみ表示
-    const shouldShow = goingUp || hoverRef.current;
+    // 上スクロール時のみ表示（カーソル連動が有効なら画面上端ホバーでも表示）
+    const shouldShow =
+      goingUp || (HEADER_CURSOR_REVEAL_ENABLED ? hoverRef.current : false);
     setVisible(shouldShow);
     lastYRef.current = y;
   }, []);
@@ -184,11 +188,15 @@ export default function Header() {
     setVisible(true); // 初期表示
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("mousemove", handleMouseMove);
+    if (HEADER_CURSOR_REVEAL_ENABLED) {
+      window.addEventListener("mousemove", handleMouseMove);
+    }
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("mousemove", handleMouseMove);
+      if (HEADER_CURSOR_REVEAL_ENABLED) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
       // コンポーネントアンマウント時にスクロールを元に戻す
       document.body.style.overflow = "";
       document.body.style.position = "";
@@ -246,7 +254,7 @@ export default function Header() {
           "div",
           {
             ref: mobileMenuRef,
-            className: "mobile-menu",
+            className: `mobile-menu${isMobileMenuOpen ? " open" : ""}`,
             style: {
               right: "-100%",
               opacity: 0,

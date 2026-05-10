@@ -120,6 +120,11 @@
   box-sizing: border-box;
 }
 
+/* 開いているときだけパネル内をクリック／タップ可能にする（pointer-events の継承を確実に効かせる） */
+.mobile-menu.open {
+  pointer-events: auto;
+}
+
 /* 背景オーバーレイ */
 .mobile-menu::before {
   content: "";
