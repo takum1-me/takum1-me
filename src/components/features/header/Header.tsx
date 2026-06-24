@@ -10,7 +10,7 @@ const HEADER_CURSOR_REVEAL_ENABLED = false;
 const HOVER_THRESHOLD = 120;
 
 export default function Header() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastYRef = useRef<number>(0);
@@ -28,15 +28,12 @@ export default function Header() {
 
   const handleScroll = useCallback(() => {
     const y = window.scrollY;
-    const goingUp = y < lastYRef.current;
 
-    // 常にトップ固定
-    setIsAtTop(true);
+    // 最上部だけ全幅バナー、それ以外はページ上部に固定表示
+    setIsAtTop(y <= 0);
 
-    // 上スクロール時のみ表示（カーソル連動が有効なら画面上端ホバーでも表示）
-    const shouldShow =
-      goingUp || (HEADER_CURSOR_REVEAL_ENABLED ? hoverRef.current : false);
-    setVisible(shouldShow);
+    // ヘッダーは常に表示
+    setVisible(true);
     lastYRef.current = y;
   }, []);
 
@@ -55,13 +52,8 @@ export default function Header() {
     const nearTop = e.clientY <= HOVER_THRESHOLD;
     hoverRef.current = nearTop;
 
-    if (nearTop) {
-      setVisible(true);
-    } else {
-      const y = window.scrollY;
-      const goingUp = y < lastYRef.current;
-      setVisible(goingUp);
-    }
+    // ヘッダーは常に表示
+    setVisible(true);
   }, []);
 
   const handleItemClick = useCallback((id: string) => {
@@ -184,7 +176,7 @@ export default function Header() {
 
   useEffect(() => {
     lastYRef.current = window.scrollY;
-    setIsAtTop(true); // 常にトップ固定
+    setIsAtTop(window.scrollY <= 0); // 最上部のみ全幅バナー
     setVisible(true); // 初期表示
 
     window.addEventListener("scroll", handleScroll, { passive: true });
