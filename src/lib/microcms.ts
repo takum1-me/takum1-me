@@ -15,3 +15,6 @@ export * from "./microcms/about";
 
 // Works API
 export * from "./microcms/works";
+
+// Lab API
+export * from "./microcms/lab";

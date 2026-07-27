@@ -1,0 +1,204 @@
+---
+import { getAllLabArticles, getLabArticleById } from "../../lib/microcms/lab";
+import Layout from "../../layouts/Layout.astro";
+import PageContainer from "../../components/shared/page/PageContainer";
+import "../../components/shared/page/page-container.css";
+
+export async function getStaticPaths() {
+  try {
+    const articles = await getAllLabArticles();
+    return articles.map((article) => ({ params: { slug: article.id } }));
+  } catch (error) {
+    console.error("[lab] static paths fetch failed:", error);
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+const article = slug ? await getLabArticleById(slug) : null;
+
+if (!article) {
+  return Astro.redirect("/404");
+}
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tokyo",
+  });
+---
+
+<Layout title={article.title}>
+  <main class="lab-main">
+    <PageContainer variant="blog">
+      <article class="lab-article">
+        <p class="back"><a href="/lab">← Lab 一覧に戻る</a></p>
+
+        <header class="lab-header">
+          <time datetime={article.publishedAt}>
+            {formatDate(article.publishedAt)}
+          </time>
+          <h1>{article.title}</h1>
+          {
+            article.category && article.category.length > 0 && (
+              <div class="lab-tags">
+                {article.category.map((category) => (
+                  <span class="tag">#{category}</span>
+                ))}
+              </div>
+            )
+          }
+        </header>
+
+        {
+          article.eyecatch && (
+            <img
+              class="eyecatch"
+              src={article.eyecatch.url}
+              alt={article.title}
+            />
+          )
+        }
+        <div class="lab-content" set:html={article.content} />
+      </article>
+    </PageContainer>
+  </main>
+</Layout>
+
+<style>
+  .lab-main {
+    min-height: 100vh;
+  }
+
+  .lab-article {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 1rem 0 4rem;
+  }
+
+  .back {
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .back a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .back a:hover {
+    color: var(--color-text-primary);
+  }
+
+  .lab-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .lab-header time {
+    font-size: 0.85rem;
+    color: var(--color-muted, #94a3b8);
+  }
+
+  h1 {
+    margin: 0.4rem 0 0;
+    font-size: 1.7rem;
+    line-height: 1.4;
+    color: var(--color-text-primary);
+  }
+
+  .lab-tags {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    color: var(--color-muted, #94a3b8);
+  }
+
+  .eyecatch {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .lab-content {
+    line-height: 1.85;
+    color: var(--color-text-primary);
+  }
+
+  .lab-content :global(h2) {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.3rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .lab-content :global(h3) {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .lab-content :global(p) {
+    margin: 0.75rem 0;
+  }
+
+  .lab-content :global(ul),
+  .lab-content :global(ol) {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .lab-content :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  .lab-content :global(code) {
+    background: #f1f5f9;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+  }
+
+  .lab-content :global(pre) {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+
+  .lab-content :global(blockquote) {
+    margin: 1rem 0;
+    padding: 0.25rem 1rem;
+    border-left: 3px solid #e2e8f0;
+    color: var(--color-text-secondary);
+  }
+
+  .lab-content :global(table) {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+
+  .lab-content :global(th),
+  .lab-content :global(td) {
+    border: 1px solid #e2e8f0;
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+  }
+
+  @media (width <= 47.9375rem) {
+    h1 {
+      font-size: 1.4rem;
+    }
+  }
+</style>

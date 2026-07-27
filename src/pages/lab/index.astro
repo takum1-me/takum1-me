@@ -1,0 +1,170 @@
+---
+import { getAllLabArticles, type LabArticle } from "../../lib/microcms/lab";
+import Layout from "../../layouts/Layout.astro";
+import PageTitle from "../../components/shared/page/PageTitle";
+import PageContainer from "../../components/shared/page/PageContainer";
+import "../../components/shared/page/page-title.css";
+import "../../components/shared/page/page-container.css";
+
+let articles: LabArticle[] = [];
+let loadError = false;
+
+try {
+  articles = await getAllLabArticles();
+} catch (error) {
+  console.error("[lab] fetch failed:", error);
+  loadError = true;
+}
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tokyo",
+  });
+---
+
+<Layout title="Lab">
+  <PageContainer variant="works">
+    <PageTitle title="LAB" client:load />
+
+    <section class="lab-section">
+      <p class="lab-lead">
+        コーヒーまわりでやったことの記録。抽出用カスタムウォーターのレシピ、3D
+        プリンターで作った道具のモデル配布、焙煎プロファイルの公開など。
+      </p>
+
+      {
+        loadError && (
+          <p class="lab-empty">
+            記事を取得できませんでした。時間をおいて再度お試しください。
+          </p>
+        )
+      }
+
+      {
+        !loadError && articles.length === 0 && (
+          <p class="lab-empty">まだ記事がありません。</p>
+        )
+      }
+
+      <ul class="lab-list">
+        {
+          articles.map((article) => (
+            <li>
+              <a class="lab-card" href={`/lab/${article.id}`}>
+                <div class="lab-card-meta">
+                  <time datetime={article.publishedAt}>
+                    {formatDate(article.publishedAt)}
+                  </time>
+                </div>
+                <h2 class="lab-card-title">{article.title}</h2>
+                {article.category && article.category.length > 0 && (
+                  <div class="lab-card-tags">
+                    {article.category.map((category) => (
+                      <span class="tag">#{category}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </PageContainer>
+</Layout>
+
+<style>
+  .lab-section {
+    margin-top: 3rem;
+    max-width: 46rem;
+  }
+
+  .lab-lead {
+    margin: 0 0 2rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-text-secondary, #4b5563);
+  }
+
+  .lab-empty {
+    color: var(--color-muted, #94a3b8);
+  }
+
+  .lab-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .lab-card {
+    display: block;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .lab-card:hover {
+    box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+    transform: translateY(-2px);
+  }
+
+  .lab-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .lab-card-meta time {
+    font-size: 0.8rem;
+    color: var(--color-muted, #94a3b8);
+  }
+
+  .lab-card-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #1f2937);
+    line-height: 1.4;
+  }
+
+  .lab-card-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #4b5563);
+  }
+
+  .lab-card-tags {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    color: var(--color-muted, #94a3b8);
+  }
+
+  @media (width <= 47.9375rem) {
+    .lab-section {
+      margin-top: 2rem;
+    }
+
+    .lab-card {
+      padding: 1rem 1.1rem;
+    }
+  }
+</style>
