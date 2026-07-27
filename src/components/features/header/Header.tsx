@@ -24,6 +24,8 @@ export default function Header() {
     { id: "about", label: "About", href: "/about" },
     { id: "blog", label: "Blog", href: "/blog" },
     { id: "works", label: "Works", href: "/works" },
+    { id: "lab", label: "Lab", href: "/lab" },
+    { id: "beans", label: "Beans", href: "/beans" },
   ];
 
   const handleScroll = useCallback(() => {
