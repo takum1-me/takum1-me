@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
-import HeaderHoverIndicator from "../../shared/hoverindicator/HeaderHoverIndicator";
 import SnsLinks from "../../shared/sns-links/SnsLinks";
 import "./header.css";
 
@@ -176,6 +175,23 @@ export default function Header() {
     });
   }, []);
 
+  const renderNavigation = (className: string) =>
+    React.createElement(
+      "nav",
+      { className, "aria-label": "サイトナビゲーション" },
+      navItems.map((item) =>
+        React.createElement(
+          "button",
+          {
+            key: item.id,
+            className: "header-nav-button",
+            onClick: () => handleItemClick(item.id),
+          },
+          item.label,
+        ),
+      ),
+    );
+
   useEffect(() => {
     lastYRef.current = window.scrollY;
     setIsAtTop(window.scrollY <= 0); // 最上部のみ全幅バナー
@@ -266,11 +282,7 @@ export default function Header() {
           React.createElement(
             "div",
             { className: "mobile-nav-container" },
-            React.createElement(HeaderHoverIndicator, {
-              items: navItems,
-              onItemClick: handleItemClick,
-              className: "mobile-header-links vertical",
-            }),
+            renderNavigation("mobile-header-links"),
           ),
           React.createElement(
             "div",
@@ -280,11 +292,7 @@ export default function Header() {
             }),
           ),
         ),
-        React.createElement(HeaderHoverIndicator, {
-          items: navItems,
-          onItemClick: handleItemClick,
-          className: "header-links",
-        }),
+        renderNavigation("header-links"),
       ),
     ),
     React.createElement(
