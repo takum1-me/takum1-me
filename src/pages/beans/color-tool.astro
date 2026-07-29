@@ -1,0 +1,43 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageTitle from "../../components/shared/page/PageTitle";
+import PageContainer from "../../components/shared/page/PageContainer";
+import { FlavorColorTool } from "../../components/features/beans";
+import "../../components/shared/page/page-title.css";
+import "../../components/shared/page/page-container.css";
+
+// ローカル専用ツール。本番ではデプロイ・公開しない。
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/beans");
+}
+---
+
+<Layout title="Flavor Color Tool" description="beans の flavorColors を作るローカル専用ツール">
+  <PageContainer variant="works">
+    <PageTitle title="FLAVOR COLOR" client:load />
+
+    <section class="tool-section">
+      <p class="tool-lead">
+        beans カードのグラデを決めるローカル専用ツール。生成した
+        <code>flavorColors</code> を microCMS の該当フィールドに貼ってください。
+      </p>
+
+      <FlavorColorTool client:only="react" />
+    </section>
+  </PageContainer>
+</Layout>
+
+<style>
+  .tool-section {
+    margin-top: 2.5rem;
+    max-width: 64rem;
+  }
+
+  .tool-lead {
+    margin: 0 0 2rem;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-text-secondary, #4b5563);
+    max-width: 44rem;
+  }
+</style>

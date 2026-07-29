@@ -1,19 +1,11 @@
 // 静的SVGから自動抽出したフレーバーホイールセグメントデータ
 // 階層構造（親子関係）を保持
 
-export interface FlavorSegment {
-  id: string;
-  path: string;
-  color: string;
-  name: string;
-  depth: number;
-  parent?: string;
-  textTransform: string;
-  textAnchor: "start" | "end";
-  textColor: string;
-}
+import type { WheelSegment } from "./wheel-segment";
 
-export const flavorWheelSegments: FlavorSegment[] = [
+export type FlavorSegment = WheelSegment;
+
+export const flavorWheelSegments: WheelSegment[] = [
   {
     id: "path-0",
     path: "M0,69.27416531557695A69.27416531557695,69.27416531557695 0 1,1 0,-69.27416531557695A69.27416531557695,69.27416531557695 0 1,1 0,69.27416531557695Z",

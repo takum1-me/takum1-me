@@ -1,0 +1,503 @@
+.wrapper {
+  --spacing-card-radius: 14px;
+  --color-line: #ebe4da;
+  --color-ink: #2a2521;
+  --color-muted: #8a7f72;
+  --color-brown: #8b5e34;
+  --color-cream: #faf8f5;
+
+  width: 100%;
+}
+
+/* ---- filters ---- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.filter {
+  position: relative;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0 0 0.3rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.filter::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.95rem;
+  height: 2px;
+  background: var(--color-brown);
+  transform: scaleX(0);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.filter:hover {
+  color: var(--color-ink);
+}
+
+.filter[data-active="true"] {
+  color: var(--color-ink);
+}
+
+.filter[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+.grid {
+  display: grid;
+
+  /* min() で狭い画面でもカードが container からはみ出さないようにする */
+  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
+  gap: 1.35rem;
+}
+
+.empty {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+}
+
+/* ---- card ---- */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 310px;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--spacing-card-radius);
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  text-align: left;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgb(42 37 33 / 10%);
+  border-color: #ddd0bd;
+  outline: none;
+}
+
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.3rem 1.15rem;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.15rem;
+}
+
+/* 通し番号（エディトリアルなアクセント） */
+.index {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #c8bba8;
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentcolor;
+  flex-shrink: 0;
+}
+
+.status[data-available="true"] {
+  color: #3f8a5c;
+}
+
+.country {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.4rem;
+}
+
+.flag {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.name {
+  font-size: 1.16rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-ink);
+  margin: 0 0 1rem;
+  letter-spacing: 0.005em;
+}
+
+/* フレーバーノート: 色ドット + ラベル */
+.note-row {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.85rem;
+}
+
+.note-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #5f564d;
+}
+
+.note-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-note);
+  flex-shrink: 0;
+}
+
+.note-more {
+  font-size: 0.75rem;
+  color: #b3a795;
+  align-self: center;
+}
+
+/* 下部メタ（焙煎度 / 精製） */
+.card-foot {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-line);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.foot-divider {
+  width: 1px;
+  height: 0.7rem;
+  background: var(--color-line);
+}
+
+/* フレーバー色のスウォッチ帯（buildFlavorSwatch をここに流し込む）。
+   カード下 1/4 くらいのバンドとして敷く。 */
+.swatch {
+  position: relative;
+  flex: 0 0 25%;
+  min-height: 74px;
+  background-size: 160% 160%;
+  transition: filter 0.35s ease;
+}
+
+/* 帯の上端をカード本体に馴染ませる薄いフェード */
+.swatch-edge {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 14px;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 55%), transparent);
+}
+
+.card:hover .swatch {
+  filter: saturate(1.12) brightness(1.02);
+}
+
+/* ---- modal ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgb(28 22 17 / 48%);
+  backdrop-filter: blur(8px);
+  animation: fade 0.22s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0%;
+  }
+
+  to {
+    opacity: 100%;
+  }
+}
+
+.modal {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 28px 70px rgb(28 22 17 / 30%);
+  animation: rise 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+    opacity: 0%;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 100%;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: #fff;
+  color: #6b6157;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.close:hover {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+.modal-inner {
+  padding: 2rem 2.1rem 1.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.9rem;
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 2.2rem;
+}
+
+.modal-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.modal-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
+  line-height: 1.3;
+  letter-spacing: 0.005em;
+}
+
+.genre {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-brown);
+  border: 1px solid #e8d9c4;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.explanation {
+  font-size: 0.95rem;
+  line-height: 1.95;
+  color: #514840;
+  margin: 0;
+}
+
+/* セクション（Flavor / Spec） */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.block-title {
+  margin: 0;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b3a795;
+}
+
+/* フレーバー帯 */
+.hero {
+  height: 92px;
+  border-radius: 12px;
+  background-size: cover;
+}
+
+.note-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.note-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4a423a;
+  padding: 0.34rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-cream);
+  border: 1px solid var(--color-line);
+}
+
+.note-tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-note);
+  flex-shrink: 0;
+}
+
+/* スペックは定義リストで行組み */
+.specs {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-row {
+  display: flex;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.spec-row:last-child {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.spec-label {
+  flex: 0 0 5.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  padding-top: 0.12rem;
+}
+
+.spec-value {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.6;
+}
+
+.modal-foot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+}
+
+.modal-foot[data-available="true"] {
+  color: #3f8a5c;
+}
+
+@media (width <= 640px) {
+  .modal-inner {
+    padding: 1.6rem 1.4rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .modal-name {
+    font-size: 1.35rem;
+  }
+
+  /* 閉じるボタンと被らないよう、ジャンルは名前の下へ回す */
+  .modal-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding-right: 2.6rem;
+  }
+
+  .genre {
+    margin-top: 0;
+  }
+
+  .spec-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .spec-label {
+    flex: none;
+  }
+}
