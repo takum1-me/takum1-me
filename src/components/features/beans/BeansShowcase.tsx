@@ -140,7 +140,10 @@ function BeanModal({ view, onClose }: { view: BeanView; onClose: () => void }) {
             </section>
           )}
 
-          <div className={styles["modal-foot"]} data-available={bean.isAvailable}>
+          <div
+            className={styles["modal-foot"]}
+            data-available={bean.isAvailable}
+          >
             <span className={styles["status-dot"]} />
             {bean.isAvailable ? "In Stock — 焙煎できます" : "Sold Out"}
           </div>
