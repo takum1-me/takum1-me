@@ -1,1 +1,1 @@
-export { ZoomableFlavorWheel } from "./ZoomableFlavorWheel";
+export { ZoomableWheel, ZoomableFlavorWheel } from "./ZoomableWheel";
