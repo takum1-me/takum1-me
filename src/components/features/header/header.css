@@ -1,370 +1,200 @@
-/* Header component styles */
-.header-wrap {
+.site-header {
   position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 150;
-  display: block;
-  opacity: 100%;
-  pointer-events: auto;
-  max-width: 100%;
-  width: 100%;
-  margin-left: 0;
+  inset: 0 0 auto;
+  z-index: 100;
+  height: var(--header-height);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
 }
 
-.nav {
+.site-header.is-scrolled {
+  background: rgb(250 248 245 / 88%);
+  border-bottom-color: var(--color-line);
+  backdrop-filter: blur(0.75rem) saturate(150%);
+}
+
+.site-header__inner {
   position: relative;
-  background: rgb(250 248 245 / 100%);
-  border: none;
-  border-bottom: 0.0625rem solid #e5e7eb;
-  box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 10%);
-  border-radius: 0;
+
+  /* ドロワーより手前に置いて、開いた状態でも閉じるボタンを押せるようにする */
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  backdrop-filter: blur(0.625rem) saturate(140%);
-  max-width: 100vw;
-  margin: 0;
+  gap: var(--spacing-lg);
+  width: min(100% - var(--gutter) * 2, var(--container-wide));
+  height: 100%;
+  margin-inline: auto;
 }
 
-/* ページ最上部の時は全幅にする */
-.header-wrap.at-top {
-  position: static;
-  top: auto;
-  left: auto;
-  transform: none;
-  opacity: 100%;
-
-  /* at-topクラスが付与された時はアニメーションを無効化 */
-  transition: none;
+/* ワードマークはヒーローと同じサンセリフで揃える（index.astro の注記参照） */
+.site-header__brand {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: color var(--transition);
 }
 
-.header-wrap.at-top .container {
-  max-width: 100vw;
-  margin: 0;
-  padding: 0;
+.site-header__brand:hover {
+  color: var(--color-accent-strong);
 }
 
-.header-wrap.at-top .nav {
-  max-width: 100vw;
-  border-radius: 0;
-  margin: 0;
-}
+/* --- ナビゲーション ---------------------------------------------------- */
 
-.brand a {
-  color: #111827;
-  text-decoration: none;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  font-size: 2rem;
-}
-
-.header-links {
+.site-header__nav {
   display: flex;
   align-items: center;
-  margin-left: 4rem;
-  margin-right: 4rem;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
 }
 
-.header-nav-button {
-  appearance: none;
-  background: none;
-  border: 0;
-  color: #111827;
-  cursor: pointer;
-  font: inherit;
-  letter-spacing: 0.02em;
-  line-height: 1;
-}
-
-.header-links .header-nav-button {
-  font-weight: 700;
-  font-size: 1.25rem;
-  padding: 0.625rem;
-  padding-left: var(--spacing-xl);
-  padding-right: var(--spacing-xl);
-}
-
-.header-nav-button:focus-visible {
-  color: #111827;
-  outline: 0.125rem solid currentcolor;
-  outline-offset: 0.25rem;
-}
-
-/* ハンバーガーメニュー */
-.hamburger-menu {
-  display: none;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 2.2rem;
-  height: 2.2rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 10;
-}
-
-.hamburger-line {
-  width: 1.8rem;
-  height: 0.25rem;
-  background: #111827;
-  border-radius: 0.125rem;
+.header-link {
   position: relative;
-  transform-origin: 1px;
+  padding-block: 0.35rem;
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: color var(--transition);
 }
 
-/* モバイルメニュー */
-.mobile-menu {
-  display: flex;
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 17.5rem;
-  height: 100vh;
-  max-height: 100vh;
-  background: rgb(250 248 245 / 98%);
-  backdrop-filter: blur(0.625rem) saturate(140%);
-  border-left: 0.0625rem solid #e5e7eb;
-  box-shadow: -0.125rem 0 0.5rem rgb(0 0 0 / 10%);
-  padding: var(--spacing-xl) var(--spacing-md);
-  opacity: 0%;
-  transform: translateX(0);
-  pointer-events: none;
-  z-index: 200;
-  overflow: hidden;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-/* 開いているときだけパネル内をクリック／タップ可能にする（pointer-events の継承を確実に効かせる） */
-.mobile-menu.open {
-  pointer-events: auto;
-}
-
-/* 背景オーバーレイ */
-.mobile-menu::before {
+.header-link::after {
   content: "";
-  position: fixed;
-  top: 0;
-  left: -100vw;
-  width: 100vw;
-  height: 100vh;
-  background: rgb(0 0 0 / 50%);
-  opacity: 0%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.mobile-menu.open::before {
-  opacity: 100%;
-  pointer-events: auto;
-}
-
-/* サイドバー開時のページコンテンツグレーアウト */
-body.mobile-menu-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-}
-
-body.mobile-menu-open::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgb(0 0 0 / 30%);
-  z-index: 150;
-  pointer-events: none;
-}
-
-/* モバイルメニューの閉じるボタン */
-.mobile-menu-close {
   position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.header-link:hover {
+  color: var(--color-ink);
+}
+
+.header-link:hover::after,
+.header-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.header-link[aria-current="page"] {
+  color: var(--color-ink);
+}
+
+/* --- ハンバーガー ------------------------------------------------------ */
+
+.site-header__toggle {
+  display: none;
+  place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  background: transparent;
-  border: none;
+  margin-right: -0.5rem;
+  padding: 0;
+  background: none;
+  border: 0;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  z-index: 10;
 }
 
-.close-icon {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1;
+.toggle-icon {
+  display: grid;
+  gap: 0.3125rem;
+  width: 1.25rem;
 }
 
-/* モバイルナビゲーションコンテナ */
-.mobile-nav-container {
-  max-height: 12.5rem; /* Worksボタンより下でホバーが消えるように制限 */
-  overflow: hidden;
-  margin-top: var(--spacing-2xl);
-  flex: 1;
+.toggle-icon__bar {
+  display: block;
+  height: 1px;
+  background: var(--color-ink);
+  transition: transform var(--transition);
 }
 
-.mobile-header-links {
+.toggle-icon.is-open .toggle-icon__bar--top {
+  transform: translateY(0.1875rem) rotate(45deg);
+}
+
+.toggle-icon.is-open .toggle-icon__bar--bottom {
+  transform: translateY(-0.1875rem) rotate(-45deg);
+}
+
+/* --- ドロワー ---------------------------------------------------------- */
+
+.site-header__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgb(42 37 33 / 25%);
+  opacity: 0%;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.site-header__scrim.is-open {
+  opacity: 100%;
+  pointer-events: auto;
+}
+
+.site-header__drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  width: min(20rem, 82vw);
+  padding: var(--header-height) var(--spacing-xl) var(--spacing-xl);
+  background: var(--color-bg);
+  border-left: 1px solid var(--color-line);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 260ms var(--ease-out),
+    visibility 260ms;
 }
 
-/* モバイルメニューのボタンスタイル */
-.mobile-header-links .header-nav-button {
-  font-weight: 600;
-  font-size: 1.2rem;
-  padding: var(--spacing-md) 0 var(--spacing-md) var(--spacing-lg);
-  text-align: left;
-  width: 100%;
-  border-bottom: 0.0625rem solid rgb(229 231 235 / 30%);
+.site-header__drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.site-header__drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.site-header__drawer-nav .header-link {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.site-header__drawer-nav .header-link::after {
+  display: none;
+}
+
+body.has-menu-open {
   overflow: hidden;
-  white-space: nowrap;
 }
 
-/* BlogFilterと同じ背景付きスタイル */
-.mobile-header-links.with-background {
-  background: rgb(255 255 255 / 95%);
-  box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 15%);
-  padding: 0.75rem 0.75rem 0.75rem var(--spacing-lg);
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* モバイルメニューのSNSセクション */
-.mobile-sns-section {
-  margin-top: auto;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid rgb(229 231 235 / 30%);
-  position: relative;
-}
-
-.mobile-sns-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(229 231 235 / 50%),
-    transparent
-  );
-}
-
-.mobile-sns-links {
-  justify-content: flex-start;
-  gap: var(--spacing-md);
-}
-
-.mobile-sns-links .footer-sns-link {
-  width: 2.75rem;
-  height: 2.75rem;
-}
-
-.mobile-sns-links .footer-sns-link svg {
-  width: 1.375rem;
-  height: 1.375rem;
-}
-
-/* タブレットサイズ */
-@media (width <= 64rem) {
-  .header-wrap {
-    margin-left: 0;
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .nav {
-    padding: var(--spacing-lg) var(--spacing-md);
-    position: relative;
-  }
-
-  .brand a {
-    font-size: 1.4rem;
-  }
-
-  .hamburger-menu {
-    display: flex;
-  }
-
-  .header-links {
+@media (width <= 48rem) {
+  .site-header__nav {
     display: none;
   }
 
-  .mobile-menu {
-    display: block;
+  .site-header__toggle {
+    display: grid;
   }
 }
 
-/* モバイルサイズ */
-@media (width <= 47.9375rem) {
-  .nav {
-    padding: var(--spacing-lg) 0.875rem;
-  }
-
-  .brand a {
-    font-size: 1.2rem;
-  }
-}
-
-/* 小さなモバイルサイズ */
-@media (width <= 30rem) {
-  .nav {
-    padding: var(--spacing-md) 0.75rem;
-  }
-
-  .brand a {
-    font-size: 1.1rem;
-  }
-}
-
-/* 非常に小さなモバイルサイズ */
-@media (width <= 20rem) {
-  .nav {
-    padding: 0.8rem var(--spacing-sm);
-  }
-
-  .brand a {
-    font-size: 1rem;
-  }
-}
-
-/* at-topクラスのスタイル（全メディアクエリで共通） */
-@media (width <= 64rem) {
-  .header-wrap.at-top {
-    position: static;
-    top: auto;
-    left: auto;
-    transform: none;
-    opacity: 100%;
-  }
-
-  .header-wrap.at-top .container {
-    max-width: 100vw;
-    margin: 0;
-    padding: 0;
-  }
-
-  .header-wrap.at-top .nav {
-    max-width: 100vw;
-    border-radius: 0;
-    margin: 0;
+@media (width > 48rem) {
+  .site-header__scrim,
+  .site-header__drawer {
+    display: none;
   }
 }

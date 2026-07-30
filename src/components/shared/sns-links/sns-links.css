@@ -1,63 +1,35 @@
-/* SnsLinks component styles */
 .sns-links {
   display: flex;
-  justify-content: center;
-  gap: var(--spacing-md);
   align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .sns-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid #e5e7eb;
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  color: var(--color-muted); /* ベースカラー（統一されたグレー） */
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-faint);
+  transition:
+    color var(--transition),
+    background-color var(--transition);
 }
 
-.sns-link.twitter:hover {
-  color: #1da1f2; /* Twitter/X ブランドカラー */
+.sns-link:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
 }
 
-.sns-link.instagram:hover {
-  color: #e4405f; /* Instagram ブランドカラー */
+.sns-link img {
+  opacity: 55%;
+  filter: grayscale(100%);
+  transition:
+    opacity var(--transition),
+    filter var(--transition);
 }
 
-/* Instagramアイコンの色制御はGSAPで制御 */
-.sns-link__icon {
-  filter: grayscale(100%) brightness(0.6) saturate(0); /* 通常時：他のアイコンと同じグレー */
-  opacity: 70%; /* 他のアイコンと同じ透明度 */
-}
-
-.sns-link.github:hover {
-  color: #333; /* GitHub ブランドカラー */
-}
-
-.sns-link svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-}
-
-/* Responsive adjustments */
-@media (width <= 47.9375rem) {
-  .sns-links {
-    gap: 0.75rem;
-  }
-
-  .sns-link {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
-
-  .sns-link svg {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
+.sns-link:hover img {
+  opacity: 100%;
+  filter: none;
 }

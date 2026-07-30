@@ -49,6 +49,25 @@ export function toArray<T>(value: MaybeArray<T> | undefined | null): T[] {
   return Array.isArray(value) ? value : [value];
 }
 
+/**
+ * 一覧の並び順（在庫あり → ジャンル → 名前）。/beans と /beans/[id] で同じ順に並べたいので
+ * ここに置く。元配列は変更しない。
+ */
+export function sortBeansForDisplay(beans: Bean[]): Bean[] {
+  const firstGenre = (b: Bean) => toArray(b.genre)[0] ?? "";
+  return [...beans].sort((a, b) => {
+    if (a.isAvailable !== b.isAvailable) return a.isAvailable ? -1 : 1;
+    const g = firstGenre(a).localeCompare(firstGenre(b));
+    if (g !== 0) return g;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+/** 豆 1 件の共有 URL（microCMS の id をそのまま使う） */
+export function beanPath(bean: Pick<Bean, "id">): string {
+  return `/beans/${bean.id}`;
+}
+
 function coffeeFetch(path: string) {
   const base = import.meta.env.MICROCMS_COFFEE_API_URL as string | undefined;
   const key = import.meta.env.MICROCMS_COFFEE_API_KEY as string | undefined;

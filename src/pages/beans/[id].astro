@@ -1,0 +1,61 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/shared/layout/Container.astro";
+import PageHeader from "../../components/shared/page/PageHeader.astro";
+import { BeansShowcase } from "../../components/features/beans";
+import {
+  getAllBeans,
+  sortBeansForDisplay,
+  toArray,
+  type Bean,
+} from "../../lib/microcms/beans-list";
+import { countryLabel, roastLabel } from "../../data/bean-meta";
+
+/**
+ * 豆 1 件を指す共有リンク（/beans/<microCMS の id>）。
+ * 中身は /beans と同じ一覧で、その豆のモーダルを開いた状態で表示する。
+ */
+export async function getStaticPaths() {
+  const beans = sortBeansForDisplay(await getAllBeans());
+  return beans.map((bean) => ({
+    params: { id: bean.id },
+    props: { bean, beans },
+  }));
+}
+
+interface Props {
+  bean: Bean;
+  beans: Bean[];
+}
+
+const { bean, beans } = Astro.props;
+
+// 共有時に中身が伝わるように、豆ごとの description を組む
+const origin = toArray(bean.country)
+  .map((c) => countryLabel(c).label)
+  .join(" / ");
+const roast = toArray(bean.roastLevel).map(roastLabel).join(" / ");
+const summary =
+  bean.expalanation ??
+  [origin, roast, bean.flavorNote].filter(Boolean).join(" / ");
+---
+
+<Layout
+  title={`${bean.name} - Beans - takum1.me`}
+  description={summary}
+  og={{ type: "article", title: `${bean.name} - Beans - takum1.me` }}
+>
+  <Container size="page">
+    <PageHeader
+      eyebrow="Beans"
+      title="いま、焙煎している豆。"
+      lead="少量ずつ選んだ生豆を、Kaffelogic nano 7 で焙煎しています。ここには、いま味わえるラインナップを記録しています。"
+    >
+      <p slot="aside">
+        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。
+      </p>
+    </PageHeader>
+
+    <BeansShowcase beans={beans} initialBeanId={bean.id} client:only="react" />
+  </Container>
+</Layout>

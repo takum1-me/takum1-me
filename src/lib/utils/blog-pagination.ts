@@ -1,226 +1,77 @@
 /**
- * ブログページネーション機能のクラス
+ * ブログ一覧のページ送り。
+ * モバイルでは全件そのまま流し、デスクトップでのみページに区切る。
  */
+const ITEMS_PER_PAGE = 6;
+const MOBILE_QUERY = "(width <= 47.9375rem)";
+
 export class BlogPagination {
-  itemsPerPage: number;
-  currentPage: number;
-  currentCategory: string;
-  allBlogs: Element[];
-  filteredBlogs: Element[];
-  totalPages: number;
-  isMobile: boolean;
+  private readonly cells: HTMLElement[];
+  private readonly prevBtn: HTMLButtonElement | null;
+  private readonly nextBtn: HTMLButtonElement | null;
+  private readonly currentEl: HTMLElement | null;
+  private readonly totalEl: HTMLElement | null;
+  private readonly mql: MediaQueryList;
+  private currentPage = 1;
 
   constructor() {
-    this.itemsPerPage = 6;
-    this.currentPage = 1;
-    this.currentCategory = "all";
-    this.allBlogs = [];
-    this.filteredBlogs = [];
-    this.totalPages = 1;
-    this.isMobile = window.innerWidth <= 767;
+    this.cells = Array.from(
+      document.querySelectorAll<HTMLElement>(".blog-card-cell"),
+    );
+    this.prevBtn = document.querySelector<HTMLButtonElement>("#prev-page");
+    this.nextBtn = document.querySelector<HTMLButtonElement>("#next-page");
+    this.currentEl = document.querySelector<HTMLElement>("#current-page");
+    this.totalEl = document.querySelector<HTMLElement>("#total-pages");
 
-    this.init();
+    this.prevBtn?.addEventListener("click", () =>
+      this.go(this.currentPage - 1),
+    );
+    this.nextBtn?.addEventListener("click", () =>
+      this.go(this.currentPage + 1),
+    );
+
+    this.mql = window.matchMedia(MOBILE_QUERY);
+    this.mql.addEventListener("change", () => this.render());
+
+    this.render();
   }
 
-  init(): void {
-    // Get all blog cards
-    this.allBlogs = Array.from(document.querySelectorAll(".blog-card"));
-    this.filteredBlogs = [...this.allBlogs];
-
-    // Calculate total pages
-    this.totalPages = Math.ceil(this.filteredBlogs.length / this.itemsPerPage);
-
-    // Initialize pagination
-    this.updatePaginationUI();
-
-    // Show all blogs on mobile, paginated on desktop
-    if (this.isMobile) {
-      this.showAllBlogs();
-    } else {
-      this.showPage(1);
-    }
-
-    // Add event listeners
-    this.addEventListeners();
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.cells.length / ITEMS_PER_PAGE));
   }
 
-  addEventListeners(): void {
-    const prevBtn = document.getElementById("prev-page");
-    const nextBtn = document.getElementById("next-page");
-
-    if (prevBtn) prevBtn.addEventListener("click", () => this.previousPage());
-    if (nextBtn) nextBtn.addEventListener("click", () => this.nextPage());
-  }
-
-  filterByCategory(categoryId: string): void {
-    this.currentCategory = categoryId;
-    this.currentPage = 1;
-
-    // Filter blogs by category
-    this.filteredBlogs = this.allBlogs.filter((blog) => {
-      const blogCategory = blog.getAttribute("data-category");
-      return categoryId === "all" || blogCategory === categoryId;
-    });
-
-    // Recalculate total pages
-    this.totalPages = Math.ceil(this.filteredBlogs.length / this.itemsPerPage);
-
-    // Update UI without animation
-    this.updatePaginationUI();
-
-    // Show all blogs on mobile, paginated on desktop
-    if (this.isMobile) {
-      this.showAllBlogs();
-    } else {
-      this.showPage(1);
-    }
-  }
-
-  showPage(page: number): void {
+  private go(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
+    this.render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
-    // Hide all blogs first
-    this.allBlogs.forEach((blog) => {
-      (blog as HTMLElement).style.display = "none";
+  private render(): void {
+    const showAll = this.mql.matches;
+    const start = (this.currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+
+    this.cells.forEach((cell, index) => {
+      const visible = showAll || (index >= start && index < end);
+      cell.hidden = !visible;
     });
 
-    // Show blogs for current page
-    const startIndex = (page - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-
-    this.filteredBlogs.slice(startIndex, endIndex).forEach((blog) => {
-      (blog as HTMLElement).style.display = "block";
-    });
-
-    // Update pagination UI
-    this.updatePaginationUI();
-
-    // Show no blogs message if needed
-    if (this.filteredBlogs.length === 0) {
-      this.showNoBlogsMessage();
-    } else {
-      this.hideNoBlogsMessage();
+    if (this.currentEl) {
+      this.currentEl.textContent = String(this.currentPage);
     }
-  }
-
-  showAllBlogs(): void {
-    // Hide all blogs first
-    this.allBlogs.forEach((blog) => {
-      (blog as HTMLElement).style.display = "none";
-    });
-
-    // Show all filtered blogs
-    this.filteredBlogs.forEach((blog) => {
-      (blog as HTMLElement).style.display = "block";
-    });
-
-    // Show no blogs message if needed
-    if (this.filteredBlogs.length === 0) {
-      this.showNoBlogsMessage();
-    } else {
-      this.hideNoBlogsMessage();
+    if (this.totalEl) {
+      this.totalEl.textContent = String(this.totalPages);
     }
-  }
-
-  hideAllBlogs(): void {
-    this.allBlogs.forEach((blog) => {
-      const blogElement = blog as HTMLElement;
-      blogElement.style.display = "none";
-
-      // Clear all animation classes
-      blogElement.classList.remove(
-        "animating",
-        "animating-in",
-        "animating-out",
-        "hidden",
-        "fade-out",
-        "fade-in",
-        "domino-in",
-      );
-    });
-  }
-
-  updatePaginationUI(): void {
-    const currentPageEl = document.getElementById("current-page");
-    const totalPagesEl = document.getElementById("total-pages");
-    const totalItemsEl = document.getElementById("total-items");
-    const prevBtn = document.getElementById("prev-page") as HTMLButtonElement;
-    const nextBtn = document.getElementById("next-page") as HTMLButtonElement;
-
-    if (currentPageEl) currentPageEl.textContent = this.currentPage.toString();
-    if (totalPagesEl) totalPagesEl.textContent = this.totalPages.toString();
-    if (totalItemsEl)
-      totalItemsEl.textContent = this.filteredBlogs.length.toString();
-
-    // Update button states
-    if (prevBtn) prevBtn.disabled = this.currentPage === 1;
-    if (nextBtn) nextBtn.disabled = this.currentPage === this.totalPages;
-  }
-
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.showPage(this.currentPage - 1);
+    if (this.prevBtn) {
+      this.prevBtn.disabled = this.currentPage === 1;
     }
-  }
-
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.showPage(this.currentPage + 1);
-    }
-  }
-
-  showNoBlogsMessage(): void {
-    const blogGrid = document.querySelector(".blog-grid");
-    if (!blogGrid) return;
-
-    this.hideNoBlogsMessage();
-
-    const messageDiv = document.createElement("div");
-    messageDiv.className = "no-blogs-message";
-    messageDiv.innerHTML = `
-      <div class="no-blogs-content">
-        <h3>表示するブログがありません</h3>
-        <p>「${this.currentCategory === "all" ? "All" : this.currentCategory}」カテゴリーにはまだブログが投稿されていません。</p>
-      </div>
-    `;
-
-    blogGrid.appendChild(messageDiv);
-  }
-
-  hideNoBlogsMessage(): void {
-    const blogGrid = document.querySelector(".blog-grid");
-    if (!blogGrid) return;
-
-    const existingMessage = blogGrid.querySelector(".no-blogs-message");
-    if (existingMessage) {
-      existingMessage.remove();
+    if (this.nextBtn) {
+      this.nextBtn.disabled = this.currentPage === this.totalPages;
     }
   }
 }
 
-/**
- * ページネーションを初期化する関数
- */
 export function initializeBlogPagination(): void {
-  document.addEventListener("DOMContentLoaded", () => {
-    (window as any).blogPagination = new BlogPagination();
-
-    // Handle window resize
-    window.addEventListener("resize", () => {
-      if ((window as any).blogPagination) {
-        const pagination = (window as any).blogPagination as BlogPagination;
-        const wasMobile = pagination.isMobile;
-        pagination.isMobile = window.innerWidth <= 767;
-
-        // If mobile state changed, reinitialize display
-        if (wasMobile !== pagination.isMobile) {
-          if (pagination.isMobile) {
-            pagination.showAllBlogs();
-          } else {
-            pagination.showPage(1);
-          }
-        }
-      }
-    });
-  });
+  new BlogPagination();
 }

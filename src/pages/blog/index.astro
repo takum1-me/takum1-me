@@ -1,285 +1,174 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { fetchNoteRSS, fetchThumbnailsForArticles, type NoteArticle } from "../../lib/note-rss";
+import Container from "../../components/shared/layout/Container.astro";
+import PageHeader from "../../components/shared/page/PageHeader.astro";
+import {
+  fetchNoteRSS,
+  fetchThumbnailsForArticles,
+  type NoteArticle,
+} from "../../lib/note-rss";
 import ArticleCard from "../../components/shared/card/ArticleCard";
-import PageTitle from "../../components/shared/page/PageTitle";
 import "../../components/shared/card/overlay-card.css";
-import "../../components/shared/page/page-title.css";
 
 // note.comのRSSから記事を取得
 let noteArticles: NoteArticle[];
 try {
   // RSSフィードから直接サムネイル画像も取得する
   noteArticles = await fetchNoteRSS();
-  
+
   // RSSにサムネイルが含まれていない場合は、OGP画像を取得（フォールバック）
-  const articlesWithoutThumbnail = noteArticles.filter(article => !article.thumbnail);
-  
+  const articlesWithoutThumbnail = noteArticles.filter(
+    (article) => !article.thumbnail,
+  );
+
   if (articlesWithoutThumbnail.length > 0) {
-    const articlesWithOGPThumbnails = await fetchThumbnailsForArticles(articlesWithoutThumbnail.slice(0, 5));
+    const articlesWithOGPThumbnails = await fetchThumbnailsForArticles(
+      articlesWithoutThumbnail.slice(0, 5),
+    );
     // OGPから取得したサムネイルをマージ
-    articlesWithOGPThumbnails.forEach(articleWithThumb => {
-      const index = noteArticles.findIndex(a => a.link === articleWithThumb.link);
+    articlesWithOGPThumbnails.forEach((articleWithThumb) => {
+      const index = noteArticles.findIndex(
+        (a) => a.link === articleWithThumb.link,
+      );
       if (index !== -1 && articleWithThumb.thumbnail) {
         noteArticles[index].thumbnail = articleWithThumb.thumbnail;
       }
     });
   }
 } catch (error) {
-  console.error('Error fetching Note articles:', error);
+  console.error("Error fetching Note articles:", error);
   noteArticles = [];
 }
-
 ---
 
 <Layout title="Blog">
-  <div class="blog-page">
-    <PageTitle title="BLOG" pageType="blog" client:load />
+  <Container size="page">
+    <PageHeader
+      eyebrow="Blog"
+      title="書いたもの"
+      lead="note に書いた記事です。コーヒーのこと、つくったもののこと、日々考えていること。"
+    />
 
     {
-      noteArticles.length === 0 && (
-        <p>
+      noteArticles.length === 0 ? (
+        <p class="blog-empty">
           記事の取得に失敗しました。ネットワークを確認してください。
         </p>
+      ) : (
+        <>
+          <div class="blog-grid">
+            {noteArticles.map((article) => (
+              <div class="blog-card-cell">
+                <ArticleCard
+                  title={article.title}
+                  summary={article.description}
+                  publishedAt={article.pubDate}
+                  thumbnail={
+                    article.thumbnail ? { url: article.thumbnail } : undefined
+                  }
+                  link={article.link}
+                  category="note"
+                />
+              </div>
+            ))}
+          </div>
+
+          <nav class="pagination" aria-label="ページ送り">
+            <button id="prev-page" class="pagination__btn" disabled>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M10 12L6 8L10 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              back
+            </button>
+
+            <p class="pagination__count">
+              <span id="current-page">1</span>
+              <span class="pagination__sep" aria-hidden="true">/</span>
+              <span id="total-pages">1</span>
+            </p>
+
+            <button id="next-page" class="pagination__btn">
+              next
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M6 4L10 8L6 12"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </nav>
+        </>
       )
     }
-    {noteArticles.length > 0 && (
-      <>
-        <div class="blog-grid">
-          {noteArticles.map((article) => (
-            <ArticleCard
-              client:load
-              title={article.title}
-              summary={article.description}
-              publishedAt={article.pubDate}
-              thumbnail={article.thumbnail ? { url: article.thumbnail } : undefined}
-              link={article.link}
-              category="all"
-            />
-          ))}
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination-container">
-          <button id="prev-page" class="pagination-btn" disabled>
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            back
-          </button>
-          
-          <div class="pagination-center">
-            <div class="items-count">
-              <span class="count-number" id="total-items">{noteArticles.length}</span>
-              <span class="count-label">articles</span>
-            </div>
-          </div>
-          
-          <button id="next-page" class="pagination-btn next-btn">
-            next
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </>
-    )}
-  </div>
+  </Container>
 </Layout>
 
 <style>
-  .blog-page {
-    max-width: 75rem;
-    margin: 0 auto;
-    margin-left: 5rem;
-    padding: 0 1rem;
-
-    /* background: #f8fafc; より落ち着いたグレー背景 */
-    position: relative;
-  }
-
-
-  .blog-page h1 {
-    color: var(--color-primary);
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-
-
   .blog-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(1rem, 2vw, 1.5rem);
-    margin-top: 2rem;
-    position: relative;
-    z-index: 0;
-    max-width: 75rem;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
+    gap: clamp(1.25rem, 3vw, 1.75rem);
   }
 
-  /* タブレット対応 */
-  @media (width <= 64rem) {
-    .blog-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .blog-empty {
+    color: var(--color-ink-muted);
   }
 
-  /* モバイル対応 */
-  @media (width <= 47.9375rem) {
-    .blog-grid {
-      grid-template-columns: 1fr;
-      gap: clamp(1rem, 3vw, 1.5rem);
-      max-width: 100%;
-      padding: 0 1rem;
-    }
-  }
-
-  /* Keyframe animations removed */
-
-
-  .no-blogs-message {
-    grid-column: 1 / -1;
+  .pagination {
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 20rem;
-  }
-
-  .no-blogs-content {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
-    border: 1px solid #e2e8f0;
-  }
-
-  .no-blogs-content h3 {
-    color: var(--color-text-primary);
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 1rem;
-  }
-
-  .no-blogs-content p {
-    color: var(--color-muted);
-    font-size: 1rem;
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  /* All keyframe animations removed */
-
-  /* Pagination Styles */
-  .pagination-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    display: flex;
     justify-content: space-between;
+    margin-block: var(--spacing-2xl) var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .pagination__btn {
+    display: inline-flex;
     align-items: center;
-    width: 100%;
-    max-width: 70rem;
-    gap: 3rem;
-  }
-
-  .pagination-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-  }
-
-  .items-count {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-    color: var(--color-muted);
-  }
-
-  .count-number {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    line-height: 1;
-  }
-
-  .count-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.0313rem;
-  }
-
-
-  .pagination-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.8rem 1.5rem;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
     background: none;
-    border: none;
-    color: var(--color-muted);
-    font-size: 1.4rem;
+    border: 0;
+    color: var(--color-ink-muted);
+    font-family: inherit;
+    font-size: var(--text-small);
     font-weight: 600;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    position: relative;
-    border-radius: 0.5rem;
+    transition:
+      color var(--transition),
+      opacity var(--transition);
   }
 
-  .pagination-btn:disabled {
-    opacity: 30%;
-    cursor: not-allowed;
-    transform: none;
+  .pagination__btn:disabled {
+    opacity: 25%;
+    cursor: default;
   }
 
-  .pagination-btn:disabled::after {
-    display: none;
+  .pagination__btn:hover:not(:disabled) {
+    color: var(--color-accent-strong);
   }
 
-  .pagination-btn:hover:not(:disabled) {
-    color: var(--color-text-primary);
-  }
-
-  .next-btn {
-    margin-left: 4rem;
-  }
-
-
-  /* タブレットサイズ */
-  @media (width <= 64rem) {
-    .blog-page {
-      margin-left: 5rem;
-    }
-  }
-
-  @media (width <= 48rem) {
-    .blog-page {
-      margin-left: 7rem;
-    }
-  }
-
-  /* 小さなモバイルサイズ */
-  @media (width <= 30rem) {
-    .blog-page {
-      margin-left: 3.5rem;
-    }
-  }
-
-  /* 非常に小さなモバイルサイズ */
-  @media (width <= 20rem) {
-    .blog-page {
-      margin-left: 2.5rem;
-    }
+  .pagination__count {
+    display: flex;
+    gap: 0.4rem;
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (width <= 47.9375rem) {
-    .pagination-container {
+    .pagination {
       display: none;
     }
   }
@@ -289,4 +178,3 @@ try {
   import { initializeBlogPagination } from "../../lib/utils/blog-pagination";
   initializeBlogPagination();
 </script>
-

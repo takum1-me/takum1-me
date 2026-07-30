@@ -1,10 +1,8 @@
 ---
 import { getAllLabArticles, type LabArticle } from "../../lib/microcms/lab";
 import Layout from "../../layouts/Layout.astro";
-import PageTitle from "../../components/shared/page/PageTitle";
-import PageContainer from "../../components/shared/page/PageContainer";
-import "../../components/shared/page/page-title.css";
-import "../../components/shared/page/page-container.css";
+import Container from "../../components/shared/layout/Container.astro";
+import PageHeader from "../../components/shared/page/PageHeader.astro";
 
 let articles: LabArticle[] = [];
 let loadError = false;
@@ -26,145 +24,104 @@ const formatDate = (date: string) =>
 ---
 
 <Layout title="Lab">
-  <PageContainer variant="works">
-    <PageTitle title="LAB" client:load />
+  <Container size="prose">
+    <PageHeader
+      eyebrow="Lab"
+      title="試したこと"
+      lead="コーヒーまわりでやったことの記録。抽出用カスタムウォーターのレシピ、3D プリンターで作った道具のモデル配布、焙煎プロファイルの公開など。"
+    />
 
-    <section class="lab-section">
-      <p class="lab-lead">
-        コーヒーまわりでやったことの記録。抽出用カスタムウォーターのレシピ、3D
-        プリンターで作った道具のモデル配布、焙煎プロファイルの公開など。
-      </p>
+    {
+      loadError && (
+        <p class="lab-empty">
+          記事を取得できませんでした。時間をおいて再度お試しください。
+        </p>
+      )
+    }
 
+    {
+      !loadError && articles.length === 0 && (
+        <p class="lab-empty">まだ記事がありません。</p>
+      )
+    }
+
+    <ul class="lab-list">
       {
-        loadError && (
-          <p class="lab-empty">
-            記事を取得できませんでした。時間をおいて再度お試しください。
-          </p>
-        )
+        articles.map((article) => (
+          <li class="lab-list__item">
+            <a class="lab-list__link" href={`/lab/${article.id}`}>
+              <time class="lab-list__date" datetime={article.publishedAt}>
+                {formatDate(article.publishedAt)}
+              </time>
+              <h2 class="lab-list__title">{article.title}</h2>
+              {article.category && article.category.length > 0 && (
+                <p class="lab-list__tags">
+                  {article.category.map((category) => (
+                    <span>#{category}</span>
+                  ))}
+                </p>
+              )}
+            </a>
+          </li>
+        ))
       }
-
-      {
-        !loadError && articles.length === 0 && (
-          <p class="lab-empty">まだ記事がありません。</p>
-        )
-      }
-
-      <ul class="lab-list">
-        {
-          articles.map((article) => (
-            <li>
-              <a class="lab-card" href={`/lab/${article.id}`}>
-                <div class="lab-card-meta">
-                  <time datetime={article.publishedAt}>
-                    {formatDate(article.publishedAt)}
-                  </time>
-                </div>
-                <h2 class="lab-card-title">{article.title}</h2>
-                {article.category && article.category.length > 0 && (
-                  <div class="lab-card-tags">
-                    {article.category.map((category) => (
-                      <span class="tag">#{category}</span>
-                    ))}
-                  </div>
-                )}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-  </PageContainer>
+    </ul>
+  </Container>
 </Layout>
 
 <style>
-  .lab-section {
-    margin-top: 3rem;
-    max-width: 46rem;
-  }
-
-  .lab-lead {
-    margin: 0 0 2rem;
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: var(--color-text-secondary, #4b5563);
-  }
-
   .lab-empty {
-    color: var(--color-muted, #94a3b8);
+    color: var(--color-ink-faint);
   }
 
+  /* 上の罫線は PageHeader が持っているので、ここでは引かない */
   .lab-list {
-    list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+    list-style: none;
   }
 
-  .lab-card {
-    display: block;
-    padding: 1.25rem 1.5rem;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
+  .lab-list__item {
+    border-bottom: 1px solid var(--color-line);
   }
 
-  .lab-card:hover {
-    box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
-    transform: translateY(-2px);
+  /* 記事一覧は面を持たせず、罫線だけで区切る */
+  .lab-list__link {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.35rem 0.75rem 1.45rem;
+    margin-inline: -0.75rem;
+    transition: background-color var(--transition);
   }
 
-  .lab-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+  .lab-list__link:hover {
+    background: var(--color-accent-soft);
   }
 
-  .lab-card-meta time {
-    font-size: 0.8rem;
-    color: var(--color-muted, #94a3b8);
+  .lab-list__date {
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    font-variant-numeric: tabular-nums;
   }
 
-  .lab-card-title {
-    margin: 0 0 0.4rem;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--color-text-primary, #1f2937);
-    line-height: 1.4;
+  .lab-list__title {
+    font-size: var(--text-h3);
+    font-weight: 700;
+    line-height: 1.55;
+    transition: color var(--transition);
   }
 
-  .lab-card-summary {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary, #4b5563);
+  .lab-list__link:hover .lab-list__title {
+    color: var(--color-accent-strong);
   }
 
-  .lab-card-tags {
-    margin-top: 0.6rem;
+  .lab-list__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tag {
-    font-size: 0.75rem;
-    color: var(--color-muted, #94a3b8);
-  }
-
-  @media (width <= 47.9375rem) {
-    .lab-section {
-      margin-top: 2rem;
-    }
-
-    .lab-card {
-      padding: 1rem 1.1rem;
-    }
+    gap: 0.6rem;
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
   }
 </style>

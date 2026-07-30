@@ -22,7 +22,7 @@
         "ignore": ["stylelint-commands"]
       }
     ],
-    "custom-property-pattern": "^(color|font|spacing|transition|max|icon|scroll|page|footer)-[a-z0-9-]+$",
+    "custom-property-pattern": "^(color|font|text|spacing|radius|container|shadow|ease|transition|gutter|header|media|max|icon|scroll|page|footer)(-[a-z0-9-]+)*$",
     "declaration-no-important": true,
     "declaration-property-value-no-unknown": true,
     "length-zero-no-unit": true,

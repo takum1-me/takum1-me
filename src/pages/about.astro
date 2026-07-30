@@ -1,15 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PageTitle from "../components/shared/page/PageTitle";
-import PageContainer from "../components/shared/page/PageContainer";
-import AboutSnsLinks from "../components/features/about/AboutSnsLinks";
+import Container from "../components/shared/layout/Container.astro";
+import PageHeader from "../components/shared/page/PageHeader.astro";
+import SnsLinks from "../components/shared/sns-links/SnsLinks";
 import AboutInterests from "../components/features/about/AboutInterests.astro";
 import AboutOrganizations from "../components/features/about/AboutOrganizations.astro";
 import AboutQualifications from "../components/features/about/AboutQualifications.astro";
 import { getAllAbout, type AboutItem } from "../lib/microcms";
-import "../components/shared/page/page-title.css";
-import "../components/shared/page/page-container.css";
-import "../components/features/about/about-sns-links.css";
+import "../components/shared/sns-links/sns-links.css";
 
 // microCMSからデータを取得
 let aboutItems: AboutItem[] = [];
@@ -31,8 +29,13 @@ const certifications = aboutItems.filter(item => item.genre.includes("certificat
 ---
 
 <Layout title="About">
-    <PageContainer variant="about">
-        <PageTitle title="ABOUT" pageType="about" client:load />
+    <Container size="page">
+        <PageHeader
+            eyebrow="About"
+            title="takum1 について"
+            lead="コーヒーと、プログラミングと、デザイン。好きなものと所属をまとめています。"
+        />
+
         <div class="content-grid">
             <AboutInterests
                 favoriteItems={favoriteItems}
@@ -44,22 +47,35 @@ const certifications = aboutItems.filter(item => item.genre.includes("certificat
             <AboutQualifications certifications={certifications} />
         </div>
 
-        <AboutSnsLinks client:load />
-    </PageContainer>
+        <div class="about-contact">
+            <p class="about-contact__label">Contact</p>
+            <SnsLinks />
+        </div>
+    </Container>
 </Layout>
 
 <style>
     .content-grid {
         display: flex;
         flex-direction: column;
-        gap: 2rem;
-        margin-top: 2rem;
+        gap: clamp(2rem, 5vw, 3rem);
     }
 
-    @media (width <= 48rem) {
-        .content-grid {
-            gap: 1.5rem;
-        }
+    .about-contact {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        margin-top: clamp(2.5rem, 6vw, 3.5rem);
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--color-line);
+    }
+
+    .about-contact__label {
+        color: var(--color-accent);
+        font-size: var(--text-eyebrow);
+        font-weight: 700;
+        letter-spacing: var(--text-eyebrow--letter-spacing);
+        text-transform: uppercase;
     }
 </style>
 

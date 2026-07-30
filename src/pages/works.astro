@@ -1,13 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PageTitle from "../components/shared/page/PageTitle";
-import PageContainer from "../components/shared/page/PageContainer";
+import Container from "../components/shared/layout/Container.astro";
+import PageHeader from "../components/shared/page/PageHeader.astro";
+import SectionHeading from "../components/shared/page/SectionHeading.astro";
 import WorksCard from "../components/shared/card/WorksCard.astro";
 import { getAllWorks, type Work as MicroCMSWork } from "../lib/microcms";
-import { ZoomableFlavorWheel } from "../components/features/flavor-wheel";
+import {
+    ZoomableFlavorWheel,
+    ZoomableWheel,
+} from "../components/features/flavor-wheel";
+import {
+    characterWheelSegments,
+    characterWheelViewBoxSize,
+    characterWheelPathMatrix,
+} from "../data/character-wheel-segments";
 import { flavorWheelSegments } from "../data/flavor-wheel-segments";
-import "../components/shared/page/page-title.css";
-import "../components/shared/page/page-container.css";
 import "../components/shared/card/overlay-card.css";
 
 // microCMSからworksデータを取得
@@ -69,122 +76,158 @@ const mapToDisplayWork = (work: MicroCMSWork): DisplayWork | null => {
     };
 };
 
-const displayWorks = allWorks
-    .map(mapToDisplayWork)
-    .filter((work): work is DisplayWork => work !== null);
+// microCMS外で管理する追加作品
+const additionalWorks: DisplayWork[] = [
+    {
+        title: "Kraken Watcher",
+        subtitle: "家庭の電力使用量と料金を可視化する電気ダッシュボード",
+        url: "https://kraken-watcher.takum1.me/",
+        type: "personal",
+        genre: "programming",
+    },
+];
+
+const displayWorks = [
+    ...allWorks
+        .map(mapToDisplayWork)
+        .filter((work): work is DisplayWork => work !== null),
+    ...additionalWorks,
+];
 
 const personalWorks = displayWorks.filter(work => work.type === "personal");
 const organizationWorks = displayWorks.filter(work => work.type === "organization");
+
 ---
 
 <Layout title="Works">
-    <PageContainer variant="works">
-        <PageTitle title="WORKS" client:load />
-        
-        {personalWorks.length > 0 && (
-            <section class="works-section">
-                <h2 class="works-section-title">Individual Works</h2>
-                <div class="works-grid">
-                    {personalWorks.map((work) => (
-                        <WorksCard
-                            title={work.title}
-                            subtitle={work.subtitle}
-                            url={work.url}
-                            githubUrl={work.githubUrl}
-                            genre={work.genre}
-                            photos={work.photos}
-                        />
-                    ))}
-                </div>
-            </section>
-        )}
+    <Container size="page">
+        <PageHeader
+            eyebrow="Works"
+            title="つくったもの"
+            lead="個人と団体でつくったプロダクト、それと日々のカッピングで使っているフレーバーホイールを置いています。"
+        />
+    </Container>
 
-        {organizationWorks.length > 0 && (
-            <section class="works-section">
-                <h2 class="works-section-title">団体作品</h2>
-                <div class="works-grid">
-                    {organizationWorks.map((work) => (
-                        <WorksCard
-                            title={work.title}
-                            subtitle={work.subtitle}
-                            url={work.url}
-                            githubUrl={work.githubUrl}
-                            genre={work.genre}
-                            photos={work.photos}
-                        />
-                    ))}
-                </div>
-            </section>
-        )}
-        <section class="works-section">
-            <h2 class="works-section-title">Flavor Wheel</h2>
-            <section class="flavor-wheel-section">
-                <ZoomableFlavorWheel
-                    segments={flavorWheelSegments}
-                    client:only="react"
-                />
-            </section>
-        </section>
-    </PageContainer>
+    {personalWorks.length > 0 && (
+        <Container size="page" as="section" class="works-section">
+            <SectionHeading eyebrow="Personal" title="個人制作" />
+            <div class="works-grid">
+                {personalWorks.map((work) => (
+                    <WorksCard
+                        title={work.title}
+                        subtitle={work.subtitle}
+                        url={work.url}
+                        githubUrl={work.githubUrl}
+                        genre={work.genre}
+                        photos={work.photos}
+                    />
+                ))}
+            </div>
+        </Container>
+    )}
+
+    {organizationWorks.length > 0 && (
+        <Container size="page" as="section" class="works-section">
+            <SectionHeading eyebrow="Collaboration" title="団体作品" />
+            <div class="works-grid">
+                {organizationWorks.map((work) => (
+                    <WorksCard
+                        title={work.title}
+                        subtitle={work.subtitle}
+                        url={work.url}
+                        githubUrl={work.githubUrl}
+                        genre={work.genre}
+                        photos={work.photos}
+                    />
+                ))}
+            </div>
+        </Container>
+    )}
+
+    <Container size="page" as="section" class="works-section">
+        <SectionHeading eyebrow="Reference" title="Flavor Wheel" />
+        <p class="wheel-lead">
+            SCA のフレーバーホイール。カテゴリーをクリックすると拡大して細かい用語まで読めます。
+        </p>
+        <div class="wheel-frame">
+            <ZoomableFlavorWheel
+                segments={flavorWheelSegments}
+                client:only="react"
+            />
+        </div>
+    </Container>
+
+    <Container size="page" as="section" class="works-section">
+        <SectionHeading eyebrow="Reference" title="Coffee Character Wheel" />
+        <p class="wheel-lead">
+            Flavor Wheel と同じ操作でズームできます。公式ポスター由来の SVG（PDF
+            出力）からパスとラベル位置を抽出しており、線や配色は原資料に沿っています。
+        </p>
+        <div class="wheel-frame">
+            <ZoomableWheel
+                segments={characterWheelSegments}
+                footerIdle="カテゴリーをクリックして拡大表示"
+                footerZoomed="詳細用語をクリックして確認"
+                hubRadius={52}
+                viewBoxSize={characterWheelViewBoxSize}
+                zoomFocusRadius={240}
+                zoomViewportSize={420}
+                showHubCircle={false}
+                pathLocalTransform={characterWheelPathMatrix}
+                client:only="react"
+            />
+        </div>
+        <p class="wheel-attribution">
+            The coffee character wheel was developed as part of the AgriFutures
+            Australia project <em
+                >Defining terroir of Australian coffee to increase demand and
+                investment</em
+            >, a collaboration between Southern Cross University, Processing
+            Methods Bootcamp and the Australian coffee industry.
+        </p>
+    </Container>
 </Layout>
 
 <style>
-    .flavor-wheel-section {
-        margin: 4rem auto 2rem;
-        max-width: 600px;
-        min-height: 400px;
-        border-radius: 0.5rem;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
-    }
-
     .works-section {
-        margin-top: 4rem;
-    }
-
-    .works-section:first-of-type {
-        margin-top: 3rem;
-    }
-
-    .works-section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin: 0 0 1.5rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid #e5e7eb;
+        padding-block: clamp(2rem, 5vw, 3.25rem);
     }
 
     .works-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+        gap: clamp(1.25rem, 3vw, 1.75rem);
     }
 
-    @media (width <= 47.9375rem) {
-        .works-section {
-            margin-top: 3rem;
-        }
+    .wheel-lead {
+        max-width: 38rem;
+        margin-bottom: var(--spacing-lg);
+        color: var(--color-ink-muted);
+        font-size: var(--text-small);
+        line-height: 1.8;
+    }
 
-        .works-section:first-of-type {
-            margin-top: 2rem;
-        }
+    .wheel-frame {
+        max-width: 37.5rem;
+        margin-inline: auto;
+        background: var(--color-surface);
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
 
-        .works-section-title {
-            font-size: 1.25rem;
-            margin: 0 0 1.25rem;
-        }
+    .wheel-attribution {
+        max-width: 38rem;
+        margin: var(--spacing-lg) auto 0;
+        color: var(--color-ink-faint);
+        font-size: var(--text-eyebrow);
+        line-height: 1.7;
+        letter-spacing: 0;
+        text-transform: none;
+    }
 
-        .works-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .flavor-wheel-section {
-            min-height: 300px;
-            margin-top: 3rem;
-        }
+    .wheel-attribution em {
+        font-style: italic;
     }
 </style>
-
 

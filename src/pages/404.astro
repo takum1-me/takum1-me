@@ -1,20 +1,70 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Button from "../components/shared/button/Button";
-import "../components/shared/button/button.css";
+import Container from "../components/shared/layout/Container.astro";
 ---
 
 <Layout title="ページが見つかりません">
-  <main>
-    <div class="flex flex-col items-center justify-center min-h-[60vh] text-center py-8 px-4 max-[768px]:min-h-[50vh] max-[768px]:py-4 max-[768px]:px-2">
-      <h1 class="text-[8rem] font-black text-[var(--color-text-primary)] m-0 leading-none tracking-[-0.02em] max-[768px]:text-[6rem] max-[480px]:text-[4rem]">404</h1>
-      <h2 class="text-2xl font-semibold text-[var(--color-text-secondary)] mt-4 leading-[1.3] max-[768px]:text-xl max-[480px]:text-lg">ページが見つかりません</h2>
-      <p class="text-[var(--color-muted)] text-base font-semibold leading-relaxed my-6 mb-12 max-w-[25rem] max-[768px]:text-sm max-[768px]:my-4 max-[768px]:mb-8">
-        お探しのページは存在しないか、移動された可能性があります。
-      </p>
-      <div class="flex justify-center">
-        <Button href="/" variant="error">トップページに戻る</Button>
-      </div>
-    </div>
-  </main>
+  <Container size="prose" class="notfound">
+    <p class="notfound__code">404</p>
+    <h1 class="notfound__title">ページが見つかりません</h1>
+    <p class="notfound__body">
+      お探しのページは存在しないか、移動された可能性があります。
+    </p>
+    <a class="notfound__link" href="/">
+      トップページに戻る <span aria-hidden="true">→</span>
+    </a>
+  </Container>
 </Layout>
+
+<style>
+  .notfound {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-md);
+    padding-block: clamp(4rem, 15vh, 8rem);
+  }
+
+  .notfound__code {
+    color: var(--color-accent);
+    font-family: var(--font-serif);
+    font-size: clamp(4rem, 14vw, 8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .notfound__title {
+    font-size: var(--text-h2);
+    font-weight: 700;
+  }
+
+  .notfound__body {
+    color: var(--color-ink-muted);
+  }
+
+  .notfound__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: var(--spacing-md);
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--color-line-strong);
+    font-size: var(--text-small);
+    font-weight: 600;
+    transition:
+      color var(--transition),
+      border-color var(--transition);
+  }
+
+  .notfound__link span {
+    transition: transform var(--transition);
+  }
+
+  .notfound__link:hover {
+    border-bottom-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .notfound__link:hover span {
+    transform: translateX(0.2rem);
+  }
+</style>

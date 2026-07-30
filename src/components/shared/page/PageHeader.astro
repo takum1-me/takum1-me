@@ -1,0 +1,104 @@
+---
+/**
+ * 全ページ共通のページ見出し。
+ * eyebrow（英字ラベル）→ title → lead → 罫線、の一定のリズムを作る。
+ */
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  /** 見出しより一段小さい補足を title の直後に置く場合 */
+  align?: "start" | "center";
+}
+
+const { eyebrow, title, lead, align = "start" } = Astro.props;
+const hasAside = Astro.slots.has("aside");
+---
+
+<header class:list={["page-header", `is-${align}`, { "has-aside": hasAside }]}>
+  <div class="page-header__main">
+    {eyebrow && <p class="page-header__eyebrow">{eyebrow}</p>}
+    <h1 class="page-header__title">{title}</h1>
+    {lead && <p class="page-header__lead">{lead}</p>}
+  </div>
+
+  {
+    hasAside && (
+      <div class="page-header__aside">
+        <slot name="aside" />
+      </div>
+    )
+  }
+</header>
+
+<style>
+  .page-header {
+    padding-block: clamp(2.5rem, 6vw, 4rem) 1.75rem;
+    border-bottom: 1px solid var(--color-line-strong);
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .page-header.has-aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(14rem, 0.85fr);
+    gap: 1.3rem clamp(2rem, 6vw, 5rem);
+    align-items: end;
+  }
+
+  .page-header.is-center {
+    text-align: center;
+  }
+
+  .page-header__main {
+    min-width: 0;
+  }
+
+  .page-header__eyebrow {
+    margin-bottom: 0.85rem;
+    color: var(--color-accent);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .page-header__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-display);
+    font-weight: 400;
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+  }
+
+  .page-header__lead {
+    max-width: 34rem;
+    margin-top: 1.1rem;
+    color: var(--color-ink-muted);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  .page-header.is-center .page-header__lead {
+    margin-inline: auto;
+  }
+
+  .page-header__aside {
+    align-self: end;
+    padding-left: 1.15rem;
+    border-left: 2px solid var(--color-accent);
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+  }
+
+  @media (width <= 48rem) {
+    .page-header.has-aside {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .page-header__aside {
+      max-width: 32rem;
+    }
+  }
+</style>

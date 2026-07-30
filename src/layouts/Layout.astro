@@ -1,8 +1,7 @@
 ---
 import ReactHeader from "../components/features/header/Header";
-import ReactFooter from "../components/features/footer/Footer";
+import Footer from "../components/features/footer/Footer.astro";
 import "../styles/global.css";
-import "../components/features/footer/footer.css";
 export interface Props {
   pageTitle?: string;
   title?: string;
@@ -86,34 +85,26 @@ const jsonldStringfy = JSON.stringify({
     <meta property="twitter:site" content={metadata.og.twitter.site} />
     <meta property="twitter:creator" content={metadata.og.twitter.creator} />
     <script type="application/ld+json" is:inline set:html={jsonldStringfy} />
-    <meta name="generator" content={Astro.generator} />
-    <title>{metadata.title}</title>
-    <meta name="description" content={description} />
+
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100svh;
+      }
+
+      /* 幅の制御は Container.astro だけが持つ。ここでは持たせない。 */
+      .site-main {
+        flex: 1;
+        padding-top: var(--header-height);
+      }
+    </style>
   </head>
-  <body class="flex flex-col overflow-hidden visible">
+  <body>
     {!hideHeader && <ReactHeader client:load />}
-    <main class="main-content flex-1 pt-8 max-w-[calc(95vw-8.25rem)] mx-auto ml-[8.25rem] mr-[2.5vw] max-[1024px]:max-w-[calc(95vw-6.5rem)] max-[1024px]:ml-[6.5rem] max-[1400px]:max-w-[calc(95vw-8.25rem)] max-[1400px]:ml-[8.25rem] min-[1400px]:ml-24 max-[768px]:max-w-[calc(100vw-2.5rem)] max-[768px]:ml-10 max-[768px]:mr-0 max-[480px]:max-w-[calc(100vw-2rem)] max-[480px]:ml-4 max-[320px]:max-w-[calc(100vw-1.5rem)] max-[320px]:ml-4">
-      <div class="max-w-[var(--max-content-width)] mx-auto px-[var(--spacing-gap)]">
-        <slot />
-      </div>
+    <main class="site-main">
+      <slot />
     </main>
-    <ReactFooter client:only="react" />
+    <Footer />
   </body>
-  
-  <style>
-    :root {
-      /* カラーパレット - より重い青系 */
-      --color-primary-blue: #0d31aa;      /* メインの青（より重い） */
-      --color-secondary-blue: #2563eb;    /* セカンダリの青 */
-      --color-accent-blue: #3b82f6;       /* アクセントの青 */
-      --color-light-blue: #60a5fa;        /* ライトブルー */
-    }
-    
-    .main-content {
-      margin-right: 0;
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 1rem;
-      padding-top: 0;
-    }
-  </style>
 </html>

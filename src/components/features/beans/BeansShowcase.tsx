@@ -1,9 +1,10 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import type { Bean } from "../../../lib/microcms/beans-list";
-import { toArray } from "../../../lib/microcms/beans-list";
+import { toArray, beanPath } from "../../../lib/microcms/beans-list";
 import {
   flavorColors,
   buildFlavorSwatch,
+  noteDotBackground,
   type FlavorColor,
 } from "../../../lib/utils/flavor-color";
 import {
@@ -35,7 +36,8 @@ function toView(bean: Bean): BeanView {
     bean,
     notes,
     background: buildFlavorSwatch(
-      notes.map((n) => n.color),
+      // 1 語に複数色ある場合はすべてスウォッチに参加させる
+      notes.flatMap((n) => n.colors),
       roastIds[0],
     ),
     countries: toArray(bean.country).map(countryLabel),
@@ -116,7 +118,12 @@ function BeanModal({ view, onClose }: { view: BeanView; onClose: () => void }) {
                   <span
                     key={`${n.label}-${i}`}
                     className={styles["note-tag"]}
-                    style={{ "--color-note": n.color } as React.CSSProperties}
+                    style={
+                      {
+                        "--color-note": n.color,
+                        "--color-note-bg": noteDotBackground(n.colors),
+                      } as React.CSSProperties
+                    }
                   >
                     <span className={styles["note-tag-dot"]} />
                     {n.label}
@@ -166,8 +173,17 @@ function BeanCard({
   const visibleNotes = notes.slice(0, 4);
   const rest = notes.length - visibleNotes.length;
 
+  // リンクとして扱えるように <a>。通常クリックはモーダルを開き、
+  // 修飾キー・中クリックはブラウザに任せて別タブで開けるようにする。
+  const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)
+      return;
+    e.preventDefault();
+    onOpen();
+  };
+
   return (
-    <button className={styles.card} onClick={onOpen} type="button">
+    <a className={styles.card} href={beanPath(bean)} onClick={onClick}>
       <div className={styles.body}>
         <div className={styles["card-top"]}>
           <span className={styles.index}>
@@ -194,7 +210,12 @@ function BeanCard({
               <li key={`${n.label}-${i}`} className={styles["note-item"]}>
                 <span
                   className={styles["note-dot"]}
-                  style={{ "--color-note": n.color } as React.CSSProperties}
+                  style={
+                    {
+                      "--color-note": n.color,
+                      "--color-note-bg": noteDotBackground(n.colors),
+                    } as React.CSSProperties
+                  }
                 />
                 {n.label}
               </li>
@@ -213,17 +234,49 @@ function BeanCard({
       <div className={styles.swatch} style={{ background: view.background }}>
         <span className={styles["swatch-edge"]} />
       </div>
-    </button>
+    </a>
   );
 }
 
 type Filter = "all" | "available";
 
-export default function BeansShowcase({ beans }: { beans: Bean[] }) {
+/** /beans/<id> で直接開いたときの URL に戻す（一覧は /beans） */
+const LIST_PATH = "/beans";
+
+export default function BeansShowcase({
+  beans,
+  initialBeanId = null,
+}: {
+  beans: Bean[];
+  /** /beans/<id> で来たとき、その豆のモーダルを開いた状態で始める */
+  initialBeanId?: string | null;
+}) {
   const [filter, setFilter] = useState<Filter>("all");
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(initialBeanId);
 
   const views = useMemo(() => beans.map(toView), [beans]);
+
+  // 戻る/進むで URL とモーダルの開閉を合わせる
+  useEffect(() => {
+    const sync = () => {
+      const id = window.location.pathname
+        .replace(/\/+$/, "")
+        .slice(`${LIST_PATH}/`.length);
+      setOpenId(
+        window.location.pathname.startsWith(`${LIST_PATH}/`) ? id : null,
+      );
+    };
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  /** モーダルを開く。URL も /beans/<id> にして、そのままリンクを送れるようにする */
+  const open = useCallback((id: string) => {
+    setOpenId(id);
+    const path = `${LIST_PATH}/${id}`;
+    if (window.location.pathname !== path)
+      window.history.pushState({ beanId: id }, "", path);
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -236,7 +289,11 @@ export default function BeansShowcase({ beans }: { beans: Bean[] }) {
     [views, openId],
   );
 
-  const close = useCallback(() => setOpenId(null), []);
+  const close = useCallback(() => {
+    setOpenId(null);
+    if (window.location.pathname !== LIST_PATH)
+      window.history.pushState({}, "", LIST_PATH);
+  }, []);
 
   if (beans.length === 0) {
     return (
@@ -281,7 +338,7 @@ export default function BeansShowcase({ beans }: { beans: Bean[] }) {
               key={view.bean.id}
               view={view}
               index={i}
-              onOpen={() => setOpenId(view.bean.id)}
+              onOpen={() => open(view.bean.id)}
             />
           ))}
         </div>
