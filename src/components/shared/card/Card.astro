@@ -1,0 +1,69 @@
+---
+/**
+ * サイト唯一のカード。派生は variant ではなく中身の組み方で作る。
+ * href を渡すと <a> になり、ホバーが有効になる。
+ */
+export interface Props {
+  href?: string;
+  external?: boolean;
+  /** 面を持たせず罫線だけにする（記事本文の中など） */
+  flat?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  external = false,
+  flat = false,
+  class: className,
+  ...rest
+} = Astro.props;
+const Tag = href ? "a" : "div";
+const linkAttrs = href
+  ? {
+      href,
+      ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}),
+    }
+  : {};
+---
+
+<!-- rest で呼び出し元の data-astro-cid-* を引き継ぐ（動的タグのため必須） -->
+<Tag
+  class:list={["card", { "is-link": !!href, "is-flat": flat }, className]}
+  {...linkAttrs}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    color: inherit;
+    overflow: hidden;
+  }
+
+  .card.is-flat {
+    background: transparent;
+  }
+
+  .card.is-link {
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition),
+      transform var(--transition);
+  }
+
+  .card.is-link:hover {
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .card.is-link:active {
+    transform: translateY(0);
+  }
+</style>

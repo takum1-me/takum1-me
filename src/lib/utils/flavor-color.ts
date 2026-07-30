@@ -4,8 +4,14 @@ import { coffeeFlavors } from "../../data/coffee-flavor";
 export interface FlavorColor {
   /** 表示用の原文（トリム済み） */
   label: string;
-  /** #RRGGBB */
+  /** 代表色（colors の 1 番目）。#RRGGBB */
   color: string;
+  /**
+   * この語に割り当てた色。1 語に複数色を当てられる
+   * （例: "raspberry-chocolate" → ラズベリー色 + チョコ色）。
+   * 必ず 1 つ以上入る。
+   */
+  colors: string[];
   /** マッチしたキーワード（デバッグ・並び替え用） */
   matched?: string;
 }
@@ -22,18 +28,35 @@ export function splitFlavorNotes(flavorNote: string | undefined): string[] {
 /** "#RGB" / "#RRGGBB" のみ有効。前後空白は許容。 */
 const HEX_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 
+/** "#RGB" / "#RRGGBB" として使える文字列か */
+export function isHexColor(value: string): boolean {
+  return HEX_RE.test(value.trim());
+}
+
+/** 1 語に複数色を当てるときのスロット内区切り（"#E52968|#692A19"） */
+export const COLOR_SLOT_SEPARATOR = "|";
+
 /**
- * flavorNote と同順の HEX CSV（例: "#F2C312,#E8D53A,#E2492F"）を分割する。
- * 各要素は有効な HEX ならその文字列、空欄・無効なら null（＝自動マッチにフォールバック）。
+ * flavorNote と同順の HEX CSV（例: "#F2C312,#E8D53A|#692A19,#E2492F"）を分割する。
+ * 各要素は有効な HEX の配列、空欄・無効なら null（＝自動マッチにフォールバック）。
+ * 1 スロットに `|` / `/` 区切りで複数色を書くと、その語に複数色が割り当たる。
  */
 export function splitFlavorColors(
   flavorColors: string | undefined,
-): (string | null)[] {
+): (string[] | null)[] {
   if (!flavorColors) return [];
-  return flavorColors.split(/[,、]/).map((s) => {
-    const v = s.trim();
-    return HEX_RE.test(v) ? v : null;
+  return flavorColors.split(/[,、]/).map((slot) => {
+    const hexes = slot
+      .split(/[|/]/)
+      .map((s) => s.trim())
+      .filter((v) => HEX_RE.test(v));
+    return hexes.length > 0 ? hexes : null;
   });
+}
+
+/** 色配列 → CSV の 1 スロット文字列 */
+export function joinColorSlot(colors: string[]): string {
+  return colors.join(COLOR_SLOT_SEPARATOR);
 }
 
 /**
@@ -151,6 +174,49 @@ const KEYWORD_COLORS: [string, string][] = [
 
 export const DEFAULT_COLOR = "#8b7355";
 
+/**
+ * 小文字化した語からキーワードを拾う。KEYWORD_COLORS は具体語 → 抽象語の順なので、
+ * 先に採った範囲と重なるものは捨てる（"high acidity" が acidity と acid で二重に
+ * ヒットしないように）。戻り値は語中の出現順。
+ */
+function matchKeywords(lower: string): { keyword: string; color: string }[] {
+  const taken: {
+    start: number;
+    end: number;
+    keyword: string;
+    color: string;
+  }[] = [];
+
+  for (const [keyword, color] of KEYWORD_COLORS) {
+    let from = 0;
+    for (;;) {
+      const start = lower.indexOf(keyword, from);
+      if (start < 0) break;
+      const end = start + keyword.length;
+      const overlaps = taken.some((t) => start < t.end && end > t.start);
+      if (!overlaps) taken.push({ start, end, keyword, color });
+      from = end;
+    }
+  }
+
+  // 同じ色になるキーワードは 1 つに畳み、色数は 3 つまでに抑える
+  const seen = new Set<string>();
+  return taken
+    .sort((a, b) => a.start - b.start)
+    .filter(({ color }) => {
+      if (seen.has(color)) return false;
+      seen.add(color);
+      return true;
+    })
+    .slice(0, 3)
+    .map(({ keyword, color }) => ({ keyword, color }));
+}
+
+/** 1 色だけの FlavorColor を組む */
+function single(label: string, color: string, matched?: string): FlavorColor {
+  return { label, color, colors: [color], matched };
+}
+
 /** フレーバーノート 1 語を色に変換する */
 export function matchFlavorColor(note: string): FlavorColor {
   const label = note.trim();
@@ -158,20 +224,27 @@ export function matchFlavorColor(note: string): FlavorColor {
 
   // 1) coffeeFlavors に完全一致（例: "Blueberry"）
   const exact = coffeeFlavors.find((f) => f.flavor.toLowerCase() === lower);
-  if (exact) return { label, color: exact.color, matched: exact.flavor };
+  if (exact) return single(label, exact.color, exact.flavor);
 
-  // 2) 官能表現キーワードの部分一致
-  for (const [keyword, color] of KEYWORD_COLORS) {
-    if (lower.includes(keyword)) return { label, color, matched: keyword };
+  // 2) 官能表現キーワードの部分一致。"raspberry-chocolate" のような複合語は
+  //    重ならない範囲のキーワードを全部拾って、出現順に複数色を当てる。
+  const hits = matchKeywords(lower);
+  if (hits.length > 0) {
+    return {
+      label,
+      color: hits[0].color,
+      colors: hits.map((h) => h.color),
+      matched: hits.map((h) => h.keyword).join("+"),
+    };
   }
 
   // 3) coffeeFlavors の部分一致（"dried fruit" など）
   const partial = coffeeFlavors.find(
     (f) => lower.includes(f.flavor.toLowerCase()) && f.flavor.length > 3,
   );
-  if (partial) return { label, color: partial.color, matched: partial.flavor };
+  if (partial) return single(label, partial.color, partial.flavor);
 
-  return { label, color: DEFAULT_COLOR };
+  return single(label, DEFAULT_COLOR);
 }
 
 /**
@@ -185,10 +258,31 @@ export function flavorColors(
 ): FlavorColor[] {
   const overrides = splitFlavorColors(override);
   return splitFlavorNotes(flavorNote).map((note, i) => {
-    const hex = overrides[i];
-    if (hex) return { label: note.trim(), color: hex, matched: "override" };
+    const hexes = overrides[i];
+    if (hexes)
+      return {
+        label: note.trim(),
+        color: hexes[0],
+        colors: hexes,
+        matched: "override",
+      };
     return matchFlavorColor(note);
   });
+}
+
+/**
+ * ノートのドット用 background 値。1 色ならその色、複数色なら等分の帯にする
+ * （"raspberry-chocolate" が 2 色に塗り分けられる）。
+ */
+export function noteDotBackground(colors: string[]): string {
+  if (colors.length === 0) return DEFAULT_COLOR;
+  if (colors.length === 1) return colors[0];
+  const stops = colors.map((color, i) => {
+    const from = ((i / colors.length) * 100).toFixed(2);
+    const to = (((i + 1) / colors.length) * 100).toFixed(2);
+    return `${color} ${from}% ${to}%`;
+  });
+  return `linear-gradient(135deg, ${stops.join(", ")})`;
 }
 
 /** 焙煎度ごとの雰囲気（背景の下地・全体トーン） */

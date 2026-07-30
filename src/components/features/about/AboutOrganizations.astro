@@ -1,7 +1,8 @@
 ---
-import Card, { CardHeader } from "../../shared/card/Card";
+import SectionHeading from "../../shared/page/SectionHeading.astro";
 import type { AboutItem } from "../../../lib/microcms";
 import { formatPeriod, formatRolePeriod } from "./date-utils";
+
 interface Props {
   organizations: AboutItem[];
 }
@@ -9,112 +10,85 @@ interface Props {
 const { organizations } = Astro.props;
 ---
 
-<Card variant="organizations">
-  <CardHeader>
-    <h2>所属</h2>
-  </CardHeader>
-  <div class="organizations-list">
-    {organizations.map(organization => (
-      <div class="organization-item">
-        <h3>
-          {organization.link ? (
-            <a href={organization.link} target="_blank" rel="noopener noreferrer">
-              <span>{organization.title}</span>
-            </a>
-          ) : (
-            <span>{organization.title}</span>
-          )}
-        </h3>
-        {organization.beginDate && (
-          <span class="organization-period">
-            {formatPeriod(organization.beginDate, organization.finishDate)}
-          </span>
-        )}
-        {organization.specific && (
-          <div class="role">
-            {organization.specific}
-            {organization.specificBeiginDate && (
-              `（${formatRolePeriod(organization.specificBeiginDate, organization.specificFinishDate)}）`
+<section>
+  <SectionHeading eyebrow="Affiliation" title="所属" />
+
+  <ul class="org-list">
+    {
+      organizations.map((organization) => (
+        <li class="org-item">
+          <h3 class="org-item__name">
+            {organization.link ? (
+              <a
+                href={organization.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {organization.title}
+              </a>
+            ) : (
+              organization.title
             )}
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-</Card>
+          </h3>
+
+          {organization.beginDate && (
+            <p class="org-item__period">
+              {formatPeriod(organization.beginDate, organization.finishDate)}
+            </p>
+          )}
+
+          {organization.specific && (
+            <p class="org-item__role">
+              {organization.specific}
+              {organization.specificBeiginDate &&
+                `（${formatRolePeriod(organization.specificBeiginDate, organization.specificFinishDate)}）`}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
 
 <style>
-  .organizations-list {
+  .org-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    gap: var(--spacing-lg) var(--spacing-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .organization-item {
-    padding: 1.5rem;
-    background: transparent;
-    border-radius: 0.5rem;
-    border-left: 3px solid var(--color-primary);
-    border-bottom: 1px solid #e2e8f0;
+  .org-item {
+    display: grid;
+    gap: 0.3rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-line-strong);
   }
 
-  .organization-item h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1e293b;
+  .org-item__name {
+    font-size: var(--text-h3);
+    font-weight: 700;
+    line-height: 1.5;
   }
 
-  .organization-item h3 a {
-    color: #1e293b;
-    text-decoration: none;
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    margin-left: -0.5rem;
-    border-radius: 0.25rem;
-    position: relative;
-    overflow: hidden;
-    background: transparent;
+  .org-item__name a {
+    transition: color var(--transition);
   }
 
-  .organization-item h3 a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 100%;
-    background: var(--color-primary);
-    z-index: 0;
+  .org-item__name a:hover {
+    color: var(--color-accent-strong);
   }
 
-  .organization-item h3 a span {
-    position: relative;
-    z-index: 1;
+  .org-item__period {
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
   }
 
-  .organization-period {
-    color: var(--color-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-bottom: 0.5rem;
-  }
-
-  .role {
-    color: var(--color-primary);
-    font-weight: 500;
-    font-size: 0.9rem;
-    background: var(--color-primary-10);
-    padding: 0.25rem 0.75rem;
-    border-radius: 1.25rem;
-    display: inline-block;
-  }
-
-  @media (width <= 48rem) {
-    .organizations-list {
-      grid-template-columns: 1fr;
-    }
+  .org-item__role {
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
   }
 </style>
-

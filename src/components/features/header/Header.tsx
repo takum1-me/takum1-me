@@ -1,304 +1,101 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { gsap } from "gsap";
+import { useCallback, useEffect, useState } from "react";
 import SnsLinks from "../../shared/sns-links/SnsLinks";
 import "./header.css";
 
-/** false の間はマウス位置でヘッダーの表示を切り替えない（再有効化するときは true に） */
-const HEADER_CURSOR_REVEAL_ENABLED = false;
-
-const HOVER_THRESHOLD = 120;
+const navItems = [
+  { label: "About", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Works", href: "/works" },
+  { label: "Lab", href: "/lab" },
+  { label: "Beans", href: "/beans" },
+];
 
 export default function Header() {
-  const [visible, setVisible] = useState(true);
-  const [isAtTop, setIsAtTop] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const lastYRef = useRef<number>(0);
-  const hoverRef = useRef<boolean>(false);
-  const headerWrapRef = useRef<HTMLDivElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const hamburgerLinesRef = useRef<HTMLSpanElement[]>([]);
-  const mobileMenuTlRef = useRef<gsap.core.Timeline | null>(null);
-
-  const navItems = [
-    { id: "about", label: "About", href: "/about" },
-    { id: "blog", label: "Blog", href: "/blog" },
-    { id: "works", label: "Works", href: "/works" },
-    { id: "lab", label: "Lab", href: "/lab" },
-    { id: "beans", label: "Beans", href: "/beans" },
-  ];
-
-  const handleScroll = useCallback(() => {
-    const y = window.scrollY;
-
-    // 最上部だけ全幅バナー、それ以外はページ上部に固定表示
-    setIsAtTop(y <= 0);
-
-    // ヘッダーは常に表示
-    setVisible(true);
-    lastYRef.current = y;
-  }, []);
-
-  // ヘッダーの表示/非表示アニメーション
-  useEffect(() => {
-    if (headerWrapRef.current) {
-      gsap.to(headerWrapRef.current, {
-        opacity: visible ? 1 : 0,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-    }
-  }, [visible]);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const nearTop = e.clientY <= HOVER_THRESHOLD;
-    hoverRef.current = nearTop;
-
-    // ヘッダーは常に表示
-    setVisible(true);
-  }, []);
-
-  const handleItemClick = useCallback((id: string) => {
-    setIsMobileMenuOpen(false); // モバイルメニューを閉じる
-    // スクロール制御を解除
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.width = "";
-    document.body.classList.remove("mobile-menu-open"); // グレーアウトを解除
-    window.location.href = `/${id}`;
-  }, []);
-
-  const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen((prev) => {
-      const newState = !prev;
-
-      // GSAPアニメーション
-      if (mobileMenuTlRef.current) {
-        mobileMenuTlRef.current.kill();
-      }
-
-      if (newState) {
-        // 開くアニメーション
-        if (mobileMenuRef.current && hamburgerLinesRef.current.length === 3) {
-          mobileMenuTlRef.current = gsap.timeline();
-          mobileMenuTlRef.current
-            .to(mobileMenuRef.current, {
-              right: 0,
-              opacity: 1,
-              duration: 0.3,
-              ease: "power2.out",
-            })
-            .to(
-              hamburgerLinesRef.current[0],
-              {
-                rotation: 45,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            )
-            .to(
-              hamburgerLinesRef.current[1],
-              {
-                opacity: 0,
-                x: 20,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            )
-            .to(
-              hamburgerLinesRef.current[2],
-              {
-                rotation: -45,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            );
-        }
-        // サイドバー開時にページスクロールを無効化とグレーアウト
-        document.body.style.overflow = "hidden";
-        document.body.style.position = "fixed";
-        document.body.style.width = "100%";
-        document.body.classList.add("mobile-menu-open");
-      } else {
-        // 閉じるアニメーション
-        if (mobileMenuRef.current && hamburgerLinesRef.current.length === 3) {
-          mobileMenuTlRef.current = gsap.timeline();
-          mobileMenuTlRef.current
-            .to(
-              hamburgerLinesRef.current[0],
-              {
-                rotation: 0,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            )
-            .to(
-              hamburgerLinesRef.current[1],
-              {
-                opacity: 1,
-                x: 0,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            )
-            .to(
-              hamburgerLinesRef.current[2],
-              {
-                rotation: 0,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            )
-            .to(
-              mobileMenuRef.current,
-              {
-                right: "-100%",
-                opacity: 0,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              0,
-            );
-        }
-        // スクロール制御を解除
-        document.body.style.overflow = "";
-        document.body.style.position = "";
-        document.body.style.width = "";
-        document.body.classList.remove("mobile-menu-open");
-      }
-      return newState;
-    });
-  }, []);
-
-  const renderNavigation = (className: string) =>
-    React.createElement(
-      "nav",
-      { className, "aria-label": "サイトナビゲーション" },
-      navItems.map((item) =>
-        React.createElement(
-          "button",
-          {
-            key: item.id,
-            className: "header-nav-button",
-            onClick: () => handleItemClick(item.id),
-          },
-          item.label,
-        ),
-      ),
-    );
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [path, setPath] = useState("");
 
   useEffect(() => {
-    lastYRef.current = window.scrollY;
-    setIsAtTop(window.scrollY <= 0); // 最上部のみ全幅バナー
-    setVisible(true); // 初期表示
+    setPath(window.location.pathname);
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    if (HEADER_CURSOR_REVEAL_ENABLED) {
-      window.addEventListener("mousemove", handleMouseMove);
-    }
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (HEADER_CURSOR_REVEAL_ENABLED) {
-        window.removeEventListener("mousemove", handleMouseMove);
-      }
-      // コンポーネントアンマウント時にスクロールを元に戻す
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
-      document.body.classList.remove("mobile-menu-open");
+  // メニューを開いている間だけ背面のスクロールを止める
+  useEffect(() => {
+    document.body.classList.toggle("has-menu-open", isMenuOpen);
+    return () => document.body.classList.remove("has-menu-open");
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMenuOpen(false);
     };
-  }, [handleScroll, handleMouseMove]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMenuOpen]);
 
-  return React.createElement(
-    "div",
-    {
-      ref: headerWrapRef,
-      className: `header-wrap${isAtTop ? " at-top" : ""}`,
-      role: "banner",
-    },
-    React.createElement(
-      "div",
-      { className: "container" },
-      React.createElement(
-        "div",
-        { className: "nav" },
-        React.createElement(
-          "div",
-          { className: "brand" },
-          React.createElement("a", { href: "/" }, "takum1.me"),
-        ),
-        React.createElement(
-          "button",
-          {
-            className: "hamburger-menu",
-            onClick: toggleMobileMenu,
-            "aria-label": "メニューを開く",
-            "aria-expanded": isMobileMenuOpen,
-          },
-          React.createElement("span", {
-            ref: (el) => {
-              if (el) hamburgerLinesRef.current[0] = el;
-            },
-            className: "hamburger-line hamburger-line--first",
-          }),
-          React.createElement("span", {
-            ref: (el) => {
-              if (el) hamburgerLinesRef.current[1] = el;
-            },
-            className: "hamburger-line hamburger-line--second",
-          }),
-          React.createElement("span", {
-            ref: (el) => {
-              if (el) hamburgerLinesRef.current[2] = el;
-            },
-            className: "hamburger-line hamburger-line--third",
-          }),
-        ),
-        React.createElement(
-          "div",
-          {
-            ref: mobileMenuRef,
-            className: `mobile-menu${isMobileMenuOpen ? " open" : ""}`,
-            style: {
-              right: "-100%",
-              opacity: 0,
-            },
-          },
-          React.createElement(
-            "button",
-            {
-              className: "mobile-menu-close",
-              onClick: toggleMobileMenu,
-              "aria-label": "メニューを閉じる",
-            },
-            React.createElement("span", { className: "close-icon" }, "×"),
-          ),
-          React.createElement(
-            "div",
-            { className: "mobile-nav-container" },
-            renderNavigation("mobile-header-links"),
-          ),
-          React.createElement(
-            "div",
-            { className: "mobile-sns-section" },
-            React.createElement(SnsLinks, {
-              className: "mobile-sns-links",
-            }),
-          ),
-        ),
-        renderNavigation("header-links"),
-      ),
-    ),
-    React.createElement(
-      "style",
-      null,
-      `.container{max-width:var(--max-width);margin:0 auto;padding:0 var(--gap);}`,
-    ),
+  const isCurrent = useCallback(
+    (href: string) => path === href || path.startsWith(`${href}/`),
+    [path],
+  );
+
+  const renderLinks = (className: string) => (
+    <nav className={className} aria-label="サイトナビゲーション">
+      {navItems.map((item) => (
+        <a
+          key={item.href}
+          href={item.href}
+          className="header-link"
+          aria-current={isCurrent(item.href) ? "page" : undefined}
+          onClick={() => setIsMenuOpen(false)}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  );
+
+  return (
+    <header className={`site-header${isScrolled ? " is-scrolled" : ""}`}>
+      <div className="site-header__inner">
+        <a className="site-header__brand" href="/">
+          takum1.me
+        </a>
+
+        {renderLinks("site-header__nav")}
+
+        <button
+          type="button"
+          className="site-header__toggle"
+          onClick={() => setIsMenuOpen((open) => !open)}
+          aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
+          aria-expanded={isMenuOpen}
+        >
+          <span className={`toggle-icon${isMenuOpen ? " is-open" : ""}`}>
+            <span className="toggle-icon__bar toggle-icon__bar--top" />
+            <span className="toggle-icon__bar toggle-icon__bar--bottom" />
+          </span>
+        </button>
+      </div>
+
+      <div
+        className={`site-header__scrim${isMenuOpen ? " is-open" : ""}`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      <div
+        className={`site-header__drawer${isMenuOpen ? " is-open" : ""}`}
+        inert={!isMenuOpen}
+      >
+        {renderLinks("site-header__drawer-nav")}
+        <SnsLinks className="site-header__drawer-sns" />
+      </div>
+    </header>
   );
 }

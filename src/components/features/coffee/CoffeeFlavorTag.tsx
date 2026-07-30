@@ -11,18 +11,12 @@ export default function CoffeeFlavorTag({ flavorName }: CoffeeFlavorTagProps) {
     (flavor: CoffeeFlavorType) => flavor.flavor === flavorName,
   );
 
-  // 色が見つからない場合はデフォルト色を使用
-  const originalColor = flavorData?.color || "#8b7355";
+  // 色が見つからない場合はアクセント色を使用
+  const originalColor = flavorData?.color || "#b78051";
   const color = addOpacity(originalColor, 0.8);
 
   return (
-    <span
-      className="flavor-tag bg-transparent py-sm px-md rounded-md text-sm font-medium border-2"
-      style={{
-        borderColor: color,
-        color: color,
-      }}
-    >
+    <span className="flavor-tag" style={{ color }}>
       {flavorName}
     </span>
   );

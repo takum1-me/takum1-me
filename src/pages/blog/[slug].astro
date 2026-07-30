@@ -1,9 +1,9 @@
 ---
 import { getAllBlog, getBlogById } from "../../lib/microcms";
 import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/shared/layout/Container.astro";
 import BlogToc from "../../components/features/blog/BlogToc.tsx";
-import PageContainer from "../../components/shared/page/PageContainer";
-import "../../components/shared/page/page-container.css";
+import "../../styles/prose.css";
 
 export async function getStaticPaths() {
   try {
@@ -37,230 +37,99 @@ const formatDate = (dateString: string) => {
 ---
 
 <Layout title={title}>
-  <main class="blog-main">
-    <PageContainer variant="blog">
-      <div class="blog-container">
-        <div class="page">
-          <div class="article-container">
-            <p class="back"><a href="/blog">← ブログ一覧に戻る</a></p>
-            <div class="title-date">
-              <h1 class="article-title">{title}</h1>
-              <p class="published-date">{formatDate(publishedAt)}</p>
-            </div>
-            {thumbnail && <img src={thumbnail.url} alt={title} />}
-            <div class="article-content" set:html={content} />
-          </div>
-        </div>
-        <div class="toc-container">
-          <BlogToc client:only="react" />
-        </div>
-      </div>
-    </PageContainer>
-  </main>
+  <Container size="wide" class="blog-layout">
+    <article class="article">
+      <a class="article__back" href="/blog">
+        <span aria-hidden="true">←</span> ブログ一覧に戻る
+      </a>
+
+      <header class="article__header">
+        <p class="article__meta">
+          <time datetime={publishedAt}>{formatDate(publishedAt)}</time>
+        </p>
+        <h1 class="article__title">{title}</h1>
+      </header>
+
+      {
+        thumbnail && (
+          <img
+            class="article__eyecatch"
+            src={thumbnail.url}
+            alt=""
+            loading="lazy"
+          />
+        )
+      }
+
+      <div class="prose" set:html={content} />
+    </article>
+
+    <div class="blog-layout__toc">
+      <BlogToc client:only="react" />
+    </div>
+  </Container>
 </Layout>
 
 <style>
-  .blog-main {
-    min-height: 100vh;
-  }
-  
-  .blog-container {
-    display: flex;
-    gap: 2.5rem;
-    align-items: flex-start;
-    max-width: var(--max-content-width);
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-  
-  .page { 
-    flex: 0 0 70%; /* 画面の70%を記事に割り当て */
-    min-width: 0;
-    margin-right: 2rem; /* TOCとの間隔を確保 */
-  }
-  
-  .toc-container {
-    flex: 0 0 30%; /* 画面の30%をTOCに割り当て */
-    position: relative;
-  }
-  
-  .article-container {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  @media (width <= 64rem) { 
-    .blog-container { 
-      flex-direction: column; 
-      gap: 1.25rem;
-      max-width: none;
-      padding: 0 1rem;
-    }
-    
-    .page {
-      flex: none;
-      max-width: none;
-      margin-right: 0;
-    }
-    
-    .toc-container {
-      flex: none;
-      display: none; /* 小さい画面ではTOCを非表示 */
-    }
-  }
-  
-  @media (width >= 48rem) {
-    .article-container {
-      max-width: 47.5rem;
-      padding: 0 2rem;
-    }
-  }
-  
-  h1 {
-    color: var(--color-text-primary);
+  .blog-layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--container-prose)) minmax(0, 15rem);
+    justify-content: center;
+    gap: clamp(2rem, 6vw, 4.5rem);
+    align-items: start;
+    padding-block: var(--spacing-xl) var(--spacing-3xl);
   }
 
-  .article-content .published-date {
-    color: var(--color-text-primary);
-  }
-
-  /* サムネイル画像のレスポンシブ対応 */
-  img {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-  }
-
-  /* content内の画像にスタイルを適用 */
-  .article-content img {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    display: block;
-    margin: 1rem 0;
-  }
-
-  @media (width <= 48rem) {
-    .blog-container {
-      max-width: calc(100vw - 2rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 2rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
-  }
-
-  @media (width <= 30rem) {
-    .blog-container {
-      max-width: calc(100vw - 1.5rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 1.5rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
-  }
-
-  @media (width <= 20rem) {
-    .blog-container {
-      max-width: calc(100vw - 1rem); /* 左マージンを小さくして右に伸ばす */
-      margin-left: 1rem;
-      margin-right: 0; /* 右マージンを削除 */
-    }
-  }
-
-  .back {
-    margin: 0.5rem 0 1rem;
-  }
-
-  .back a {
-    color: var(--color-text-secondary);
-    text-decoration: none;
+  .article__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
     font-weight: 600;
-    position: relative;
-  }
-  
-  .back a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0.125rem;
-    bottom: -0.125rem;
-    left: 0;
-    background-color: var(--color-text-primary);
+    transition: color var(--transition);
   }
 
-  /* ▼▼▼ ここから変更 ▼▼▼ */
-  .title-date {
-    display: flex;
-
-    /* Flexboxを有効にする */
-    justify-content: space-between; /* 両端に配置する */
-    align-items: flex-end;
-
-    /* 下端で揃える */
-    gap: 1rem; /* タイトルと日付の間に最低限の隙間を設ける */
-    margin-bottom: 1rem;
+  .article__back:hover {
+    color: var(--color-accent-strong);
   }
 
-  .title-date h1 {
-    margin: 0; /* h1のデフォルトマージンをリセット */
-
-    /* 元のmargin-bottomを削除 */
-    margin-bottom: 0;
+  .article__header {
+    margin-block: var(--spacing-xl) var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-line-strong);
   }
 
-  .title-date p {
-    /* position: absolute;
-     を削除 */
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
+  .article__meta {
+    margin-bottom: 0.85rem;
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
     font-weight: 700;
-    white-space: nowrap;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    font-variant-numeric: tabular-nums;
+  }
 
-    /* 日付が改行しないようにする */
-    flex-shrink: 0; /* コンテナが狭くなっても日付部分が縮まないようにする */
-    margin-bottom: 0.4rem;
+  .article__title {
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: var(--text-h1--line-height);
+    letter-spacing: var(--text-h1--letter-spacing);
+  }
+
+  .article__eyecatch {
+    width: 100%;
+    height: auto;
+    margin-bottom: var(--spacing-xl);
+    border-radius: var(--radius-md);
+  }
+
+  @media (width <= 64rem) {
+    .blog-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .blog-layout__toc {
+      display: none;
+    }
   }
 </style>
-
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    const backLink = document.querySelector(".back a");
-    if (!backLink) return;
-
-    // ::after疑似要素の代わりにspan要素を作成
-    if (!backLink.querySelector(".back-underline")) {
-      const underlineEl = document.createElement("span");
-      underlineEl.className = "back-underline";
-      underlineEl.style.cssText = `
-        position: absolute;
-        width: 0;
-        height: 0.125rem;
-        bottom: -0.125rem;
-        left: 0;
-        background-color: var(--color-text-primary);
-        pointer-events: none;
-      `;
-      backLink.style.position = "relative";
-      backLink.appendChild(underlineEl);
-    }
-
-    const underlineEl = backLink.querySelector(".back-underline");
-    if (!underlineEl || typeof window.gsap === "undefined") return;
-
-    backLink.addEventListener("mouseenter", () => {
-      window.gsap.to(underlineEl, {
-        width: "100%",
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    });
-
-    backLink.addEventListener("mouseleave", () => {
-      window.gsap.to(underlineEl, {
-        width: "0%",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    });
-  });
-</script>

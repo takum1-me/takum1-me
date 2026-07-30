@@ -1,8 +1,4 @@
-import React, { useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { calculateImageBrightness } from "../../../lib/utils/image-brightness";
 import { formatDate } from "../../../lib/utils/date-format";
-import { useOverlayCardAnimation } from "./hooks/useOverlayCardAnimation";
 
 interface OverlayCardProps {
   title: string;
@@ -10,197 +6,86 @@ interface OverlayCardProps {
   date?: string;
   imageUrl?: string;
   imageAlt?: string;
-  onClick?: () => void;
   href?: string;
   isExternal?: boolean;
   className?: string;
   dataCategory?: string;
   githubUrl?: string;
-  disableHover?: boolean;
+  /** アートワークのように正方形で見せたいとき */
+  square?: boolean;
 }
 
+/**
+ * サイト共通のエントリーカード。
+ * 画像の上に文字を重ねず、罫線で区切った下段に置く。
+ * 表示だけを担うのでハイドレーション不要。
+ */
 export default function OverlayCard({
   title,
   subtitle,
   date,
   imageUrl,
   imageAlt,
-  onClick,
   href,
   isExternal = false,
   className = "",
   dataCategory,
   githubUrl,
-  disableHover = false,
+  square = false,
 }: OverlayCardProps) {
-  const [overlayOpacity, setOverlayOpacity] = React.useState(0.8);
-  const cardRef = useRef<HTMLElement>(null);
-  const thumbnailRef = useRef<HTMLImageElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
+  return (
+    <article
+      className={`entry-card${square ? " is-square" : ""} ${className}`.trim()}
+      data-category={dataCategory}
+    >
+      <div className="entry-card__media">
+        {imageUrl ? (
+          <img src={imageUrl} alt={imageAlt || title} loading="lazy" />
+        ) : (
+          <div className="entry-card__placeholder" aria-hidden="true" />
+        )}
+      </div>
 
-  // アニメーションロジックをカスタムフックに分離
-  const { handleMouseEnter, handleMouseLeave } = useOverlayCardAnimation({
-    disableHover,
-    cardRef,
-    thumbnailRef,
-    overlayRef,
-  });
+      <div className="entry-card__body">
+        {(dataCategory || date) && (
+          <p className="entry-card__meta">
+            {dataCategory && <span>{dataCategory}</span>}
+            {date && <time dateTime={date}>{formatDate(date)}</time>}
+          </p>
+        )}
 
-  // 初期ロードアニメーション（disableHover時の処理）
-  useEffect(() => {
-    if (disableHover && overlayRef.current) {
-      gsap.set(overlayRef.current, { y: 0 });
-    }
-  }, [disableHover]);
+        <h3 className="entry-card__title">
+          {href ? (
+            <a
+              className="entry-card__link"
+              href={href}
+              {...(isExternal
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+            >
+              {title}
+            </a>
+          ) : (
+            title
+          )}
+        </h3>
 
-  useEffect(() => {
-    if (imageUrl) {
-      // パフォーマンス改善：デバウンス処理を追加
-      const timeoutId = setTimeout(() => {
-        calculateImageBrightness(imageUrl).then((brightness) => {
-          // 明度が低い（暗い）場合は背景を薄く（opacity: 0.8）
-          // 明度が高い（明るい）場合は背景を濃く（opacity: 0.9）
-          const opacity = brightness < 0.5 ? 0.8 : 0.9;
-          setOverlayOpacity(opacity);
-        });
-      }, 100);
+        {subtitle && <p className="entry-card__excerpt">{subtitle}</p>}
 
-      return () => clearTimeout(timeoutId);
-    } else {
-      // サムネイルがない場合はデフォルトのオーバーレイ不透明度を設定
-      setOverlayOpacity(0.85);
-    }
-  }, [imageUrl]);
-
-  const shadowClass = disableHover
-    ? ""
-    : "shadow-[0_0.25rem_1.25rem_rgba(0,0,0,0.1)]";
-  const cardContent = React.createElement(
-    "article",
-    {
-      ref: cardRef,
-      className: `overlay-card bg-white rounded-xl ${shadowClass} overflow-hidden relative aspect-video w-full max-w-full origin-center z-0 border border-gray-200 cursor-pointer max-[768px]:aspect-[4/3] ${className}`,
-      "data-category": dataCategory,
-      onMouseEnter: disableHover ? undefined : handleMouseEnter,
-      onMouseLeave: disableHover ? undefined : handleMouseLeave,
-      onClick: onClick,
-    },
-    React.createElement(
-      "div",
-      { className: "card-thumbnail relative w-full h-full overflow-hidden" },
-      imageUrl
-        ? React.createElement("img", {
-            ref: thumbnailRef,
-            src: imageUrl,
-            alt: imageAlt || title,
-            className:
-              "card-thumbnail__img w-full h-full object-cover relative z-0",
-          })
-        : React.createElement("div", {
-            className:
-              "card-thumbnail-placeholder w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 relative z-0 flex items-center justify-center text-gray-400 text-xl font-medium",
-          }),
-      React.createElement(
-        "div",
-        {
-          ref: overlayRef,
-          className:
-            "card-content absolute bottom-0 left-0 w-full p-md box-border z-[1] translate-y-full",
-          style: {
-            background: `linear-gradient(transparent, rgba(0, 0, 0, ${overlayOpacity}))`,
-          },
-        },
-        React.createElement(
-          "h2",
-          {
-            className:
-              "card-title font-bold text-white m-0 mb-3 leading-[1.3] line-clamp-3 break-words max-w-full [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]",
-          },
-          title,
-        ),
-        (subtitle || date || githubUrl) &&
-          React.createElement(
-            "div",
-            { className: "card-footer flex flex-col gap-sm mt-auto" },
-            subtitle &&
-              React.createElement(
-                "p",
-                {
-                  className:
-                    "card-subtitle text-gray-200 leading-[1.4] m-0 line-clamp-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
-                },
-                subtitle,
-              ),
-            date &&
-              React.createElement(
-                "time",
-                {
-                  className:
-                    "card-date text-gray-400 font-medium [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] whitespace-nowrap",
-                },
-                formatDate(date),
-              ),
-            githubUrl &&
-              React.createElement(
-                "span",
-                {
-                  className:
-                    "card-github-link text-white text-xs font-medium flex items-center gap-1 mt-1 hover:text-gray-200 transition-colors cursor-pointer [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
-                  onClick: (e: React.MouseEvent<HTMLSpanElement>) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (githubUrl) {
-                      window.open(githubUrl, "_blank", "noopener,noreferrer");
-                    }
-                  },
-                  role: "button",
-                  tabIndex: 0,
-                  onKeyDown: (e: React.KeyboardEvent<HTMLSpanElement>) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      if (githubUrl) {
-                        window.open(githubUrl, "_blank", "noopener,noreferrer");
-                      }
-                    }
-                  },
-                },
-                React.createElement(
-                  "svg",
-                  {
-                    width: "16",
-                    height: "16",
-                    viewBox: "0 0 24 24",
-                    fill: "currentColor",
-                    className: "card-github-icon",
-                  },
-                  React.createElement("path", {
-                    d: "M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z",
-                  }),
-                ),
-                "GitHub",
-              ),
-          ),
-      ),
-    ),
+        {githubUrl && (
+          <a
+            className="entry-card__github"
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            GitHub
+          </a>
+        )}
+      </div>
+    </article>
   );
-
-  // hrefが指定されている場合はリンクでラップ
-  if (href) {
-    return React.createElement(
-      "a",
-      {
-        href,
-        className:
-          "card-link block no-underline text-inherit h-full relative z-0",
-        ...(isExternal && {
-          target: "_blank",
-          rel: "noopener noreferrer",
-        }),
-      },
-      cardContent,
-    );
-  }
-
-  return cardContent;
 }

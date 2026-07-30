@@ -1,7 +1,8 @@
 ---
-import Card, { CardHeader } from "../../shared/card/Card";
+import SectionHeading from "../../shared/page/SectionHeading.astro";
 import type { AboutItem } from "../../../lib/microcms";
 import { formatDate } from "./date-utils";
+
 interface Props {
   certifications: AboutItem[];
 }
@@ -9,62 +10,49 @@ interface Props {
 const { certifications } = Astro.props;
 ---
 
-<Card variant="qualifications">
-  <CardHeader>
-    <h2>資格</h2>
-  </CardHeader>
-  <div class="qualifications-list">
-    {certifications.map(certification => (
-      <div class="qualification-item">
-        <span class="qualification-name">{certification.title}</span>
-        {certification.beginDate && (
-          <span class="qualification-date">{formatDate(certification.beginDate)}</span>
-        )}
-      </div>
-    ))}
-  </div>
-</Card>
+<section>
+  <SectionHeading eyebrow="Certification" title="資格" />
+
+  <dl class="cert-list">
+    {
+      certifications.map((certification) => (
+        <div class="cert-item">
+          <dt>{certification.title}</dt>
+          {certification.beginDate && (
+            <dd>{formatDate(certification.beginDate)}</dd>
+          )}
+        </div>
+      ))
+    }
+  </dl>
+</section>
 
 <style>
-  .qualifications-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
-    gap: 1rem;
+  /* 上の罫線は SectionHeading が持っているので、ここでは引かない */
+  .cert-list {
+    margin: 0;
   }
 
-  .qualification-item {
+  /* 資格名と取得日を両端に置いた、目次のような並び */
+  .cert-item {
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: transparent;
-    border-radius: 0.5rem;
-    border-left: 3px solid var(--color-primary);
-    border-bottom: 1px solid #e2e8f0;
+    gap: var(--spacing-md);
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--color-line);
   }
 
-  .qualification-name {
+  .cert-item dt {
+    font-size: var(--text-body);
     font-weight: 600;
-    color: #1e293b;
   }
 
-  .qualification-date {
-    color: var(--color-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.25rem 0;
-  }
-
-  @media (width <= 48rem) {
-    .qualifications-list {
-      grid-template-columns: 1fr;
-    }
-    
-    .qualification-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
+  .cert-item dd {
+    margin: 0;
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 </style>
-

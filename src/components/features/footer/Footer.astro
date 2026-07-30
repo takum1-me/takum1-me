@@ -1,0 +1,66 @@
+---
+import SnsLinks from "../../shared/sns-links/SnsLinks";
+import "../../shared/sns-links/sns-links.css";
+
+const currentYear = new Date().getFullYear();
+
+const links = [
+  { label: "About", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Works", href: "/works" },
+  { label: "Lab", href: "/lab" },
+  { label: "Beans", href: "/beans" },
+];
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <nav class="site-footer__nav" aria-label="フッターナビゲーション">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+
+    <SnsLinks />
+
+    <p class="site-footer__copyright">© {currentYear} takum1</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--spacing-3xl);
+    padding-block: var(--spacing-2xl);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    width: min(100% - var(--gutter) * 2, var(--container-page));
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .site-footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg);
+  }
+
+  .site-footer__nav a {
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+    transition: color var(--transition);
+  }
+
+  .site-footer__nav a:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .site-footer__copyright {
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+  }
+</style>

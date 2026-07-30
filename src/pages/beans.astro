@@ -1,90 +1,28 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PageTitle from "../components/shared/page/PageTitle";
-import PageContainer from "../components/shared/page/PageContainer";
+import Container from "../components/shared/layout/Container.astro";
+import PageHeader from "../components/shared/page/PageHeader.astro";
 import { BeansShowcase } from "../components/features/beans";
-import { getAllBeans, toArray } from "../lib/microcms/beans-list";
-import "../components/shared/page/page-title.css";
-import "../components/shared/page/page-container.css";
+import { getAllBeans, sortBeansForDisplay } from "../lib/microcms/beans-list";
 
-const beans = await getAllBeans();
-
-const firstGenre = (b: (typeof beans)[number]) => toArray(b.genre)[0] ?? "";
-
-// 在庫あり → ジャンル → 名前順で安定表示
-const sorted = [...beans].sort((a, b) => {
-  if (a.isAvailable !== b.isAvailable) return a.isAvailable ? -1 : 1;
-  const g = firstGenre(a).localeCompare(firstGenre(b));
-  if (g !== 0) return g;
-  return a.name.localeCompare(b.name);
-});
+const sorted = sortBeansForDisplay(await getAllBeans());
 ---
 
 <Layout
   title="Beans"
   description="takum1 が焙煎しているコーヒー豆のリスト。フレーバーを色で記録しています。"
 >
-  <PageContainer variant="works">
-    <PageTitle title="BEANS" client:load />
+  <Container size="page">
+    <PageHeader
+      eyebrow="Beans"
+      title="いま、焙煎している豆。"
+      lead="少量ずつ選んだ生豆を、Kaffelogic nano 7 で焙煎しています。ここには、いま味わえるラインナップを記録しています。"
+    >
+      <p slot="aside">
+        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。
+      </p>
+    </PageHeader>
 
-    <section class="beans-section">
-      <div class="beans-intro">
-        <p class="beans-lead">
-          いま手元にある豆を並べています。生豆を少量ずつ買って、Kaffelogic
-          nano7 で焙煎したもの。
-        </p>
-        <p class="beans-sub">
-          カード下部の色は、その豆で感じたフレーバーを並べた「味の指紋」のようなものです。
-          明るい黄色なら軽やかな酸、深い赤や茶ならしっかりした甘さと苦味。
-          気になる豆をタップすると、焙煎の狙いや精製方法まで見られます。
-        </p>
-      </div>
-
-      <BeansShowcase beans={sorted} client:only="react" />
-    </section>
-  </PageContainer>
+    <BeansShowcase beans={sorted} client:only="react" />
+  </Container>
 </Layout>
-
-<style>
-  .beans-section {
-    margin-top: 2.5rem;
-    max-width: 64rem;
-  }
-
-  .beans-intro {
-    max-width: 42rem;
-    margin-bottom: 2.75rem;
-    padding-left: 1.1rem;
-    border-left: 2px solid #e0d3c0;
-  }
-
-  .beans-lead {
-    margin: 0 0 0.85rem;
-    font-size: 1.08rem;
-    font-weight: 600;
-    line-height: 1.7;
-    color: #2a2521;
-    letter-spacing: 0.01em;
-  }
-
-  .beans-sub {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.9;
-    color: #7d7267;
-  }
-
-  @media (width <= 47.9375rem) {
-    .beans-section {
-      margin-top: 2rem;
-    }
-
-    .beans-intro {
-      margin-bottom: 2rem;
-    }
-
-    .beans-lead {
-      font-size: 1rem;
-    }
-  }
-</style>

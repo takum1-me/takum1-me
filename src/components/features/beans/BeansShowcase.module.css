@@ -1,10 +1,8 @@
+/* 色はグローバルトークンを参照する。ここで独自のパレットを定義しないこと。 */
 .wrapper {
-  --spacing-card-radius: 14px;
-  --color-line: #ebe4da;
-  --color-ink: #2a2521;
-  --color-muted: #8a7f72;
-  --color-brown: #8b5e34;
-  --color-cream: #faf8f5;
+  --spacing-card-radius: var(--radius-lg);
+  --color-brown: var(--color-accent-strong);
+  --color-cream: var(--color-bg);
 
   width: 100%;
 }
@@ -26,7 +24,7 @@
   border: none;
   background: none;
   padding: 0 0 0.3rem;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -67,7 +65,7 @@
 }
 
 .empty {
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
   font-size: 0.95rem;
   padding: 2rem 0;
 }
@@ -83,8 +81,12 @@
   border-radius: var(--spacing-card-radius);
   overflow: hidden;
   cursor: pointer;
-  background: #fff;
+  background: var(--color-surface);
   text-align: left;
+
+  /* カードは <a>（共有リンク）なので、下線と文字色を打ち消す */
+  color: inherit;
+  text-decoration: none;
   transition:
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.3s ease,
@@ -95,7 +97,7 @@
 .card:focus-visible {
   transform: translateY(-3px);
   box-shadow: 0 14px 32px rgb(42 37 33 / 10%);
-  border-color: #ddd0bd;
+  border-color: var(--color-line-strong);
   outline: none;
 }
 
@@ -118,7 +120,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #c8bba8;
+  color: var(--color-ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
@@ -130,7 +132,7 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
 }
 
 .status-dot {
@@ -142,7 +144,7 @@
 }
 
 .status[data-available="true"] {
-  color: #3f8a5c;
+  color: var(--color-positive);
 }
 
 .country {
@@ -153,7 +155,7 @@
   font-weight: 700;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
   margin-bottom: 0.4rem;
 }
 
@@ -187,20 +189,22 @@
   gap: 0.35rem;
   font-size: 0.78rem;
   line-height: 1.5;
-  color: #5f564d;
+  color: var(--color-ink-muted);
 }
 
 .note-dot {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: var(--color-note);
+
+  /* 1 語に複数色ある場合は --color-note-bg に塗り分けグラデが入る */
+  background: var(--color-note-bg, var(--color-note));
   flex-shrink: 0;
 }
 
 .note-more {
   font-size: 0.75rem;
-  color: #b3a795;
+  color: var(--color-ink-faint);
   align-self: center;
 }
 
@@ -216,7 +220,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
 }
 
 .foot-divider {
@@ -276,7 +280,7 @@
   width: min(620px, 100%);
   max-height: 88vh;
   overflow-y: auto;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 18px;
   box-shadow: 0 28px 70px rgb(28 22 17 / 30%);
   animation: rise 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -303,8 +307,8 @@
   height: 2rem;
   border-radius: 999px;
   border: 1px solid var(--color-line);
-  background: #fff;
-  color: #6b6157;
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
   font-size: 1.05rem;
   line-height: 1;
   cursor: pointer;
@@ -357,7 +361,7 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--color-brown);
-  border: 1px solid #e8d9c4;
+  border: 1px solid var(--color-line-strong);
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   white-space: nowrap;
@@ -366,7 +370,7 @@
 .explanation {
   font-size: 0.95rem;
   line-height: 1.95;
-  color: #514840;
+  color: var(--color-ink-muted);
   margin: 0;
 }
 
@@ -383,7 +387,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b3a795;
+  color: var(--color-ink-faint);
 }
 
 /* フレーバー帯 */
@@ -405,7 +409,7 @@
   gap: 0.4rem;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #4a423a;
+  color: var(--color-ink-muted);
   padding: 0.34rem 0.7rem;
   border-radius: 999px;
   background: var(--color-cream);
@@ -416,7 +420,7 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: var(--color-note);
+  background: var(--color-note-bg, var(--color-note));
   flex-shrink: 0;
 }
 
@@ -444,7 +448,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
   padding-top: 0.12rem;
 }
 
@@ -463,11 +467,11 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--color-muted);
+  color: var(--color-ink-faint);
 }
 
 .modal-foot[data-available="true"] {
-  color: #3f8a5c;
+  color: var(--color-positive);
 }
 
 @media (width <= 640px) {

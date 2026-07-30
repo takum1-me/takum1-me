@@ -1,0 +1,84 @@
+---
+/**
+ * セクションの見出し。eyebrow と細い罫線で階層を出す。
+ * ページ見出し（PageHeader）より一段弱いリズムにしている。
+ */
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  href?: string;
+  linkLabel?: string;
+  class?: string;
+}
+
+const { eyebrow, title, href, linkLabel = "すべて見る", class: className } = Astro.props;
+---
+
+<div class:list={["section-heading", className]}>
+  <div class="section-heading__text">
+    {eyebrow && <p class="section-heading__eyebrow">{eyebrow}</p>}
+    <h2 class="section-heading__title">{title}</h2>
+  </div>
+
+  {
+    href && (
+      <a class="section-heading__link" href={href}>
+        {linkLabel}
+        <span aria-hidden="true">→</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .section-heading__eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  /* ページ見出しと張り合わないよう、意図的に一段小さく保つ */
+  .section-heading__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-h2);
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: var(--text-h2--letter-spacing);
+  }
+
+  .section-heading__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    padding-bottom: 0.2rem;
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+    transition: color var(--transition);
+  }
+
+  .section-heading__link span {
+    transition: transform var(--transition);
+  }
+
+  .section-heading__link:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .section-heading__link:hover span {
+    transform: translateX(0.2rem);
+  }
+</style>

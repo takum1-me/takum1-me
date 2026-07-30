@@ -1,0 +1,47 @@
+---
+/**
+ * サイト唯一の横幅コントロール。
+ * ページ側で margin-left / max-width を持たせないこと。
+ */
+export interface Props {
+  size?: "prose" | "page" | "wide" | "full";
+  as?: "div" | "section" | "article" | "main" | "header" | "footer" | "nav";
+  class?: string;
+}
+
+const {
+  size = "page",
+  as: Tag = "div",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<!-- rest には呼び出し元の data-astro-cid-* が含まれる。動的タグだと Astro が
+     自動で付けてくれないので、これを渡さないと親側の scoped style が効かない。 -->
+<Tag class:list={["container", `container--${size}`, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .container {
+    width: min(100% - var(--gutter) * 2, var(--container-width));
+    margin-inline: auto;
+  }
+
+  .container--prose {
+    --container-width: var(--container-prose);
+  }
+
+  .container--page {
+    --container-width: var(--container-page);
+  }
+
+  .container--wide {
+    --container-width: var(--container-wide);
+  }
+
+  .container--full {
+    --container-width: 100%;
+  }
+</style>
