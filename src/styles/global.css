@@ -1,17 +1,17 @@
 @import "tailwindcss";
 @import "@fontsource-variable/noto-sans-jp";
-@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/eb-garamond/400.css";
 
 @theme {
   /* --- Typefaces ---------------------------------------------------------
-     Latin headings render in Instrument Serif; Japanese has no glyphs there
+     Latin headings render in EB Garamond; Japanese has no glyphs there
      so it falls through to the platform mincho, which keeps headings
      editorial without shipping a second CJK webfont. */
   --font-sans:
     "Noto Sans JP Variable", "Helvetica Neue", "Hiragino Kaku Gothic ProN",
     arial, sans-serif;
   --font-serif:
-    "Instrument Serif", "Hiragino Mincho ProN", "Yu Mincho", yumincho, serif;
+    "EB Garamond", "Hiragino Mincho ProN", "Yu Mincho", yumincho, serif;
 
   /* --- Type scale --------------------------------------------------------
      These are the only sizes the site uses. */

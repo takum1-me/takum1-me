@@ -17,11 +17,11 @@ const songsData = await loadSongsData();
 
 <Layout title="takum1.me">
   <Container size="page" as="section" class="hero">
-    <p class="hero__eyebrow">Coffee · Programming · Design</p>
+    <p class="hero__eyebrow">Coffee · Programming</p>
     <h1 class="hero__title">takum1</h1>
     <p class="hero__lead">
       Undergraduate / Brewer.<br />
-      少量ずつ選んだ生豆を焙煎して、感じた味わいを色で記録しています。
+      最近、焙煎も始めました。
     </p>
     <div class="hero__actions">
       <a class="hero__cta" href="/beans">焙煎している豆を見る <span aria-hidden="true">→</span></a>
@@ -37,48 +37,6 @@ const songsData = await loadSongsData();
   <Container size="page" as="section" class="section">
     <SectionHeading eyebrow="Photo" title="日々の記録" />
     <PhotoGallery photos={latestPhotos} client:visible />
-  </Container>
-
-  <Container size="page" as="section" class="section">
-    <SectionHeading
-      eyebrow="Reference"
-      title="Flavor Wheel"
-      href="/works"
-      linkLabel="ホイールを開く"
-    />
-    <a class="wheel-promo" href="/works">
-      <span class="wheel-promo__art" aria-hidden="true">
-        {/* ホイールを想起させる同心円のモチーフ。外部アセットに依存しない */}
-        <svg viewBox="0 0 100 100" role="presentation">
-          {
-            [
-              { r: 46, from: 0, to: 300 },
-              { r: 36, from: 40, to: 250 },
-              { r: 26, from: 120, to: 330 },
-            ].map((ring, i) => (
-              <circle
-                cx="50"
-                cy="50"
-                r={ring.r}
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1"
-                stroke-dasharray={`${(2 * Math.PI * ring.r * (ring.to - ring.from)) / 360} ${2 * Math.PI * ring.r}`}
-                transform={`rotate(${ring.from} 50 50)`}
-                opacity={0.85 - i * 0.2}
-              />
-            ))
-          }
-          <circle cx="50" cy="50" r="7" fill="currentColor" />
-        </svg>
-      </span>
-      <span class="wheel-promo__text">
-        <span class="wheel-promo__title">Coffee Flavor / Character Wheel</span>
-        <span class="wheel-promo__body">
-          カッピングで使うフレーバーホイールとキャラクターホイールを、ズームして読めるかたちで置いています。
-        </span>
-      </span>
-    </a>
   </Container>
 </Layout>
 
@@ -98,15 +56,14 @@ const songsData = await loadSongsData();
     text-transform: uppercase;
   }
 
-  /* ワードマークはサンセリフで組む。Instrument Serif は字幅が極端に狭く
-     "1" が小文字 l と判別できないため、ここだけ書体を混ぜると継ぎ足しに
-     見えてしまう。見出しのセリフとは役割を分ける。 */
+  /* ワードマークも見出しと同じセリフ（EB Garamond）で組む。
+     サイズだけ他の見出しより大きく取る。 */
   .hero__title {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: clamp(3rem, 9vw, 5.5rem);
-    font-weight: 700;
+    font-weight: 400;
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: var(--text-display--letter-spacing);
   }
 
   .hero__lead {
@@ -157,67 +114,5 @@ const songsData = await loadSongsData();
 
   .section {
     padding-block: clamp(2.5rem, 7vw, 4rem);
-  }
-
-  /* --- フレーバーホイールへの導線 --------------------------------------- */
-
-  .wheel-promo {
-    display: grid;
-    grid-template-columns: 7.5rem minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(1.25rem, 4vw, 2.25rem);
-    padding: 1.5rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    transition:
-      border-color var(--transition),
-      box-shadow var(--transition),
-      transform var(--transition);
-  }
-
-  .wheel-promo:hover {
-    border-color: var(--color-line-strong);
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-2px);
-  }
-
-  .wheel-promo__art {
-    display: block;
-    color: var(--color-accent);
-  }
-
-  .wheel-promo__art svg {
-    width: 100%;
-    aspect-ratio: 1;
-  }
-
-  .wheel-promo__text {
-    display: grid;
-    gap: 0.55rem;
-  }
-
-  .wheel-promo__title {
-    color: var(--color-ink);
-    font-family: var(--font-serif);
-    font-size: var(--text-h2);
-    line-height: 1.3;
-  }
-
-  .wheel-promo__body {
-    color: var(--color-ink-muted);
-    font-size: var(--text-small);
-    line-height: 1.8;
-  }
-
-  @media (width <= 30rem) {
-    .wheel-promo {
-      grid-template-columns: 1fr;
-      justify-items: start;
-    }
-
-    .wheel-promo__art {
-      width: 5.5rem;
-    }
   }
 </style>

@@ -36,6 +36,11 @@ export interface Bean {
   /** カンマ区切りのフレーバーノート（例: "bright, tomato, high acidity"） */
   flavorNote?: string;
   /**
+   * 焙煎日（任意。microCMS 側に日時フィールドを足したら使われる）。
+   * 未設定なら /beans/color-tool のカード生成では当日が既定になる。
+   */
+  roastDate?: string;
+  /**
    * flavorNote と同順の HEX カラー CSV（任意。例: "#F2C312,#E8D53A,#E2492F"）。
    * 各語の色を上書きする。空欄・無効な要素は自動マッチにフォールバック。
    * 値は /beans/color-tool（ローカル専用）で作れる。

@@ -358,6 +358,52 @@ export function buildFlavorSwatch(
   colors: string[],
   roast: string | undefined,
 ): string {
+  const { spots, base } = flavorSwatch(colors, roast);
+
+  const layers = spots.map(
+    (s) =>
+      `radial-gradient(circle at ${s.cx.toFixed(1)}% ${s.cy.toFixed(1)}%, rgba(${toRgb(
+        s.color,
+      )}, ${SPOT_STOPS[0].alpha}) 0%, rgba(${toRgb(s.color)}, ${
+        SPOT_STOPS[1].alpha
+      }) ${SPOT_STOPS[1].at * 100}%, rgba(${toRgb(s.color)}, 0) ${
+        SPOT_STOPS[2].at * 100
+      }%)`,
+  );
+
+  const baseFill = `linear-gradient(135deg, rgba(${toRgb(
+    base.color,
+  )}, ${base.alpha.toFixed(2)}) 0%, rgba(250, 248, 245, 1) ${BASE_END * 100}%)`;
+
+  // 上に重ねる順: spots → base
+  return [...layers, baseFill].join(", ");
+}
+
+/** スウォッチ 1 染みの不透明度カーブ（at は染みの半径比） */
+export const SPOT_STOPS = [
+  { at: 0, alpha: 0.92 },
+  { at: 0.38, alpha: 0.42 },
+  { at: 0.66, alpha: 0 },
+] as const;
+
+/** 下地グラデーションが白（#faf8f5）に到達する位置 */
+export const BASE_END = 0.78;
+
+/** スウォッチ 1 染みの配置（cx / cy は % 座標） */
+export interface FlavorSwatchSpot {
+  cx: number;
+  cy: number;
+  color: string;
+}
+
+/**
+ * スウォッチの構成（染みの位置と下地）。CSS の `background` と canvas 描画で
+ * 同じ見た目にしたいので、配置の計算はここに集約する。
+ */
+export function flavorSwatch(
+  colors: string[],
+  roast: string | undefined,
+): { spots: FlavorSwatchSpot[]; base: { color: string; alpha: number } } {
   const mood = roastMood(roast);
   const palette = colors.length > 0 ? colors : [mood.base];
 
@@ -365,19 +411,16 @@ export function buildFlavorSwatch(
   const spots = palette.map((color, i) => {
     // 1 色なら中央、複数なら左右に広げて配置
     const t = palette.length === 1 ? 0.5 : i / (palette.length - 1);
-    const cx = 12 + t * 76; // 12%〜88%
-    const cy = 34 + (i % 2) * 32; // 段違いにして有機的に
-    return `radial-gradient(circle at ${cx.toFixed(1)}% ${cy.toFixed(1)}%, rgba(${toRgb(
+    return {
+      cx: 12 + t * 76, // 12%〜88%
+      cy: 34 + (i % 2) * 32, // 段違いにして有機的に
       color,
-    )}, 0.92) 0%, rgba(${toRgb(color)}, 0.42) 38%, rgba(${toRgb(color)}, 0) 66%)`;
+    };
   });
 
   // 淡い warm ベース（焙煎度で少しだけトーンを変える。暗くはしない）
-  const tint = 0.14 + mood.darkness * 0.12; // 0.16〜0.24 程度
-  const baseFill = `linear-gradient(135deg, rgba(${toRgb(
-    mood.base,
-  )}, ${tint.toFixed(2)}) 0%, rgba(250, 248, 245, 1) 78%)`;
-
-  // 上に重ねる順: spots → base
-  return [...spots, baseFill].join(", ");
+  return {
+    spots,
+    base: { color: mood.base, alpha: 0.14 + mood.darkness * 0.12 },
+  };
 }

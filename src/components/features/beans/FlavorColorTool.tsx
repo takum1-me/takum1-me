@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   splitFlavorNotes,
   splitFlavorColors,
@@ -14,7 +14,19 @@ import { ZoomableWheel } from "../../features/flavor-wheel";
 import { flavorWheelSegments } from "../../../data/flavor-wheel-segments";
 import type { WheelSegment } from "../../../data/wheel-segment";
 import { toArray, type Bean } from "../../../lib/microcms/beans-list";
-import { countryLabel } from "../../../data/bean-meta";
+import {
+  countryLabel,
+  roastLabel,
+  processLabel,
+  genreLabel,
+  varietyLabel,
+} from "../../../data/bean-meta";
+import {
+  buildBeanCardSvg,
+  ensureCardFonts,
+  beanCardFileName,
+  type BeanCardData,
+} from "../../../lib/utils/bean-card";
 
 /**
  * /beans/color-tool（ローカル専用）で使う色決めツール。
@@ -41,6 +53,21 @@ function normalizeHexInput(raw: string): string {
   return v;
 }
 
+/** "2026-07-30" → "2026.07.30"（カード表示用） */
+function formatRoastDate(value: string): string {
+  return value.replace(/-/g, ".");
+}
+
+/** input[type=date] 用の今日（ローカル日付） */
+function today(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** プレビューの SVG を横幅いっぱいに伸ばすためのクラス名 */
+const CARD_PREVIEW_CLASS = "bean-card-preview";
+
 /** ホイールでの選択を「行の置換」に使うか「行への色追加」に使うか */
 type TargetMode = "replace" | "add";
 
@@ -58,12 +85,15 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
   const [target, setTarget] = useState<Target | null>(null);
   // 読み込み中の豆（表示用。編集内容は豆に書き戻さない）
   const [beanId, setBeanId] = useState<string | null>(null);
+  // カードに載せる焙煎日（microCMS に roastDate があればそれ、無ければ今日）
+  const [roastDate, setRoastDate] = useState(today());
 
   /** 豆を選ぶ → その豆の flavorNote / flavorColors / 焙煎度を読み込む */
   const loadBean = (bean: Bean) => {
     setBeanId(bean.id);
     setNote(bean.flavorNote ?? "");
     setRoast(toArray(bean.roastLevel)[0] ?? "medium");
+    setRoastDate(bean.roastDate?.slice(0, 10) ?? today());
     setTarget(null);
     const next: Record<number, string[]> = {};
     splitFlavorColors(bean.flavorColors).forEach((slot, i) => {
@@ -246,6 +276,70 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
 
   const copy = () => navigator.clipboard?.writeText(csv);
 
+  // ---- 豆カード（SVG 保存） ----
+  const selectedBean = beans.find((b) => b.id === beanId) ?? null;
+  // フォント読込後は文字幅が変わるので、読み込めたら組み直す
+  const [fontsReady, setFontsReady] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    ensureCardFonts().then(() => alive && setFontsReady(true));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  /** カードの内容。色は編集中のものをそのまま反映する */
+  const cardData = useMemo<BeanCardData | null>(() => {
+    if (!selectedBean) return null;
+    const countries = toArray(selectedBean.country).map(countryLabel);
+    const specs = [
+      {
+        label: "Variety",
+        value: toArray(selectedBean.variety).map(varietyLabel).join(", "),
+      },
+      {
+        label: "Process",
+        value: toArray(selectedBean.process).map(processLabel).join(", "),
+      },
+      { label: "Roast", value: roastLabel(roast) },
+      {
+        label: "Genre",
+        value: toArray(selectedBean.genre).map(genreLabel).join(", "),
+      },
+    ].filter((s) => s.value);
+
+    return {
+      name: selectedBean.name,
+      origin: countries.map((c) => `${c.flag} ${c.label}`).join(" / "),
+      notes: rows.map((r) => ({ label: r.label, colors: r.display })),
+      specs,
+      roastDate: formatRoastDate(roastDate),
+      roastLevel: roast,
+    };
+    // rows は note/overrides から毎回作られるので、その 2 つを依存にする
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBean, note, overrides, roast, roastDate]);
+
+  /** プレビューと保存で同じ SVG を使う */
+  const cardSvg = useMemo(
+    () => (cardData ? buildBeanCardSvg(cardData) : null),
+    // fontsReady は文字幅の再計算のトリガー
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cardData, fontsReady],
+  );
+
+  /** カードを SVG で保存する */
+  const saveCard = () => {
+    if (!cardData || !cardSvg) return;
+    const blob = new Blob([cardSvg], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = beanCardFileName(cardData.name, roastDate);
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const targetLabel = () => {
     if (target === null) return "選択 → 末尾に追加";
     const label = rows[target.index]?.label ?? "";
@@ -255,6 +349,9 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
 
   return (
     <div style={S.page}>
+      {/* 埋め込んだ SVG（幅は固定属性で持っている）をプレビュー幅に合わせる */}
+      <style>{`.${CARD_PREVIEW_CLASS} svg { width: 100%; height: auto; display: block; border: 1px solid #ebe4da; }`}</style>
+
       {/* 豆を選んで flavorNote を読み込む */}
       <div style={S.beanBox}>
         <div style={S.wheelHead}>
@@ -297,6 +394,44 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
               );
             })}
           </div>
+        )}
+      </div>
+
+      {/* 豆カード（横長・PNG 保存） */}
+      <div style={S.beanBox}>
+        <div style={S.wheelHead}>
+          <span style={S.blockTitle}>Bean Card（1200 × 630）</span>
+          <div style={S.cardActions}>
+            <label style={S.dateLabel}>
+              焙煎日
+              <input
+                type="date"
+                value={roastDate}
+                onChange={(e) => setRoastDate(e.target.value)}
+                style={S.dateInput}
+              />
+            </label>
+            <button
+              type="button"
+              style={{ ...S.copy, ...(cardData ? null : S.copyOff) }}
+              onClick={saveCard}
+              disabled={!cardData}
+            >
+              SVG を保存
+            </button>
+          </div>
+        </div>
+        {cardSvg ? (
+          // 保存する SVG をそのまま埋め込むので、見えているものが出力そのまま
+          <div
+            className={CARD_PREVIEW_CLASS}
+            style={S.cardPreviewBox}
+            dangerouslySetInnerHTML={{ __html: cardSvg }}
+          />
+        ) : (
+          <p style={S.hint}>
+            豆を選ぶとカードを組みます。フレーバーの色を編集すると、その色がそのままカードに反映されます。
+          </p>
         )}
       </div>
 
@@ -601,6 +736,28 @@ const S: Record<string, React.CSSProperties> = {
     color: "#8b5e34",
   },
   beanFlag: { fontSize: 13, lineHeight: 1 },
+  cardActions: { display: "flex", alignItems: "center", gap: 10 },
+  dateLabel: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#8a7f72",
+  },
+  dateInput: {
+    padding: "0.3rem 0.4rem",
+    border: "1px solid #e5e0d8",
+    borderRadius: 6,
+    font: "inherit",
+    fontSize: 13,
+  },
+  cardPreviewBox: {
+    // 印刷前提なので角丸なし（保存される SVG と同じ見た目）
+    display: "block",
+    lineHeight: 0,
+  },
+  copyOff: { opacity: 0.4, cursor: "default" },
   beanEmpty: { fontSize: 10, fontWeight: 700, color: "#b3a795" },
   wheelBox: {
     border: "1px solid #ebe4da",
