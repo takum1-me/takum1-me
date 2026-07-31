@@ -1,31 +1,33 @@
 name: Auto Deploy Note Articles
 
-# このワークフローは、定期的にnote.comの記事をチェックして
-# 新しい記事があれば自動的に再ビルド＆デプロイを行います
+# note.com には Webhook が無いので、定期的に Cloudflare Pages の Deploy hook を
+# 叩いてリビルドし、新しい記事を取り込む。
+# ビルドとデプロイは Cloudflare 側で回るので、ここでは URL を POST するだけ。
+#
+# 必要な Secret:
+#   CLOUDFLARE_DEPLOY_HOOK_URL … Pages のプロジェクト設定 > Deploy hooks で作った URL
+#     （microCMS の Webhook に登録しているものと同じ URL でよい）
+#
+# 実行間隔は Cloudflare のビルド上限（無料プランは月 500 回）を踏まえて 6 時間ごと。
+# もっと速く反映したい場合は cron を短くする。
 
 on:
   schedule:
-    # 毎時0分に実行（必要に応じて調整可能）
-    - cron: "0 * * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch: # 手動実行も可能
 
 jobs:
-  deploy:
+  trigger-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-      - run: npm ci
-      - run: npm run build
+      - name: Trigger Cloudflare Pages deploy hook
         env:
-          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL || '' }}
-          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY || '' }}
-      - name: Build & Deploy Worker
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "::error::CLOUDFLARE_DEPLOY_HOOK_URL が未設定です（Settings > Secrets で登録してください）"
+            exit 1
+          fi
+          curl --fail --silent --show-error -X POST "$DEPLOY_HOOK_URL" -o /dev/null
+          echo "Cloudflare Pages のビルドをトリガーしました"
