@@ -6,15 +6,42 @@ import {
 } from "./flavor-color";
 
 /**
- * 豆 1 件の横長カードを SVG で組む（/beans/color-tool から保存して印刷する用）。
+ * 豆 1 件の名刺サイズカードを SVG で組む（/beans/color-tool から保存して印刷する用）。
  * コーヒー袋に貼るラベルのつもりで、上に情報・下にフレーバーの帯、右上に焙煎日を置く。
  * 印刷前提なので角は落とさず、最下層は白。色とフォントはサイトの @theme と同じ。
  * 帯のグラデーションは web のカード（.swatch）と同じ組み立て・同じ拡大率にしている。
  */
 
-/** 論理サイズ。共有しやすい 1.91:1（OG 画像と同じ比率） */
-export const CARD_WIDTH = 1200;
-export const CARD_HEIGHT = 630;
+/**
+ * ユーザー単位 = 0.1mm。ルートの width/height には mm を書くので、
+ * 何も指定せず印刷しても名刺の原寸で出る。
+ */
+const MM = 10;
+
+/** 名刺サイズ（日本の標準 91 × 55mm） */
+export const CARD_WIDTH = 91 * MM;
+export const CARD_HEIGHT = 55 * MM;
+
+/** 文字サイズを印刷の pt で書くための変換（1pt = 0.3528mm） */
+function pt(size: number): number {
+  return round(size * 0.352778 * MM);
+}
+
+/**
+ * 書体の役割はサイトと同じで、中身は EB Garamond、小見出しだけ Noto Sans の
+ * 字間を空けた大文字にする。名刺で本文用の下限が 8pt、字間の空いた大文字は
+ * 6.5pt くらいまで読めるので、その範囲に収めている。
+ */
+const SIZE_LABEL = pt(6.5);
+const SIZE_ORIGIN = pt(7);
+const SIZE_NOTE = pt(9);
+const SIZE_SPEC = pt(9);
+const SIZE_DATE = pt(10);
+const SIZE_NAME = pt(17);
+
+/** 大文字だけの行は字間を空けないと詰まって見える */
+const LABEL_TRACKING = round(SIZE_LABEL * 0.18);
+const ORIGIN_TRACKING = round(SIZE_ORIGIN * 0.14);
 
 /** サイトの配色トークン（global.css の @theme と同じ値） */
 const INK = "#2a2521";
@@ -30,10 +57,39 @@ const SANS =
 const SERIF = "'EB Garamond', 'Hiragino Mincho ProN', serif";
 
 /** カードの左右余白 */
-const PADDING = 56;
+const PADDING = 5 * MM;
 
-/** 下部スウォッチ帯の高さ。サイトのカード（下 1/4 の横長帯）に近い比率にする */
-const BAND_HEIGHT = 196;
+/**
+ * 下部スウォッチ帯の高さ。中身が詰まった豆ではスペックに押されて縮むので、
+ * 最低限ここまでは残すという下限も持たせる。
+ */
+const BAND_HEIGHT = 11 * MM;
+const BAND_HEIGHT_MIN = 9 * MM;
+/** スペックの最終行と帯の間 */
+const SPEC_TO_BAND = 3.2 * MM;
+
+/** 各行のベースライン（上から積む）。数字は名刺の上端からの mm */
+const Y_EYEBROW = 5.9 * MM;
+const Y_ROAST_LABEL = 5.6 * MM;
+const Y_ROAST_DATE = 10.2 * MM;
+const Y_ORIGIN = 13.8 * MM;
+const Y_NAME = 21.2 * MM;
+const Y_NOTES = 27 * MM;
+const NOTE_LEADING = 4.4 * MM;
+
+/**
+ * スペックは上から積まずに帯の上へ溜める。行数が減るとそのぶん
+ * ノートとの間が空くので、中身が少ない豆ほど紙面が緩くなる。
+ */
+const Y_SPEC_LAST = 39.8 * MM;
+const SPEC_LEADING = 4.4 * MM;
+const SPEC_MAX_LINES = 2;
+/** 罫線とノート / スペックの間に最低限空ける量 */
+const RULE_CLEARANCE = 2.4 * MM;
+
+/** ベースラインからの高さの目安。罫線を上下の中央に置くのに使う概算値 */
+const CAP_HEIGHT = 0.72;
+const DESCENT = 0.27;
 
 /**
  * CSS 側の `.swatch { background-size: 160% 160% }` と同じ拡大率。
@@ -41,6 +97,9 @@ const BAND_HEIGHT = 196;
  * 1 色あたりの占有面積が web のカードと同じ感じになる。
  */
 const SWATCH_ZOOM = 1.6;
+
+/** 帯の上端の白ぼかしの高さ */
+const BAND_EDGE = 2 * MM;
 
 /** カードに載せる内容 */
 export interface BeanCardData {
@@ -61,9 +120,9 @@ export interface BeanCardData {
 export async function ensureCardFonts(): Promise<void> {
   if (typeof document === "undefined" || !document.fonts) return;
   await Promise.all([
-    document.fonts.load(`400 68px ${SERIF}`),
-    document.fonts.load(`400 20px ${SANS}`),
-    document.fonts.load(`700 20px ${SANS}`),
+    document.fonts.load(`400 ${SIZE_NAME}px ${SERIF}`),
+    document.fonts.load(`400 ${SIZE_NOTE}px ${SERIF}`),
+    document.fonts.load(`600 ${SIZE_LABEL}px ${SANS}`),
   ]);
   await document.fonts.ready;
 }
@@ -80,17 +139,25 @@ export function beanCardFileName(name: string, roastDate: string): string {
 
 /** カード 1 枚の SVG 文字列を組む */
 export function buildBeanCardSvg(data: BeanCardData): string {
-  const bandY = CARD_HEIGHT - BAND_HEIGHT;
-  const { defs, band } = swatchBand(data, 0, bandY, CARD_WIDTH, BAND_HEIGHT);
+  // 帯の高さは中身次第なので、先に情報面を組んでから帯を敷く
+  const face = info(data);
+  const { defs, band } = swatchBand(
+    data,
+    0,
+    face.bandTop,
+    CARD_WIDTH,
+    CARD_HEIGHT - face.bandTop,
+  );
 
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" role="img" aria-label="${esc(data.name)}">`,
+    // width/height は mm。印刷ダイアログで拡大しなければ名刺の原寸で出る
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH / MM}mm" height="${CARD_HEIGHT / MM}mm" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" role="img" aria-label="${esc(data.name)}">`,
     `<defs>${defs}</defs>`,
     // 最下層は白（印刷用）
     `<rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="${SURFACE}"/>`,
     band,
-    info(data, bandY),
-    // 断裁の目印になる細い枠
+    face.svg,
+    // 断裁の目印になる細い枠（0.2mm）
     `<rect x="1" y="1" width="${CARD_WIDTH - 2}" height="${CARD_HEIGHT - 2}" fill="none" stroke="${LINE}" stroke-width="2"/>`,
     `</svg>`,
   ].join("");
@@ -119,7 +186,7 @@ function swatchBand(
       `<stop offset="1" stop-color="${PAGE_BG}"/>` +
       `</linearGradient>`,
     // 帯の上端を白くぼかして本体に馴染ませる（.swatch-edge 相当）
-    `<linearGradient id="band-edge" gradientUnits="userSpaceOnUse" x1="0" y1="${y}" x2="0" y2="${y + 44}">` +
+    `<linearGradient id="band-edge" gradientUnits="userSpaceOnUse" x1="0" y1="${y}" x2="0" y2="${y + BAND_EDGE}">` +
       `<stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>` +
       `<stop offset="1" stop-color="#ffffff" stop-opacity="0"/>` +
       `</linearGradient>`,
@@ -150,7 +217,7 @@ function swatchBand(
   });
 
   layers.push(
-    `<rect x="${x}" y="${y}" width="${w}" height="44" fill="url(#band-edge)"/>`,
+    `<rect x="${x}" y="${y}" width="${w}" height="${BAND_EDGE}" fill="url(#band-edge)"/>`,
   );
 
   return {
@@ -159,8 +226,8 @@ function swatchBand(
   };
 }
 
-/** 帯より上の情報面 */
-function info(data: BeanCardData, bandTop: number): string {
+/** 帯より上の情報面。帯の上端は中身を組んでみないと決まらないので一緒に返す */
+function info(data: BeanCardData): { svg: string; bandTop: number } {
   const left = PADDING;
   const right = CARD_WIDTH - PADDING;
   const maxWidth = right - left;
@@ -168,24 +235,25 @@ function info(data: BeanCardData, bandTop: number): string {
 
   // 1 行目: 左に eyebrow、右に焙煎日
   out.push(
-    text("TAKUM1.ME — BEANS", left, 66, {
+    text("TAKUM1.ME — BEANS", left, Y_EYEBROW, {
       font: SANS,
-      size: 13,
-      weight: 700,
+      size: SIZE_LABEL,
+      weight: 600,
       fill: INK_FAINT,
-      tracking: 2.6,
+      tracking: LABEL_TRACKING,
+      pinWidth: true,
     }),
-    text("ROASTED ON", right, 62, {
+    text("ROASTED ON", right, Y_ROAST_LABEL, {
       font: SANS,
-      size: 12,
-      weight: 700,
+      size: SIZE_LABEL,
+      weight: 600,
       fill: INK_FAINT,
-      tracking: 2.2,
+      tracking: LABEL_TRACKING,
       anchor: "end",
     }),
-    text(data.roastDate, right, 102, {
+    text(data.roastDate, right, Y_ROAST_DATE, {
       font: SERIF,
-      size: 34,
+      size: SIZE_DATE,
       fill: INK,
       anchor: "end",
     }),
@@ -193,62 +261,83 @@ function info(data: BeanCardData, bandTop: number): string {
 
   // 産地（旗の絵文字が入るので字間は控えめに）
   out.push(
-    text(data.origin.toUpperCase(), left, 152, {
+    text(data.origin.toUpperCase(), left, Y_ORIGIN, {
       font: SANS,
-      size: 15,
-      weight: 700,
+      size: SIZE_ORIGIN,
+      weight: 600,
       fill: ACCENT_STRONG,
-      tracking: 1.6,
+      tracking: ORIGIN_TRACKING,
+      pinWidth: true,
     }),
   );
 
   // 豆の名前（Latin は EB Garamond、日本語は明朝に落ちる）
   out.push(
-    text(fit(data.name, maxWidth, `400 68px ${SERIF}`), left, 226, {
-      font: SERIF,
-      size: 68,
-      fill: INK,
-      pinWidth: true,
-    }),
+    text(
+      fit(data.name, maxWidth, `400 ${SIZE_NAME}px ${SERIF}`),
+      left,
+      Y_NAME,
+      {
+        font: SERIF,
+        size: SIZE_NAME,
+        fill: INK,
+        pinWidth: true,
+      },
+    ),
   );
 
   // フレーバーノート（色ドット + 語）
-  out.push(notes(data.notes, left, 280, maxWidth));
+  const note = notes(data.notes, left, Y_NOTES, maxWidth);
+  // ノートが空の豆では、罫線は豆の名前を基準にする
+  const notesBottom = note.lines
+    ? Y_NOTES + (note.lines - 1) * NOTE_LEADING + SIZE_NOTE * DESCENT
+    : Y_NAME + SIZE_NAME * DESCENT;
+  out.push(note.svg);
 
-  // スペックは帯の上に横 1 列で並べる
-  const specTop = bandTop - 96;
-  out.push(
-    `<line x1="${left}" y1="${specTop - 34}" x2="${right}" y2="${specTop - 34}" stroke="${LINE}" stroke-width="1"/>`,
-    specs(data.specs, left, specTop, maxWidth),
+  // スペックは帯の上に溜めて、その上に罫線を引く
+  const spec = specs(data.specs, left, maxWidth, notesBottom);
+  if (spec.svg) {
+    out.push(
+      `<line x1="${left}" y1="${spec.ruleY}" x2="${right}" y2="${spec.ruleY}" stroke="${LINE}" stroke-width="1.5"/>`,
+      spec.svg,
+    );
+  }
+
+  // 帯は残りを全部使うが、中身に押されても下限までしか譲らない
+  const bandTop = Math.min(
+    Math.max(CARD_HEIGHT - BAND_HEIGHT, spec.bottom + SPEC_TO_BAND),
+    CARD_HEIGHT - BAND_HEIGHT_MIN,
   );
 
-  return out.join("");
+  return { svg: out.join(""), bandTop: round(bandTop) };
 }
 
-/** ノートを 2 行までで折り返して並べる */
+/** ノートを 2 行までで折り返して並べる。使った行数は罫線の位置決めに要る */
 function notes(
   list: BeanCardData["notes"],
   left: number,
   top: number,
   maxWidth: number,
-): string {
-  const lineHeight = 34;
-  const gap = 26;
-  const font = `400 20px ${SANS}`;
+): { svg: string; lines: number } {
+  const gap = round(SIZE_NOTE * 1.1);
+  const font = `400 ${SIZE_NOTE}px ${SERIF}`;
+  // ドットは語の左に置く（半径・語までの距離とも文字サイズ基準）
+  const dotRadius = round(SIZE_NOTE * 0.22);
+  const labelOffset = round(SIZE_NOTE * 0.8);
   const out: string[] = [];
   let x = left;
   let line = 0;
 
   for (const note of list) {
-    const width = 18 + measure(note.label, font);
+    const width = labelOffset + measure(note.label, font);
     if (x > left && x + width > left + maxWidth) {
       line += 1;
       if (line > 1) {
         // 3 行目に溢れる分は省略
         out.push(
-          text("…", x, top + lineHeight, {
-            font: SANS,
-            size: 20,
+          text("…", x, top + NOTE_LEADING, {
+            font: SERIF,
+            size: SIZE_NOTE,
             fill: INK_FAINT,
           }),
         );
@@ -257,12 +346,17 @@ function notes(
       x = left;
     }
 
-    const y = top + line * lineHeight;
+    const y = top + line * NOTE_LEADING;
     out.push(
-      noteDot(note.colors.map(normalizeHex), x + 5, y - 6, 5),
-      text(note.label, x + 18, y, {
-        font: SANS,
-        size: 20,
+      noteDot(
+        note.colors.map(normalizeHex),
+        x + dotRadius,
+        y - round(SIZE_NOTE * 0.28),
+        dotRadius,
+      ),
+      text(note.label, x + labelOffset, y, {
+        font: SERIF,
+        size: SIZE_NOTE,
         fill: INK_MUTED,
         pinWidth: true,
       }),
@@ -270,14 +364,17 @@ function notes(
     x += width + gap;
   }
 
-  return out.join("");
+  return {
+    svg: out.join(""),
+    lines: out.length === 0 ? 0 : Math.min(line + 1, 2),
+  };
 }
 
 /** 1 語に複数色ある場合は円を等分して塗り分ける */
 function noteDot(colors: string[], cx: number, cy: number, r: number): string {
   if (colors.length === 0) return "";
   if (colors.length === 1)
-    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${colors[0]}"/>`;
+    return `<circle cx="${round(cx)}" cy="${round(cy)}" r="${r}" fill="${colors[0]}"/>`;
 
   // 左上から時計回りに等分（CSS 側の linear-gradient(135deg) の塗り分けに合わせる）
   const start = -Math.PI * 0.75;
@@ -296,37 +393,104 @@ function noteDot(colors: string[], cx: number, cy: number, r: number): string {
     .join("");
 }
 
-/** スペックを横 1 列で並べる（帯の上のスペック帯） */
+/**
+ * スペックは「小見出し + 値」を 1 組にして流し込む。名刺幅で列を等分すると
+ * ほとんどの値が "…" になるので、組ごとの実測幅で折り返す方に振っている。
+ * 行は帯の上端から積み上げるので、組が少ない豆ほどグラデーションとの間が空く。
+ * ノートに近すぎるときだけ下へ逃がし、罫線はノートとの間の中央に置く。
+ */
 function specs(
   list: BeanCardData["specs"],
   left: number,
-  top: number,
   maxWidth: number,
-): string {
+  notesBottom: number,
+): { svg: string; ruleY: number; bottom: number } {
   const shown = list.slice(0, 4);
-  if (shown.length === 0) return "";
-  const colWidth = maxWidth / shown.length;
+  if (shown.length === 0)
+    return { svg: "", ruleY: notesBottom, bottom: notesBottom };
 
-  return shown
-    .map((spec, i) => {
-      const x = left + i * colWidth;
-      return [
-        text(spec.label.toUpperCase(), x, top, {
-          font: SANS,
-          size: 12,
-          weight: 700,
-          fill: INK_FAINT,
-          tracking: 2.2,
-        }),
-        text(fit(spec.value, colWidth - 24, `400 19px ${SANS}`), x, top + 30, {
-          font: SANS,
-          size: 19,
-          fill: INK,
-          pinWidth: true,
-        }),
-      ].join("");
+  const labelFont = `600 ${SIZE_LABEL}px ${SANS}`;
+  const valueFont = `400 ${SIZE_SPEC}px ${SERIF}`;
+  /** 小見出しと値の間 / 組と組の間 */
+  const labelGap = round(SIZE_LABEL * 0.9);
+  const itemGap = round(SIZE_SPEC * 1.4);
+
+  const items = shown.map((spec) => {
+    const label = spec.label.toUpperCase();
+    // 字間を空けている分、実測より広い
+    const labelWidth =
+      measure(label, labelFont) + [...label].length * LABEL_TRACKING;
+    return {
+      label,
+      labelWidth,
+      value: spec.value,
+      width: labelWidth + labelGap + measure(spec.value, valueFont),
+    };
+  });
+
+  // 幅で折り返す。最終行にも入らない値だけ "…" で詰める
+  const lines: (typeof items)[] = [[]];
+  let used = 0;
+  for (const item of items) {
+    const line = lines[lines.length - 1];
+    const advance = line.length === 0 ? item.width : itemGap + item.width;
+    if (used + advance <= maxWidth) {
+      line.push(item);
+      used += advance;
+    } else if (lines.length < SPEC_MAX_LINES) {
+      lines.push([item]);
+      used = item.width;
+    } else {
+      const rest = maxWidth - used - itemGap - item.labelWidth - labelGap;
+      // 数文字も残らないなら、中途半端に出すより落とす
+      if (rest < SIZE_SPEC * 2) continue;
+      item.value = fit(item.value, rest, valueFont);
+      item.width = item.labelWidth + labelGap + measure(item.value, valueFont);
+      line.push(item);
+      used += itemGap + item.width;
+    }
+  }
+
+  // 帯の上に溜めるのが基本。ただし罫線を挟む余白が取れないときは下へ逃がす
+  const capTop = SIZE_LABEL * CAP_HEIGHT;
+  const top = Math.max(
+    Y_SPEC_LAST - (lines.length - 1) * SPEC_LEADING,
+    notesBottom + RULE_CLEARANCE * 2 + capTop,
+  );
+  // 罫線はノートの下端と小見出しの上端のちょうど中間に置く
+  const ruleY = round((notesBottom + top - capTop) / 2);
+  const bottom = top + (lines.length - 1) * SPEC_LEADING + SIZE_SPEC * DESCENT;
+
+  const svg = lines
+    .map((line, row) => {
+      const y = top + row * SPEC_LEADING;
+      let x = left;
+      return line
+        .map((item) => {
+          const out = [
+            text(item.label, x, y, {
+              font: SANS,
+              size: SIZE_LABEL,
+              weight: 600,
+              fill: INK_FAINT,
+              tracking: LABEL_TRACKING,
+              pinWidth: true,
+            }),
+            text(item.value, x + item.labelWidth + labelGap, y, {
+              font: SERIF,
+              size: SIZE_SPEC,
+              fill: INK,
+              pinWidth: true,
+            }),
+          ].join("");
+          x += item.width + itemGap;
+          return out;
+        })
+        .join("");
     })
     .join("");
+
+  return { svg, ruleY, bottom };
 }
 
 interface TextStyle {
@@ -357,8 +521,11 @@ function text(value: string, x: number, y: number, style: TextStyle): string {
   if (style.anchor === "end") attrs.push(`text-anchor="end"`);
   if (style.pinWidth && value !== "") {
     const font = `${style.weight ?? 400} ${style.size}px ${style.font}`;
+    // textLength は字間込みの送り幅なので、tracking の分を足しておく
+    const width =
+      measure(value, font) + (style.tracking ?? 0) * [...value].length;
     attrs.push(
-      `textLength="${round(measure(value, font))}"`,
+      `textLength="${round(width)}"`,
       `lengthAdjust="spacingAndGlyphs"`,
     );
   }

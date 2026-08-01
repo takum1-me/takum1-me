@@ -397,10 +397,10 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
         )}
       </div>
 
-      {/* 豆カード（横長・PNG 保存） */}
+      {/* 豆カード（名刺サイズ・SVG 保存） */}
       <div style={S.beanBox}>
         <div style={S.wheelHead}>
-          <span style={S.blockTitle}>Bean Card（1200 × 630）</span>
+          <span style={S.blockTitle}>Bean Card（名刺 91 × 55mm）</span>
           <div style={S.cardActions}>
             <label style={S.dateLabel}>
               焙煎日
