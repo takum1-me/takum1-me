@@ -1,0 +1,35 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Container from "../../../components/shared/layout/Container.astro";
+import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import RoastLogUploader from "../../../components/features/beans/RoastLogUploader";
+import { getAllBeans } from "../../../lib/microcms/beans-list";
+import manifest from "../../../data/roast-logs/index.json";
+
+// ローカル専用ツール。本番ではデプロイ・公開しない（color-tool と同じ）。
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/beans/logs");
+}
+
+const beans = await getAllBeans();
+---
+
+<Layout
+  title="Roast Log Uploader"
+  description="焙煎ログをリポジトリに取り込むローカル専用ツール"
+>
+  <Container size="page">
+    <PageHeader
+      eyebrow="Dev only"
+      title="焙煎ログの取り込み"
+      lead=".klog を読んでバッチ ID と指標を確認し、豆を紐付けて、リポジトリに置くファイルを書き出します。"
+    >
+      <p slot="aside">
+        サイトは静的ビルドなので、ここから直接サーバーへは保存されません。書き出した
+        2 つを <code>src/data/roast-logs/</code> に置いて commit してください。
+      </p>
+    </PageHeader>
+
+    <RoastLogUploader beans={beans} manifest={manifest} client:only="react" />
+  </Container>
+</Layout>

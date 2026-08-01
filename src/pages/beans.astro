@@ -4,8 +4,10 @@ import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
 import { BeansShowcase } from "../components/features/beans";
 import { getAllBeans, sortBeansForDisplay } from "../lib/microcms/beans-list";
+import { getRoastLogLinksByBean } from "../lib/roast-logs";
 
 const sorted = sortBeansForDisplay(await getAllBeans());
+const roastLogs = getRoastLogLinksByBean();
 ---
 
 <Layout
@@ -19,10 +21,11 @@ const sorted = sortBeansForDisplay(await getAllBeans());
       lead="Kaffelogic nano 7 で焙煎しています。飲みたい豆があったらいつでも言ってね。"
     >
       <p slot="aside">
-        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。
+        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。<br />
+        <a href="/beans/logs">焙煎ログ一覧 →</a>
       </p>
     </PageHeader>
 
-    <BeansShowcase beans={sorted} client:only="react" />
+    <BeansShowcase beans={sorted} roastLogs={roastLogs} client:only="react" />
   </Container>
 </Layout>

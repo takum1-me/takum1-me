@@ -1,0 +1,9 @@
+{
+  "$comment": "バッチ ID → 手で足すメタデータ。beanId は microCMS（takum1-coffee）の豆 ID。/beans/logs/upload で生成できる。",
+  "batches": {
+    "20260729-0049": {
+      "beanId": "chox6td1hsv",
+      "note": "TAKE FREEに入れたやつ。"
+    }
+  }
+}
