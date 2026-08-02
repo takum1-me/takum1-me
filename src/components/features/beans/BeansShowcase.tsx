@@ -14,7 +14,20 @@ import {
   genreLabel,
   varietyLabel,
 } from "../../../data/bean-meta";
+import { mmss, percent } from "../../../lib/utils/klog";
+import type { BeanRoastLogLink } from "../../../lib/roast-logs";
 import styles from "./BeansShowcase.module.css";
+
+/** 焙煎ログの日付表示（日時までは要らないので日付だけ） */
+function formatLogDate(iso: string | undefined): string {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tokyo",
+  });
+}
 
 /** カード表示に必要な派生データをまとめた型 */
 interface BeanView {
@@ -49,7 +62,15 @@ function toView(bean: Bean): BeanView {
   };
 }
 
-function BeanModal({ view, onClose }: { view: BeanView; onClose: () => void }) {
+function BeanModal({
+  view,
+  logs,
+  onClose,
+}: {
+  view: BeanView;
+  logs: BeanRoastLogLink[];
+  onClose: () => void;
+}) {
   const { bean, notes } = view;
 
   useEffect(() => {
@@ -144,6 +165,31 @@ function BeanModal({ view, onClose }: { view: BeanView; onClose: () => void }) {
                   </div>
                 ))}
               </dl>
+            </section>
+          )}
+
+          {logs.length > 0 && (
+            <section className={styles.block}>
+              <h3 className={styles["block-title"]}>Roast logs</h3>
+              <ul className={styles["log-list"]}>
+                {logs.map((log) => (
+                  <li key={log.batchId}>
+                    <a
+                      className={styles["log-link"]}
+                      href={`/beans/logs/${log.batchId}`}
+                    >
+                      <span className={styles["log-id"]}>{log.batchId}</span>
+                      <span className={styles["log-meta"]}>
+                        {formatLogDate(log.roastedAt)}
+                        {" · 1ハゼ "}
+                        {mmss(log.firstCrackSec)}
+                        {" · Dev "}
+                        {percent(log.developmentPercent)}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 
@@ -246,10 +292,13 @@ const LIST_PATH = "/beans";
 export default function BeansShowcase({
   beans,
   initialBeanId = null,
+  roastLogs = {},
 }: {
   beans: Bean[];
   /** /beans/<id> で来たとき、その豆のモーダルを開いた状態で始める */
   initialBeanId?: string | null;
+  /** 豆 ID → その豆の焙煎ログ（新しい順）。モーダルからバッチへ辿らせる */
+  roastLogs?: Record<string, BeanRoastLogLink[]>;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [openId, setOpenId] = useState<string | null>(initialBeanId);
@@ -344,7 +393,13 @@ export default function BeansShowcase({
         </div>
       )}
 
-      {openView && <BeanModal view={openView} onClose={close} />}
+      {openView && (
+        <BeanModal
+          view={openView}
+          logs={roastLogs[openView.bean.id] ?? []}
+          onClose={close}
+        />
+      )}
     </div>
   );
 }

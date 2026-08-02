@@ -1,0 +1,239 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Container from "../../../components/shared/layout/Container.astro";
+import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import { getRoastLogs } from "../../../lib/roast-logs";
+import { buildRoastChartSvg } from "../../../lib/utils/roast-chart";
+import { mmss, percent, celsius, type KlogLog } from "../../../lib/utils/klog";
+import { getAllBeans, type Bean } from "../../../lib/microcms/beans-list";
+import type { RoastLogRecord } from "../../../lib/roast-logs";
+
+/** バッチ 1 件の詳細。グラフと指標、焙煎機の記録を出す。 */
+export async function getStaticPaths() {
+  const beans = await getAllBeans();
+  const byId = new Map(beans.map((b) => [b.id, b]));
+  return getRoastLogs().map((record) => ({
+    params: { batch: record.batchId },
+    props: { record, bean: record.beanId ? byId.get(record.beanId) : undefined },
+  }));
+}
+
+// props の型は getStaticPaths から流れてくる
+const { record, bean } = Astro.props as { record: RoastLogRecord; bean?: Bean };
+const { log, metrics } = record;
+
+const chart = buildRoastChartSvg(log, {
+  label: `${record.batchId} の焙煎グラフ`,
+});
+
+const roastedAt = record.roastedAt
+  ? new Date(record.roastedAt).toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Tokyo",
+    })
+  : undefined;
+
+const metricRows: [string, string][] = [
+  ["カラーチェンジ", mmss(metrics.colourChangeSec)],
+  ["1 ハゼ", mmss(metrics.firstCrackSec)],
+  ["DTR", percent(metrics.developmentPercent)],
+  // 焙煎終了の時刻と同じ値なので、行はこちらに寄せる
+  ["焙煎時間", mmss(metrics.totalSec)],
+  // 最大値ではなく終了時点の温度
+  ["煎り上げ温度", celsius(metrics.endTemp)],
+];
+
+const phaseRows: [string, string][] = [
+  ["ドライ", mmss(metrics.dryingSec)],
+  ["メイラード", mmss(metrics.maillardSec)],
+  ["デベロップメント", mmss(metrics.developmentSec)],
+];
+
+/** 焙煎機側の記録。ヘッダに無い項目は落とす */
+const recordRows = (
+  [
+    ["焙煎レベル", numeric(log, "roasting_level", 2)],
+    ["室温", numeric(log, "ambient_temperature", 1, "°C")],
+    // model ヘッダは <機種>/<地域>/<製造番号> の形で機体のシリアルを含むので、
+    // メーカー名だけに丸めて出す
+    ["機種", log.header.model ? "Kaffelogic" : undefined],
+  ] as [string, string | undefined][]
+).filter((row): row is [string, string] => Boolean(row[1]));
+
+function numeric(
+  source: KlogLog,
+  key: string,
+  digits: number,
+  unit = "",
+): string | undefined {
+  const raw = source.header[key];
+  if (raw === undefined) return undefined;
+  const n = Number.parseFloat(raw);
+  return Number.isNaN(n) ? undefined : `${n.toFixed(digits)}${unit}`;
+}
+
+const description = [
+  bean?.name,
+  roastedAt,
+  `1ハゼ ${mmss(metrics.firstCrackSec)}`,
+  `Dev ${percent(metrics.developmentPercent)}`,
+]
+  .filter(Boolean)
+  .join(" / ");
+---
+
+<Layout
+  title={`${record.batchId} - 焙煎ログ - takum1.me`}
+  description={description}
+  og={{ type: "article", title: `${record.batchId} - 焙煎ログ - takum1.me` }}
+>
+  <Container size="page">
+    <PageHeader eyebrow="Roast log" title={record.batchId} lead={description}>
+      <p slot="aside">
+        <a href="/beans/logs">← 焙煎ログ一覧</a>
+        {
+          bean && (
+            <>
+              <br />
+              <a href={`/beans/${bean.id}`}>{bean.name} の豆ページ</a>
+            </>
+          )
+        }
+      </p>
+    </PageHeader>
+
+    {record.note && <p class="note">{record.note}</p>}
+
+    <figure class="chart">
+      <Fragment set:html={chart} />
+      <figcaption>
+        左軸が温度、右軸が RoR（℃/min）。投入直後の RoR
+        は枠外まで跳ねるので、焙煎中が読める範囲に軸を合わせています。
+      </figcaption>
+    </figure>
+
+    <div class="panels">
+      <section class="panel">
+        <h2>焙煎ログ</h2>
+        <dl class="rows">
+          {
+            metricRows.map(([label, value]) => (
+              <div class="row">
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="panel">
+        <h2>フェーズ</h2>
+        <dl class="rows">
+          {
+            phaseRows.map(([label, value]) => (
+              <div class="row">
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="panel">
+        <h2>焙煎の記録</h2>
+        <dl class="rows">
+          {
+            recordRows.map(([label, value]) => (
+              <div class="row">
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+    </div>
+  </Container>
+</Layout>
+
+<style>
+  .note {
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-ink-muted);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  .chart {
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  .chart figcaption {
+    margin-top: var(--spacing-sm);
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--spacing-md);
+    margin-block: var(--spacing-xl);
+  }
+
+  .panel {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  .panel h2 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding-block: 0.4rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .row:last-child {
+    border-bottom: 0;
+  }
+
+  .row dt {
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+  }
+
+  .row dd {
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+</style>

@@ -1,0 +1,417 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Container from "../../../components/shared/layout/Container.astro";
+import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import { getRoastLogs } from "../../../lib/roast-logs";
+import { mmss, percent, celsius } from "../../../lib/utils/klog";
+import { getAllBeans } from "../../../lib/microcms/beans-list";
+
+/**
+ * 焙煎ログの一覧。バッチ ID・豆名・プロファイル・日付で絞り込める。
+ * 検索は静的 HTML に対する行フィルタなので、JS が無くても全件は読める。
+ */
+const logs = getRoastLogs();
+const beans = await getAllBeans();
+const beanName = new Map(beans.map((b) => [b.id, b.name]));
+
+const rows = logs.map((log) => {
+  const bean = log.beanId ? beanName.get(log.beanId) : undefined;
+  const date = log.roastedAt
+    ? new Date(log.roastedAt).toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Tokyo",
+      })
+    : "—";
+  return {
+    ...log,
+    bean,
+    date,
+    /** 豆フィルタの照合キー。紐付けの無いログは "none" にまとめる */
+    beanKey: log.beanId ?? "none",
+    // 検索対象をまとめた 1 本の文字列（小文字化して data 属性に載せる）
+    haystack: [log.batchId, bean, log.profileName, date, log.note]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase(),
+  };
+});
+
+/**
+ * 豆の絞り込みボタン。実際にログがある豆だけを、件数の多い順に出す
+ * （押しても 0 件になるボタンを並べない）。
+ */
+const beanCounts = new Map<string, number>();
+for (const row of rows) beanCounts.set(row.beanKey, (beanCounts.get(row.beanKey) ?? 0) + 1);
+
+const beanFilters = [...beanCounts.entries()]
+  .map(([key, count]) => ({
+    key,
+    label: key === "none" ? "紐付けなし" : (beanName.get(key) ?? key),
+    count,
+  }))
+  .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "ja"));
+---
+
+<Layout
+  title="焙煎ログ - Beans - takum1.me"
+  description="Kaffelogic nano 7 で焙煎したバッチのログ一覧。"
+>
+  <Container size="page">
+    <PageHeader
+      eyebrow="Roast logs"
+      title="焙煎ログ"
+      lead="Kaffelogic nano 7 の焙煎ログです。バッチごとに ID がついていて、温度と RoR の記録を開けます。"
+    >
+      <p slot="aside">
+        ID は「焙煎機のログ番号 - 焙煎日」です。豆の焙煎ログもぜひご覧ください。
+      </p>
+    </PageHeader>
+
+    <div class="tools">
+      <label class="search">
+        <span class="search__label">検索</span>
+        <input
+          type="search"
+          id="log-search"
+          placeholder="バッチ ID / 豆 / プロファイル / 日付"
+          autocomplete="off"
+        />
+      </label>
+      <p class="count" id="log-count">{rows.length} 件</p>
+    </div>
+
+    {
+      beanFilters.length > 1 && (
+        <div class="beans" id="bean-filters">
+          <span class="beans__label">豆</span>
+          <button type="button" class="chip" data-bean="all" aria-pressed="true">
+            すべて
+            <span class="chip__count">{rows.length}</span>
+          </button>
+          {beanFilters.map((filter) => (
+            <button
+              type="button"
+              class="chip"
+              data-bean={filter.key}
+              aria-pressed="false"
+            >
+              {filter.label}
+              <span class="chip__count">{filter.count}</span>
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      rows.length === 0 ? (
+        <p class="empty">
+          まだ焙煎ログがありません。<code>src/data/roast-logs/</code> に .klog
+          を置くとここに並びます。
+        </p>
+      ) : (
+        <ul class="logs" id="log-list">
+          {rows.map((row) => (
+            <li
+              class="logs__item"
+              data-haystack={row.haystack}
+              data-bean={row.beanKey}
+            >
+              <a class="logs__link" href={`/beans/logs/${row.batchId}`}>
+                <span class="logs__id">{row.batchId}</span>
+                <span class="logs__main">
+                  <span class="logs__bean">{row.bean ?? "豆の紐付けなし"}</span>
+                  <span class="logs__meta">
+                    {row.date}
+                    {row.profileName && ` · ${row.profileName}`}
+                  </span>
+                </span>
+                <span class="logs__stats">
+                  <span class="stat">
+                    <span class="stat__label">1ハゼ</span>
+                    <span class="stat__value">
+                      {mmss(row.metrics.firstCrackSec)}
+                    </span>
+                  </span>
+                  <span class="stat">
+                    <span class="stat__label">合計</span>
+                    <span class="stat__value">
+                      {mmss(row.metrics.totalSec)}
+                    </span>
+                  </span>
+                  <span class="stat">
+                    <span class="stat__label">DTR</span>
+                    <span class="stat__value">
+                      {percent(row.metrics.developmentPercent)}
+                    </span>
+                  </span>
+                  <span class="stat">
+                    <span class="stat__label">煎り上げ</span>
+                    <span class="stat__value">
+                      {celsius(row.metrics.endTemp)}
+                    </span>
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <p class="none" id="log-none" hidden>該当する焙煎ログがありません。</p>
+  </Container>
+</Layout>
+
+<script>
+  // 静的に並べた行を絞り込むだけ。件数表示も合わせて更新する。
+  const input = document.querySelector<HTMLInputElement>("#log-search");
+  const list = document.querySelector<HTMLUListElement>("#log-list");
+  const count = document.querySelector<HTMLElement>("#log-count");
+  const none = document.querySelector<HTMLElement>("#log-none");
+
+  const chips = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("#bean-filters .chip"),
+  );
+
+  if (list) {
+    const items = Array.from(
+      list.querySelectorAll<HTMLLIElement>(".logs__item"),
+    );
+    // 豆ボタンとテキスト検索は AND で効かせる
+    let bean = "all";
+
+    const apply = () => {
+      const query = input?.value.trim().toLowerCase() ?? "";
+      let shown = 0;
+      for (const item of items) {
+        const hit =
+          (bean === "all" || item.dataset.bean === bean) &&
+          (query === "" || (item.dataset.haystack ?? "").includes(query));
+        item.hidden = !hit;
+        if (hit) shown += 1;
+      }
+      if (count) count.textContent = `${shown} 件`;
+      if (none) none.hidden = shown > 0;
+    };
+
+    input?.addEventListener("input", apply);
+
+    for (const chip of chips) {
+      chip.addEventListener("click", () => {
+        // 押されているものをもう一度押したら解除して全件に戻す
+        bean = bean === chip.dataset.bean ? "all" : (chip.dataset.bean ?? "all");
+        for (const other of chips) {
+          other.setAttribute(
+            "aria-pressed",
+            String(other.dataset.bean === bean),
+          );
+        }
+        apply();
+      });
+    }
+  }
+</script>
+
+<style>
+  .tools {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .search {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    max-width: 24rem;
+  }
+
+  .search__label {
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .search input {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: var(--text-body);
+  }
+
+  .search input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
+  .count {
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+  }
+
+  .beans {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .beans__label {
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-ink-muted);
+    font-family: inherit;
+    font-size: var(--text-small);
+    cursor: pointer;
+    transition:
+      border-color var(--transition),
+      background var(--transition),
+      color var(--transition);
+  }
+
+  .chip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .chip[aria-pressed="true"] {
+    border-color: var(--color-accent-strong);
+    background: var(--color-accent-strong);
+    color: var(--color-surface);
+  }
+
+  .chip__count {
+    font-size: var(--text-eyebrow);
+    font-variant-numeric: tabular-nums;
+    opacity: 70%;
+  }
+
+  .logs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    list-style: none;
+  }
+
+  .logs__link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--spacing-md);
+    align-items: center;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition);
+  }
+
+  .logs__link:hover {
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .logs__id {
+    color: var(--color-accent-strong);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .logs__main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .logs__bean {
+    overflow: hidden;
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .logs__meta {
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+  }
+
+  .logs__stats {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    text-align: right;
+  }
+
+  .stat__label {
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+  }
+
+  .stat__value {
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .empty,
+  .none {
+    padding-block: var(--spacing-xl);
+    color: var(--color-ink-faint);
+    font-size: var(--text-body);
+  }
+
+  @media (width <= 48rem) {
+    .logs__link {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--spacing-sm);
+    }
+
+    .logs__stats {
+      justify-content: space-between;
+    }
+
+    .stat {
+      text-align: left;
+    }
+  }
+</style>

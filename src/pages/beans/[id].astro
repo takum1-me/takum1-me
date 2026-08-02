@@ -10,6 +10,7 @@ import {
   type Bean,
 } from "../../lib/microcms/beans-list";
 import { countryLabel, roastLabel } from "../../data/bean-meta";
+import { getRoastLogLinksByBean } from "../../lib/roast-logs";
 
 /**
  * 豆 1 件を指す共有リンク（/beans/<microCMS の id>）。
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const { bean, beans } = Astro.props;
+const roastLogs = getRoastLogLinksByBean();
 
 // 共有時に中身が伝わるように、豆ごとの description を組む
 const origin = toArray(bean.country)
@@ -52,10 +54,16 @@ const summary =
       lead="少量ずつ選んだ生豆を、Kaffelogic nano 7 で焙煎しています。ここには、いま味わえるラインナップを記録しています。"
     >
       <p slot="aside">
-        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。
+        カード下部の色帯は、感じたフレーバーを重ねた味わいの輪郭です。気になる豆を開くと、精製方法や焙煎度も確認できます。<br />
+        <a href="/beans/logs">焙煎ログ一覧 →</a>
       </p>
     </PageHeader>
 
-    <BeansShowcase beans={beans} initialBeanId={bean.id} client:only="react" />
+    <BeansShowcase
+      beans={beans}
+      initialBeanId={bean.id}
+      roastLogs={roastLogs}
+      client:only="react"
+    />
   </Container>
 </Layout>
