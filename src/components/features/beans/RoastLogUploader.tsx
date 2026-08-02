@@ -30,10 +30,20 @@ interface BatchMeta {
   note?: string;
 }
 
+/** すでにリポジトリに入っているログ 1 件分 */
+interface SavedLog {
+  batchId: string;
+  roastedAt?: string;
+  beanId?: string;
+  note?: string;
+}
+
 interface Props {
   beans: Bean[];
   /** src/data/roast-logs/index.json の中身（ビルド時に読んで渡す） */
   manifest: { batches?: Record<string, BatchMeta> };
+  /** すでに取り込んである分（新しい順） */
+  saved?: SavedLog[];
 }
 
 /** 取り込んだ 1 ファイル分の状態 */
@@ -86,7 +96,11 @@ function describeRun(run: LastRun): string {
   return `${saved}。${git.sha} を commit しましたが、${git.detail}`;
 }
 
-export default function RoastLogUploader({ beans, manifest }: Props) {
+export default function RoastLogUploader({
+  beans,
+  manifest,
+  saved = [],
+}: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [over, setOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -476,6 +490,34 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
           </div>
         </div>
       )}
+
+      <section className={styles.saved}>
+        <h2 className={styles.saved__title}>
+          取り込み済み{" "}
+          <span className={styles.saved__count}>{saved.length}</span>
+        </h2>
+        {saved.length === 0 ? (
+          <p className={styles.hint}>まだ 1 件もありません。</p>
+        ) : (
+          <ul className={styles.saved__list}>
+            {saved.map((log) => (
+              <li key={log.batchId} className={styles.saved__item}>
+                <a
+                  className={styles.saved__link}
+                  href={`/beans/logs/${log.batchId}`}
+                >
+                  <span className={styles.batch}>{log.batchId}</span>
+                  <span className={styles.saved__meta}>
+                    {formatDateTime(log.roastedAt)} ·{" "}
+                    {beanName(beans, log.beanId ?? "")}
+                    {log.note ? ` · ${log.note}` : ""}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className={styles.steps}>
         <div className={styles.actions}>

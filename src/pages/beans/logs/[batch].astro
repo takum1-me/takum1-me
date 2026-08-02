@@ -38,16 +38,17 @@ const roastedAt = record.roastedAt
   : undefined;
 
 const metricRows: [string, string][] = [
-  ["色変化", mmss(metrics.colourChangeSec)],
+  ["カラーチェンジ", mmss(metrics.colourChangeSec)],
   ["1 ハゼ", mmss(metrics.firstCrackSec)],
-  ["焙煎終了", mmss(metrics.roastEndSec)],
-  ["デベロップメント率", percent(metrics.developmentPercent)],
-  ["合計時間", mmss(metrics.totalSec)],
-  ["最高温度", celsius(metrics.peakTemp)],
+  ["DTR", percent(metrics.developmentPercent)],
+  // 焙煎終了の時刻と同じ値なので、行はこちらに寄せる
+  ["焙煎時間", mmss(metrics.totalSec)],
+  // 最大値ではなく終了時点の温度
+  ["煎り上げ温度", celsius(metrics.endTemp)],
 ];
 
 const phaseRows: [string, string][] = [
-  ["乾燥", mmss(metrics.dryingSec)],
+  ["ドライ", mmss(metrics.dryingSec)],
   ["メイラード", mmss(metrics.maillardSec)],
   ["デベロップメント", mmss(metrics.developmentSec)],
 ];
@@ -55,13 +56,11 @@ const phaseRows: [string, string][] = [
 /** 焙煎機側の記録。ヘッダに無い項目は落とす */
 const recordRows = (
   [
-    ["プロファイル", log.header.profile_short_name],
     ["焙煎レベル", numeric(log, "roasting_level", 2)],
     ["室温", numeric(log, "ambient_temperature", 1, "°C")],
     // model ヘッダは <機種>/<地域>/<製造番号> の形で機体のシリアルを含むので、
     // メーカー名だけに丸めて出す
     ["機種", log.header.model ? "Kaffelogic" : undefined],
-    ["ファームウェア", log.header.firmware_version],
   ] as [string, string | undefined][]
 ).filter((row): row is [string, string] => Boolean(row[1]));
 
@@ -119,7 +118,7 @@ const description = [
 
     <div class="panels">
       <section class="panel">
-        <h2>焙煎の指標</h2>
+        <h2>焙煎ログ</h2>
         <dl class="rows">
           {
             metricRows.map(([label, value]) => (

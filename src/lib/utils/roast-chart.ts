@@ -1,4 +1,11 @@
-import { computeMetrics, series, timeSeries, mmss, type KlogLog } from "./klog";
+import {
+  computeMetrics,
+  series,
+  timeSeries,
+  valueAt,
+  mmss,
+  type KlogLog,
+} from "./klog";
 
 /**
  * 焙煎ログのグラフを SVG 文字列で組む。
@@ -7,7 +14,7 @@ import { computeMetrics, series, timeSeries, mmss, type KlogLog } from "./klog";
  * （@theme のトークンがそのまま効く）。チャートライブラリを足さないのは
  * このリポジトリの方針で、豆カードの SVG 生成と同じ組み立て方にしている。
  *
- * 左軸が温度、右軸が RoR。色変化・1 ハゼ・焙煎終了は縦の破線で示す。
+ * 左軸が温度、右軸が RoR。カラーチェンジと 1 ハゼは豆温度の線上に点で示す。
  */
 
 /** 論理サイズ。ページ側で width:100% にして使う */
@@ -21,12 +28,14 @@ const LEGEND_BASELINE = 44;
 const PLOT_W = WIDTH - PAD.left - PAD.right;
 const PLOT_H = HEIGHT - PAD.top - PAD.bottom;
 
-/** 縦線を引くイベントと、その表示名 */
+/**
+ * 豆温度の線の上に点を打つイベントと、その表示名。
+ * 焙煎終了はグラフの右端そのものなので、点を打たずに省く。
+ */
 const EVENT_LABELS: Record<string, string> = {
-  colour_change: "色変化",
-  first_crack: "1ハゼ",
-  second_crack: "2ハゼ",
-  roast_end: "終了",
+  colour_change: "CC",
+  first_crack: "1C",
+  second_crack: "2C",
 };
 
 /**
@@ -37,6 +46,9 @@ const EVENT_LABELS: Record<string, string> = {
  */
 const ROR_WINDOW_START = 90;
 const ROR_WINDOW_END_MARGIN = 10;
+
+/** イベントの点とラベルの間隔 */
+const EVENT_LABEL_GAP = 9;
 
 interface Scale {
   min: number;
@@ -186,21 +198,37 @@ export function buildRoastChartSvg(
     `</g>`,
   );
 
-  // --- イベントの縦線 ---
+  // --- イベントの点 ---
+  // 豆温度の線上に打って、その少し上に名前と時刻を出す
   for (const ev of log.events) {
     if (ev.kind !== "time") continue;
     const name = EVENT_LABELS[ev.name];
     if (!name || ev.value > x.max) continue;
-    const px = round(x.to(ev.value));
-    out.push(
-      `<line x1="${px}" y1="${PAD.top}" x2="${px}" y2="${PAD.top + PLOT_H}" class="event"/>`,
-    );
+    const at = valueAt(time, temp, ev.value);
+    if (at === undefined) continue;
+
+    const cx = round(x.to(ev.value));
+    const cy = round(y.to(at));
+    out.push(`<circle cx="${cx}" cy="${cy}" r="4" class="event-dot"/>`);
     if (!axes) continue;
-    // 右端に寄ったイベントは枠から出るので、ラベルを線の左側へ返す
+
     const text = `${name} ${mmss(ev.value)}`;
-    const flip = px + 4 + textWidth(text, 11) > PAD.left + PLOT_W;
+    const half = textWidth(text, 11) / 2;
+    // 枠から出ないよう、端では寄せ方を変える
+    let anchor = "middle";
+    let tx = cx;
+    if (cx - half < PAD.left) {
+      anchor = "start";
+      tx = PAD.left;
+    } else if (cx + half > PAD.left + PLOT_W) {
+      anchor = "end";
+      tx = PAD.left + PLOT_W;
+    }
+    // 上に出すと枠から出る位置なら、点の下へ回す
+    const above = cy - EVENT_LABEL_GAP - 11 > PAD.top;
+    const ty = above ? cy - EVENT_LABEL_GAP : cy + EVENT_LABEL_GAP + 8;
     out.push(
-      `<text x="${round(flip ? px - 4 : px + 4)}" y="${PAD.top + 6}" class="event-label"${flip ? ' text-anchor="end"' : ""}>${esc(text)}</text>`,
+      `<text x="${tx}" y="${round(ty)}" class="event-label" text-anchor="${anchor}">${esc(text)}</text>`,
     );
   }
 
@@ -260,7 +288,7 @@ function style(): string {
 .roast-chart { display: block; width: 100%; height: auto; }
 .roast-chart .grid { stroke: var(--color-line); stroke-width: 1; }
 .roast-chart .frame { fill: none; stroke: var(--color-line-strong); stroke-width: 1; }
-.roast-chart .event { stroke: var(--color-line-strong); stroke-width: 1; stroke-dasharray: 3 3; }
+.roast-chart .event-dot { fill: var(--color-surface); stroke: var(--color-accent-strong); stroke-width: 2; }
 .roast-chart .line { fill: none; stroke-linejoin: round; stroke-linecap: round; }
 .roast-chart .line--temp { stroke: var(--color-accent-strong); stroke-width: 2.5; }
 .roast-chart .line--mean { stroke: var(--color-accent); stroke-width: 1.2; }
@@ -271,7 +299,7 @@ function style(): string {
 .roast-chart .tick--y { text-anchor: end; }
 .roast-chart .tick--x { text-anchor: middle; }
 .roast-chart .tick--ror { text-anchor: start; fill: var(--color-roast-ror); }
-.roast-chart .event-label { font-size: 11px; fill: var(--color-ink-muted); }
+.roast-chart .event-label { font-size: 11px; font-weight: 700; fill: var(--color-ink); }
 .roast-chart .legend { font-size: 11px; fill: var(--color-ink-muted); }
 </style>`;
 }

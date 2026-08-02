@@ -4,6 +4,7 @@ import Container from "../../../components/shared/layout/Container.astro";
 import PageHeader from "../../../components/shared/page/PageHeader.astro";
 import RoastLogUploader from "../../../components/features/beans/RoastLogUploader";
 import { getAllBeans } from "../../../lib/microcms/beans-list";
+import { getRoastLogs } from "../../../lib/roast-logs";
 import manifest from "../../../data/roast-logs/index.json";
 
 // ローカル専用ツール。本番ではデプロイ・公開しない（color-tool と同じ）。
@@ -12,6 +13,14 @@ if (!import.meta.env.DEV) {
 }
 
 const beans = await getAllBeans();
+
+// すでに取り込んである分。生の系列は重いので落として渡す
+const saved = getRoastLogs().map((log) => ({
+  batchId: log.batchId,
+  roastedAt: log.roastedAt,
+  beanId: log.beanId,
+  note: log.note,
+}));
 ---
 
 <Layout
@@ -30,6 +39,11 @@ const beans = await getAllBeans();
       </p>
     </PageHeader>
 
-    <RoastLogUploader beans={beans} manifest={manifest} client:only="react" />
+    <RoastLogUploader
+      beans={beans}
+      manifest={manifest}
+      saved={saved}
+      client:only="react"
+    />
   </Container>
 </Layout>

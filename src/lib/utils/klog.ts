@@ -183,6 +183,8 @@ export interface RoastMetrics {
   developmentPercent?: number;
   totalSec?: number;
   peakTemp?: number;
+  /** 焙煎終了時の豆温度（煎り上げ温度）。最大値ではなく終了時点の値 */
+  endTemp?: number;
   /** 投入 → 色変化 */
   dryingSec?: number;
   /** 色変化 → 1 ハゼ */
@@ -220,6 +222,13 @@ export function computeMetrics(log: KlogLog): RoastMetrics {
       peakTemp = v;
   }
 
+  // 煎り上げ温度は終了時点の値。最大値（peakTemp）とは別物で、
+  // 終了後に冷却へ入るログでは両者がずれる
+  const endTemp =
+    roastEndSec !== undefined
+      ? valueAt(time, series(log, "temp"), roastEndSec)
+      : undefined;
+
   let developmentPercent = eventValue(log, "development_percent", "scalar");
   if (
     developmentPercent === undefined &&
@@ -236,6 +245,7 @@ export function computeMetrics(log: KlogLog): RoastMetrics {
     developmentPercent,
     totalSec,
     peakTemp,
+    endTemp,
     dryingSec: colourChangeSec,
     maillardSec:
       firstCrackSec !== undefined && colourChangeSec !== undefined
@@ -246,6 +256,31 @@ export function computeMetrics(log: KlogLog): RoastMetrics {
         ? roastEndSec - firstCrackSec
         : undefined,
   };
+}
+
+/**
+ * 時刻 `t` における系列の値。サンプルの間は線形に補間する。
+ * イベント時刻はサンプルの刻みとずれるので、素直に前後から求める。
+ */
+export function valueAt(
+  time: number[],
+  values: number[] | undefined,
+  t: number,
+): number | undefined {
+  if (!values || time.length === 0) return undefined;
+  for (let i = 0; i < time.length; i += 1) {
+    const ti = time[i];
+    if (ti === undefined || ti < t) continue;
+    if (i === 0) return values[0];
+    const prev = time[i - 1];
+    const a = values[i - 1];
+    const b = values[i];
+    if (prev === undefined || a === undefined || b === undefined)
+      return undefined;
+    const span = ti - prev;
+    return span === 0 ? b : a + ((b - a) * (t - prev)) / span;
+  }
+  return values[values.length - 1];
 }
 
 /**
