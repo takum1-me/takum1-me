@@ -585,11 +585,11 @@ export default function RoastLogUploader({
 }
 
 /**
- * バッチ ID から焙煎機のログ番号だけを取り出す（"20260729-0049" → "0049"）。
+ * バッチ ID から焙煎機のログ番号だけを取り出す（"0049-20260729" → "0049"）。
  * 次に何番を上げるかはこの番号で見るので、一覧ではここを主役にする。
  */
 function logNumber(batchId: string): string {
-  return batchId.split("-")[1] ?? batchId;
+  return batchId.split("-")[0] ?? batchId;
 }
 
 /** 選んだ豆の名前。未選択なら分かるように書く */

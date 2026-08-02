@@ -299,8 +299,9 @@ export function parseRoastDate(raw: string | undefined): string | undefined {
 }
 
 /**
- * バッチ ID を導出する（例: "20260627-0023"）。
- * 焙煎日 + 焙煎機が振ったログ番号なので、同じログからは何度でも同じ ID が出る。
+ * バッチ ID を導出する（例: "0023-20260627"）。
+ * 一意なのは焙煎機が振ったログ番号なので、そちらを先に置いて焙煎日を添える。
+ * 同じログからは何度でも同じ ID が出る。
  * ログ番号が取れない場合だけ焙煎時刻の時分で代用する。
  */
 export function deriveBatchId(log: KlogLog): string | undefined {
@@ -308,8 +309,8 @@ export function deriveBatchId(log: KlogLog): string | undefined {
   if (!iso) return undefined;
   const day = iso.slice(0, 10).replace(/-/g, "");
   const logNo = log.header.log_file_name?.match(/log(\d+)\.klog/i)?.[1];
-  if (logNo) return `${day}-${logNo.padStart(4, "0")}`;
-  return `${day}-${iso.slice(11, 13)}${iso.slice(14, 16)}`;
+  if (logNo) return `${logNo.padStart(4, "0")}-${day}`;
+  return `${iso.slice(11, 13)}${iso.slice(14, 16)}-${day}`;
 }
 
 /**

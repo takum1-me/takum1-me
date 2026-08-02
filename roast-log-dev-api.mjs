@@ -22,8 +22,8 @@ const run = promisify(execFile);
  *   - git はシェルを介さず execFile で呼ぶ
  */
 
-/** 受け付けるファイル名。バッチ ID は「8 桁の日付 - 英数字」 */
-const KLOG_NAME = /^\d{8}-[A-Za-z0-9]+\.klog$/;
+/** 受け付けるファイル名。バッチ ID は「ログ番号 - 8 桁の焙煎日」 */
+const KLOG_NAME = /^\d{4,}-\d{8}\.klog$/;
 const MANIFEST_NAME = "index.json";
 
 /** 1 リクエストの上限（.klog は 1 件 60KB ほど） */
