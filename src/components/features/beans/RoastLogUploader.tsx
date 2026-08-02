@@ -491,34 +491,6 @@ export default function RoastLogUploader({
         </div>
       )}
 
-      <section className={styles.saved}>
-        <h2 className={styles.saved__title}>
-          取り込み済み{" "}
-          <span className={styles.saved__count}>{saved.length}</span>
-        </h2>
-        {saved.length === 0 ? (
-          <p className={styles.hint}>まだ 1 件もありません。</p>
-        ) : (
-          <ul className={styles.saved__list}>
-            {saved.map((log) => (
-              <li key={log.batchId} className={styles.saved__item}>
-                <a
-                  className={styles.saved__link}
-                  href={`/beans/logs/${log.batchId}`}
-                >
-                  <span className={styles.batch}>{log.batchId}</span>
-                  <span className={styles.saved__meta}>
-                    {formatDateTime(log.roastedAt)} ·{" "}
-                    {beanName(beans, log.beanId ?? "")}
-                    {log.note ? ` · ${log.note}` : ""}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
       <div className={styles.steps}>
         <div className={styles.actions}>
           <button
@@ -575,8 +547,49 @@ export default function RoastLogUploader({
           </li>
         </ol>
       </div>
+
+      <section className={styles.saved}>
+        <h2 className={styles.saved__title}>
+          取り込み済み{" "}
+          <span className={styles.saved__count}>{saved.length}</span>
+        </h2>
+        {saved.length === 0 ? (
+          <p className={styles.hint}>まだ 1 件もありません。</p>
+        ) : (
+          <ul className={styles.saved__list}>
+            {saved.map((log) => (
+              <li key={log.batchId}>
+                <a
+                  className={styles.saved__link}
+                  href={`/beans/logs/${log.batchId}`}
+                >
+                  <span className={styles.saved__no}>
+                    {logNumber(log.batchId)}
+                  </span>
+                  <span className={styles.saved__body}>
+                    <span className={styles.saved__id}>{log.batchId}</span>
+                    <span className={styles.saved__meta}>
+                      {formatDateTime(log.roastedAt)} ·{" "}
+                      {beanName(beans, log.beanId ?? "")}
+                      {log.note ? ` · ${log.note}` : ""}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
+}
+
+/**
+ * バッチ ID から焙煎機のログ番号だけを取り出す（"20260729-0049" → "0049"）。
+ * 次に何番を上げるかはこの番号で見るので、一覧ではここを主役にする。
+ */
+function logNumber(batchId: string): string {
+  return batchId.split("-")[1] ?? batchId;
 }
 
 /** 選んだ豆の名前。未選択なら分かるように書く */

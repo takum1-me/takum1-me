@@ -298,12 +298,11 @@
 }
 
 .saved__link {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-  padding: 0.5rem 0.7rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: 0.55rem 0.8rem;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   color: inherit;
@@ -315,7 +314,31 @@
   border-color: var(--color-line-strong);
 }
 
+/* 次に何番を上げるかを見る場所なので、ログ番号だけ大きく置く */
+.saved__no {
+  color: var(--color-accent-strong);
+  font-size: var(--text-h2);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.saved__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.saved__id {
+  color: var(--color-ink);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
 .saved__meta {
+  overflow: hidden;
   color: var(--color-ink-faint);
   font-size: var(--text-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
