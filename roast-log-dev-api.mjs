@@ -32,6 +32,14 @@ const MAX_BODY_BYTES = 8 * 1024 * 1024;
 const TARGET_DIR = "src/data/roast-logs";
 
 /**
+ * 直近の実行結果。
+ * ファイルを書くと Vite がページを読み直すので、commit / push（10 秒ほど
+ * かかる）のレスポンスはたいてい受け取れない。そこでサーバー側に残しておき、
+ * 読み直したあとの画面が GET で取りに来られるようにする。
+ */
+let lastRun = null;
+
+/**
  * 書いたログを commit して push する。
  * stage するのは roast-logs ディレクトリだけなので、作業中の他の変更は巻き込まない。
  *
@@ -119,16 +127,6 @@ export function roastLogDevApi(rootDir) {
     // dev サーバーでのみ有効。build には含まれない
     apply: "serve",
 
-    /**
-     * 保存したファイルを watcher の対象から外す。
-     * 外さないと、書いた瞬間にページが読み直されて、まだ走っている
-     * commit / push のレスポンスを取りこぼす（結果が画面に出ない）。
-     * 代わりに一覧は自動更新されないので、見るときは手で読み直す。
-     */
-    config() {
-      return { server: { watch: { ignored: [`${dir}/**`] } } };
-    },
-
     configureServer(server) {
       server.middlewares.use("/__roast-logs", async (req, res) => {
         const send = (status, payload) => {
@@ -137,8 +135,11 @@ export function roastLogDevApi(rootDir) {
           res.end(JSON.stringify(payload));
         };
 
+        // 読み直し後に結果を拾いに来るための口
+        if (req.method === "GET") return send(200, { last: lastRun });
         if (req.method !== "POST") return send(405, { error: "POST のみです" });
 
+        lastRun = { at: Date.now(), state: "running" };
         try {
           const body = JSON.parse(await readBody(req));
           const files = Array.isArray(body.files) ? body.files : [];
@@ -170,11 +171,19 @@ export function roastLogDevApi(rootDir) {
           const git = body.commit
             ? await commitAndPush(rootDir, written)
             : undefined;
-          send(200, { written, dir: TARGET_DIR, git });
+          lastRun = {
+            at: Date.now(),
+            state: "done",
+            written,
+            dir: TARGET_DIR,
+            git,
+          };
+          send(200, lastRun);
         } catch (error) {
-          send(500, {
-            error: error instanceof Error ? error.message : "失敗しました",
-          });
+          const message =
+            error instanceof Error ? error.message : "失敗しました";
+          lastRun = { at: Date.now(), state: "error", error: message };
+          send(500, { error: message });
         }
       });
     },

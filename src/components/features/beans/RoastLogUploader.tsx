@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   parseKlog,
   computeMetrics,
@@ -56,6 +56,35 @@ let seq = 0;
 
 /** 読み直しをまたいで結果を渡すためのキー */
 const RESULT_KEY = "roast-log-upload-result";
+/** 保存を投げたまま読み直された、という印 */
+const PENDING_KEY = "roast-log-upload-pending";
+
+/** サーバーが持っている直近の実行結果 */
+interface LastRun {
+  state: "running" | "done" | "error";
+  written?: string[];
+  dir?: string;
+  error?: string;
+  git?: {
+    branch: string;
+    committed: boolean;
+    sha?: string;
+    pushed: boolean;
+    detail?: string;
+  };
+}
+
+/** 実行結果を 1 行の文にする */
+function describeRun(run: LastRun): string {
+  if (run.state === "error") return `保存できませんでした（${run.error}）`;
+  const saved = `${run.dir} に保存しました（${run.written?.join(", ")}）`;
+  const git = run.git;
+  if (!git) return saved;
+  if (!git.committed) return `${saved}。commit は${git.detail}`;
+  if (git.pushed)
+    return `${saved}。${git.branch} に ${git.sha} を commit して push しました`;
+  return `${saved}。${git.sha} を commit しましたが、${git.detail}`;
+}
 
 export default function RoastLogUploader({ beans, manifest }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -152,11 +181,12 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
    * src/data/roast-logs/ へ直接書き込む（dev サーバーのエンドポイント）。
    * commit を渡すと、書いたあとに commit と push まで走る。
    *
-   * 結果は sessionStorage も経由して出す。ページが読み直されても拾える
-   * ようにするためで、読んだ時点では消さない（読み直しが複数回来ると
-   * 最初の 1 回で消えてしまう）。消すのは次に保存を始めるときだけ。
+   * ファイルを書いた時点で Vite がページを読み直すので、commit / push の
+   * レスポンスはたいてい受け取れない。投げる前に印を付けておき、読み直した
+   * あとはサーバーの結果を取りに行って表示する。
    */
   const [saving, setSaving] = useState<"save" | "commit" | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [result, setResult] = useState<string | null>(() =>
     typeof sessionStorage === "undefined"
       ? null
@@ -165,15 +195,46 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
 
   const report = (message: string) => {
     setResult(message);
-    if (typeof sessionStorage !== "undefined")
+    if (typeof sessionStorage !== "undefined") {
       sessionStorage.setItem(RESULT_KEY, message);
+      sessionStorage.removeItem(PENDING_KEY);
+    }
   };
+
+  // 投げたまま読み直された場合は、終わるまでサーバーに聞きに行く
+  useEffect(() => {
+    if (sessionStorage.getItem(PENDING_KEY) === null) return;
+    let alive = true;
+    setSaving("commit");
+    const tick = async () => {
+      while (alive) {
+        try {
+          const res = await fetch("/__roast-logs");
+          const { last } = (await res.json()) as { last: LastRun | null };
+          if (last && last.state !== "running") {
+            report(describeRun(last));
+            setEntries([]);
+            break;
+          }
+        } catch {
+          // dev サーバーが落ちていれば次の周回で拾う
+        }
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+      if (alive) setSaving(null);
+    };
+    void tick();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const saveToRepo = async (commit: boolean) => {
     setSaving(commit ? "commit" : "save");
     setResult(null);
-    if (typeof sessionStorage !== "undefined")
-      sessionStorage.removeItem(RESULT_KEY);
+    sessionStorage.removeItem(RESULT_KEY);
+    // 読み直されても、投げたことが分かるようにしておく
+    if (commit) sessionStorage.setItem(PENDING_KEY, "1");
     try {
       const response = await fetch("/__roast-logs", {
         method: "POST",
@@ -192,35 +253,17 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
           ],
         }),
       });
-      const payload = (await response.json()) as {
-        written?: string[];
-        dir?: string;
-        error?: string;
-        git?: {
-          branch: string;
-          committed: boolean;
-          sha?: string;
-          pushed: boolean;
-          detail?: string;
-        };
-      };
+      const payload = (await response.json()) as LastRun & { error?: string };
       if (!response.ok) throw new Error(payload.error ?? "保存に失敗しました");
-
-      const saved = `${payload.dir} に保存しました（${payload.written?.join(", ")}）`;
-      const git = payload.git;
-      if (!git) report(saved);
-      else if (!git.committed) report(`${saved}。commit は${git.detail}`);
-      else if (git.pushed)
-        report(
-          `${saved}。${git.branch} に ${git.sha} を commit して push しました`,
-        );
-      else report(`${saved}。${git.sha} を commit しましたが、${git.detail}`);
-
+      report(describeRun(payload));
       setEntries([]);
     } catch (error) {
-      report(
-        `保存できませんでした（${error instanceof Error ? error.message : "不明なエラー"}）。下のボタンで書き出して手で置いてください。`,
-      );
+      // 読み直しで切れただけなら、上の useEffect が結果を拾い直す
+      if (sessionStorage.getItem(PENDING_KEY) === null) {
+        report(
+          `保存できませんでした（${error instanceof Error ? error.message : "不明なエラー"}）。下のボタンで書き出して手で置いてください。`,
+        );
+      }
     } finally {
       setSaving(null);
     }
@@ -369,13 +412,78 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
         </div>
       ))}
 
+      {confirming && (
+        <div
+          className={styles.overlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="commit と push の確認"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setConfirming(false);
+          }}
+        >
+          <div className={styles.dialog}>
+            <h2 className={styles.dialog__title}>commit して push します</h2>
+            <p className={styles.dialog__lead}>
+              下の {ready.length} 件を <code>src/data/roast-logs/</code>{" "}
+              に書いて commit し、そのまま push します。push すると CI と
+              デプロイが動きます。メモはここでも直せます。
+            </p>
+
+            <ul className={styles.dialog__list}>
+              {ready.map((entry) => (
+                <li key={entry.key} className={styles.dialog__item}>
+                  <div className={styles.dialog__head}>
+                    <span className={styles.batch}>{entry.batchId}</span>
+                    <span className={styles.file}>
+                      {beanName(beans, entry.beanId)}
+                    </span>
+                  </div>
+                  <label className={styles.field}>
+                    <span className={styles.field__label}>メモ</span>
+                    <input
+                      type="text"
+                      value={entry.note}
+                      placeholder="任意。一覧と詳細に出ます"
+                      onChange={(e) =>
+                        update(entry.key, { note: e.target.value })
+                      }
+                    />
+                  </label>
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.actions}>
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => {
+                  setConfirming(false);
+                  void saveToRepo(true);
+                }}
+              >
+                commit して push
+              </button>
+              <button
+                type="button"
+                className={`${styles.button} ${styles["button--ghost"]}`}
+                onClick={() => setConfirming(false)}
+              >
+                やめる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.steps}>
         <div className={styles.actions}>
           <button
             type="button"
             className={styles.button}
             disabled={ready.length === 0 || saving !== null}
-            onClick={() => void saveToRepo(true)}
+            onClick={() => setConfirming(true)}
           >
             {saving === "commit"
               ? "commit して push 中…"
@@ -421,12 +529,18 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
           </li>
           <li>
             まだ公開したくないときは <strong>保存だけ</strong>{" "}
-            を使ってください。一覧は自動更新しないので、見るときは手で読み直してください
+            を使ってください（ファイルを書くところまで）
           </li>
         </ol>
       </div>
     </div>
   );
+}
+
+/** 選んだ豆の名前。未選択なら分かるように書く */
+function beanName(beans: Bean[], beanId: string): string {
+  if (!beanId) return "豆の紐付けなし";
+  return beans.find((b) => b.id === beanId)?.name ?? beanId;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
