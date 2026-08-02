@@ -54,6 +54,9 @@ interface Entry {
 
 let seq = 0;
 
+/** 読み直しをまたいで結果を渡すためのキー */
+const RESULT_KEY = "roast-log-upload-result";
+
 export default function RoastLogUploader({ beans, manifest }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [over, setOver] = useState(false);
@@ -147,20 +150,36 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
 
   /**
    * src/data/roast-logs/ へ直接書き込む（dev サーバーのエンドポイント）。
-   * 保存できたら index.json の変更で Astro がページを読み直すので、
-   * 取り込み中の一覧はそこで空に戻る。
+   * commit を渡すと、書いたあとに commit と push まで走る。
+   *
+   * 結果は sessionStorage も経由して出す。ページが読み直されても拾える
+   * ようにするためで、読んだ時点では消さない（読み直しが複数回来ると
+   * 最初の 1 回で消えてしまう）。消すのは次に保存を始めるときだけ。
    */
-  const [saving, setSaving] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [saving, setSaving] = useState<"save" | "commit" | null>(null);
+  const [result, setResult] = useState<string | null>(() =>
+    typeof sessionStorage === "undefined"
+      ? null
+      : sessionStorage.getItem(RESULT_KEY),
+  );
 
-  const saveToRepo = async () => {
-    setSaving(true);
+  const report = (message: string) => {
+    setResult(message);
+    if (typeof sessionStorage !== "undefined")
+      sessionStorage.setItem(RESULT_KEY, message);
+  };
+
+  const saveToRepo = async (commit: boolean) => {
+    setSaving(commit ? "commit" : "save");
     setResult(null);
+    if (typeof sessionStorage !== "undefined")
+      sessionStorage.removeItem(RESULT_KEY);
     try {
       const response = await fetch("/__roast-logs", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          commit,
           files: [
             ...ready.map((entry) => ({
               name: `${entry.batchId}.klog`,
@@ -177,18 +196,33 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
         written?: string[];
         dir?: string;
         error?: string;
+        git?: {
+          branch: string;
+          committed: boolean;
+          sha?: string;
+          pushed: boolean;
+          detail?: string;
+        };
       };
       if (!response.ok) throw new Error(payload.error ?? "保存に失敗しました");
-      setResult(
-        `${payload.dir} に保存しました: ${payload.written?.join(", ")}`,
-      );
+
+      const saved = `${payload.dir} に保存しました（${payload.written?.join(", ")}）`;
+      const git = payload.git;
+      if (!git) report(saved);
+      else if (!git.committed) report(`${saved}。commit は${git.detail}`);
+      else if (git.pushed)
+        report(
+          `${saved}。${git.branch} に ${git.sha} を commit して push しました`,
+        );
+      else report(`${saved}。${git.sha} を commit しましたが、${git.detail}`);
+
       setEntries([]);
     } catch (error) {
-      setResult(
+      report(
         `保存できませんでした（${error instanceof Error ? error.message : "不明なエラー"}）。下のボタンで書き出して手で置いてください。`,
       );
     } finally {
-      setSaving(false);
+      setSaving(null);
     }
   };
 
@@ -340,17 +374,25 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
           <button
             type="button"
             className={styles.button}
-            disabled={ready.length === 0 || saving}
-            onClick={() => void saveToRepo()}
+            disabled={ready.length === 0 || saving !== null}
+            onClick={() => void saveToRepo(true)}
           >
-            {saving
-              ? "保存中…"
-              : `src/data/roast-logs/ に保存（${ready.length} 件）`}
+            {saving === "commit"
+              ? "commit して push 中…"
+              : `保存して commit & push（${ready.length} 件）`}
           </button>
           <button
             type="button"
             className={`${styles.button} ${styles["button--ghost"]}`}
-            disabled={ready.length === 0}
+            disabled={ready.length === 0 || saving !== null}
+            onClick={() => void saveToRepo(false)}
+          >
+            {saving === "save" ? "保存中…" : "保存だけ"}
+          </button>
+          <button
+            type="button"
+            className={`${styles.button} ${styles["button--ghost"]}`}
+            disabled={ready.length === 0 || saving !== null}
             onClick={() =>
               download(
                 "index.json",
@@ -367,18 +409,19 @@ export default function RoastLogUploader({ beans, manifest }: Props) {
 
         <ol>
           <li>
-            <strong>保存</strong>を押すと、<code>&lt;バッチ ID&gt;.klog</code>{" "}
-            と<code>index.json</code> が <code>src/data/roast-logs/</code>{" "}
-            に直接書かれます（開発サーバー経由。本番にはこの口はありません）
+            <strong>保存して commit &amp; push</strong> は、
+            <code>&lt;バッチ ID&gt;.klog</code> と <code>index.json</code> を{" "}
+            <code>src/data/roast-logs/</code> に書いて、そのまま commit と push
+            まで走らせます
           </li>
           <li>
-            書けたら <code>git status</code> で差分を確認して commit
-            してください
+            stage するのは <code>src/data/roast-logs/</code>{" "}
+            だけなので、作業中の他の変更は巻き込みません。push すると CI と
+            Cloudflare のデプロイが動きます
           </li>
           <li>
-            うまくいかないときは、各カードの
-            <code>.klog</code> ボタンと右の <code>index.json</code>{" "}
-            で書き出して手で置けます
+            まだ公開したくないときは <strong>保存だけ</strong>{" "}
+            を使ってください。一覧は自動更新しないので、見るときは手で読み直してください
           </li>
         </ol>
       </div>
