@@ -20,62 +20,71 @@ try {
 }
 
 // genreで分類
-const favoriteItems = aboutItems.filter(item => item.genre.includes("favorite-item"));
-const favoriteCoffees = aboutItems.filter(item => item.genre.includes("favorite-coffee"));
-const favoriteFlavors = aboutItems.filter(item => item.genre.includes("favorite-flavor"));
-const interests = aboutItems.filter(item => item.genre.includes("interest"));
-const organizations = aboutItems.filter(item => item.genre.includes("organization"));
-const certifications = aboutItems.filter(item => item.genre.includes("certification"));
+const favoriteItems = aboutItems.filter((item) =>
+  item.genre.includes("favorite-item"),
+);
+const favoriteCoffees = aboutItems.filter((item) =>
+  item.genre.includes("favorite-coffee"),
+);
+const favoriteFlavors = aboutItems.filter((item) =>
+  item.genre.includes("favorite-flavor"),
+);
+const interests = aboutItems.filter((item) => item.genre.includes("interest"));
+const organizations = aboutItems.filter((item) =>
+  item.genre.includes("organization"),
+);
+const certifications = aboutItems.filter((item) =>
+  item.genre.includes("certification"),
+);
 ---
 
 <Layout title="About">
-    <Container size="page">
-        <PageHeader
-            eyebrow="About"
-            title="takum1 について"
-            lead="コーヒーと、プログラミング。好きなものと所属をまとめています。"
-        />
+  <Container size="page">
+    <PageHeader
+      eyebrow="About"
+      title="takum1 について"
+      lead="コーヒーと、プログラミング。好きなものと所属をまとめています。"
+    />
 
-        <div class="content-grid">
-            <AboutInterests
-                favoriteItems={favoriteItems}
-                favoriteCoffees={favoriteCoffees}
-                favoriteFlavors={favoriteFlavors}
-                interests={interests}
-            />
-            <AboutOrganizations organizations={organizations} />
-            <AboutQualifications certifications={certifications} />
-        </div>
+    <div class="content-grid">
+      <AboutInterests
+        favoriteItems={favoriteItems}
+        favoriteCoffees={favoriteCoffees}
+        favoriteFlavors={favoriteFlavors}
+        interests={interests}
+      />
+      <AboutOrganizations organizations={organizations} />
+      <AboutQualifications certifications={certifications} />
+    </div>
 
-        <div class="about-contact">
-            <p class="about-contact__label">Contact</p>
-            <SnsLinks />
-        </div>
-    </Container>
+    <div class="about-contact">
+      <p class="about-contact__label">Contact</p>
+      <SnsLinks />
+    </div>
+  </Container>
 </Layout>
 
 <style>
-    .content-grid {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(2rem, 5vw, 3rem);
-    }
+  .content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 5vw, 3rem);
+  }
 
-    .about-contact {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-lg);
-        margin-top: clamp(2.5rem, 6vw, 3.5rem);
-        padding-top: var(--spacing-lg);
-        border-top: 1px solid var(--color-line);
-    }
+  .about-contact {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-line);
+  }
 
-    .about-contact__label {
-        color: var(--color-accent);
-        font-size: var(--text-eyebrow);
-        font-weight: 700;
-        letter-spacing: var(--text-eyebrow--letter-spacing);
-        text-transform: uppercase;
-    }
+  .about-contact__label {
+    color: var(--color-accent);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
 </style>
-

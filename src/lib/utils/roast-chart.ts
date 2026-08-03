@@ -271,10 +271,15 @@ function legendMarks(): string {
  * 文字の描画幅の概算。canvas が無い環境（ビルド時）でも要るので、
  * 全角は 1em、半角は 0.55em として数えるだけに留める。
  */
+// 全角とみなす範囲。リテラルで書くと先頭が U+3000（全角スペース）で
+// 見分けが付かないため、コードポイントで明示する。
+// U+3000-30FF: 全角スペース・約物・かな / U+3400-9FFF: 漢字 / U+FF00-FF60: 全角英数
+const FULL_WIDTH = /[\u3000-\u30ff\u3400-\u9fff\uff00-\uff60]/;
+
 function textWidth(text: string, size: number): number {
   let width = 0;
   for (const ch of text) {
-    width += /[　-ヿ㐀-鿿＀-｠]/.test(ch) ? size : size * 0.55;
+    width += FULL_WIDTH.test(ch) ? size : size * 0.55;
   }
   return width;
 }

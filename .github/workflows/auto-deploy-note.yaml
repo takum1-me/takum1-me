@@ -16,6 +16,9 @@ on:
     - cron: "0 */6 * * *"
   workflow_dispatch: # 手動実行も可能
 
+# Deploy hook を叩くだけでリポジトリには触らないので、権限は与えない
+permissions: {}
+
 jobs:
   trigger-deploy:
     runs-on: ubuntu-latest

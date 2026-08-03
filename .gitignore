@@ -25,3 +25,10 @@ pnpm-debug.log*
 
 # wrangler temporary files
 .wrangler/
+
+# Claude Code のローカル作業用（launch.json だけは共有したいので個別に除外する）
+.claude/worktrees/
+.claude/settings.local.json
+
+# 外部から持ってきた Claude スキル定義
+skills/

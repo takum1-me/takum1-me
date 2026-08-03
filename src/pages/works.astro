@@ -6,13 +6,13 @@ import SectionHeading from "../components/shared/page/SectionHeading.astro";
 import WorksCard from "../components/shared/card/WorksCard.astro";
 import { getAllWorks, type Work as MicroCMSWork } from "../lib/microcms";
 import {
-    ZoomableFlavorWheel,
-    ZoomableWheel,
+  ZoomableFlavorWheel,
+  ZoomableWheel,
 } from "../components/features/flavor-wheel";
 import {
-    characterWheelSegments,
-    characterWheelViewBoxSize,
-    characterWheelPathMatrix,
+  characterWheelSegments,
+  characterWheelViewBoxSize,
+  characterWheelPathMatrix,
 } from "../data/character-wheel-segments";
 import { flavorWheelSegments } from "../data/flavor-wheel-segments";
 import "../components/shared/card/overlay-card.css";
@@ -23,211 +23,212 @@ const allWorks = worksResponse.contents;
 
 // 表示用のWork型に変換
 interface DisplayWork {
-    title: string;
-    subtitle?: string;
+  title: string;
+  subtitle?: string;
+  url: string;
+  githubUrl?: string;
+  type: "personal" | "organization";
+  genre?: "programming" | "design";
+  photos?: {
     url: string;
-    githubUrl?: string;
-    type: "personal" | "organization";
-    genre?: "programming" | "design";
-    photos?: {
-        url: string;
-        height: number;
-        width: number;
-    }[];
+    height: number;
+    width: number;
+  }[];
 }
 
 // 配列または文字列から最初の値を取得するヘルパー関数
 function getFirstValue<T>(value: T | T[] | undefined): T | undefined {
-    if (value === undefined) return undefined;
-    if (Array.isArray(value)) return value[0];
-    return value;
+  if (value === undefined) return undefined;
+  if (Array.isArray(value)) return value[0];
+  return value;
 }
 
 const mapToDisplayWork = (work: MicroCMSWork): DisplayWork | null => {
-    // 配列から最初の値を取得
-    const genre = getFirstValue(work.genre);
-    const owner = getFirstValue(work.owner);
-    
-    // programmingの場合はlinkが必須、designの場合はphotosまたはlinkがあればOK
-    if (genre === "programming" && !work.link) {
-        return null;
-    }
-    
-    if (genre === "design" && !work.photos && !work.link) {
-        return null;
-    }
-    
-    // genreが未設定の場合は、linkがあれば表示する
-    if (!genre && !work.link) {
-        return null;
-    }
-    
-    // designでlinkがない場合は、photosの最初の画像のURLをダミーURLとして使用
-    const url = work.link || (work.photos && work.photos.length > 0 ? "#" : "#");
+  // 配列から最初の値を取得
+  const genre = getFirstValue(work.genre);
+  const owner = getFirstValue(work.owner);
 
-    return {
-        title: work.title,
-        subtitle: work.outline,
-        url: url,
-        githubUrl: work.githuburl,
-        type: owner || "personal",
-        genre: genre,
-        photos: work.photos,
-    };
+  // programmingの場合はlinkが必須、designの場合はphotosまたはlinkがあればOK
+  if (genre === "programming" && !work.link) {
+    return null;
+  }
+
+  if (genre === "design" && !work.photos && !work.link) {
+    return null;
+  }
+
+  // genreが未設定の場合は、linkがあれば表示する
+  if (!genre && !work.link) {
+    return null;
+  }
+
+  // designでlinkがない場合は、photosの最初の画像のURLをダミーURLとして使用
+  const url = work.link || (work.photos && work.photos.length > 0 ? "#" : "#");
+
+  return {
+    title: work.title,
+    subtitle: work.outline,
+    url: url,
+    githubUrl: work.githuburl,
+    type: owner || "personal",
+    genre: genre,
+    photos: work.photos,
+  };
 };
 
 // microCMS外で管理する追加作品
 const additionalWorks: DisplayWork[] = [
-    {
-        title: "Kraken Watcher",
-        subtitle: "家庭の電力使用量と料金を可視化する電気ダッシュボード",
-        url: "https://kraken-watcher.takum1.me/",
-        type: "personal",
-        genre: "programming",
-    },
+  {
+    title: "Kraken Watcher",
+    subtitle: "家庭の電力使用量と料金を可視化する電気ダッシュボード",
+    url: "https://kraken-watcher.takum1.me/",
+    type: "personal",
+    genre: "programming",
+  },
 ];
 
 const displayWorks = [
-    ...allWorks
-        .map(mapToDisplayWork)
-        .filter((work): work is DisplayWork => work !== null),
-    ...additionalWorks,
+  ...allWorks
+    .map(mapToDisplayWork)
+    .filter((work): work is DisplayWork => work !== null),
+  ...additionalWorks,
 ];
 
-const personalWorks = displayWorks.filter(work => work.type === "personal");
-const organizationWorks = displayWorks.filter(work => work.type === "organization");
-
+const personalWorks = displayWorks.filter((work) => work.type === "personal");
+const organizationWorks = displayWorks.filter(
+  (work) => work.type === "organization",
+);
 ---
 
 <Layout title="Works">
-    <Container size="page">
-        <PageHeader
-            eyebrow="Works"
-            title="つくったもの"
-            lead="趣味その他、作成したものをまとめています。"
-        />
-    </Container>
+  <Container size="page">
+    <PageHeader
+      eyebrow="Works"
+      title="つくったもの"
+      lead="趣味その他、作成したものをまとめています。"
+    />
+  </Container>
 
-    {personalWorks.length > 0 && (
-        <Container size="page" as="section" class="works-section">
-            <SectionHeading eyebrow="Personal" title="個人制作" />
-            <div class="works-grid">
-                {personalWorks.map((work) => (
-                    <WorksCard
-                        title={work.title}
-                        subtitle={work.subtitle}
-                        url={work.url}
-                        githubUrl={work.githubUrl}
-                        genre={work.genre}
-                        photos={work.photos}
-                    />
-                ))}
-            </div>
-        </Container>
-    )}
-
-    {organizationWorks.length > 0 && (
-        <Container size="page" as="section" class="works-section">
-            <SectionHeading eyebrow="Collaboration" title="団体作品" />
-            <div class="works-grid">
-                {organizationWorks.map((work) => (
-                    <WorksCard
-                        title={work.title}
-                        subtitle={work.subtitle}
-                        url={work.url}
-                        githubUrl={work.githubUrl}
-                        genre={work.genre}
-                        photos={work.photos}
-                    />
-                ))}
-            </div>
-        </Container>
-    )}
-
-    <Container size="page" as="section" class="works-section">
-        <SectionHeading eyebrow="Reference" title="Flavor Wheel" />
-        <p class="wheel-lead">
-            SCA のフレーバーホイール。カテゴリーをクリックすると拡大して細かい用語まで読めます。
-        </p>
-        <div class="wheel-frame">
-            <ZoomableFlavorWheel
-                segments={flavorWheelSegments}
-                client:only="react"
+  {
+    personalWorks.length > 0 && (
+      <Container size="page" as="section" class="works-section">
+        <SectionHeading eyebrow="Personal" title="個人制作" />
+        <div class="works-grid">
+          {personalWorks.map((work) => (
+            <WorksCard
+              title={work.title}
+              subtitle={work.subtitle}
+              url={work.url}
+              githubUrl={work.githubUrl}
+              genre={work.genre}
+              photos={work.photos}
             />
+          ))}
         </div>
-    </Container>
+      </Container>
+    )
+  }
 
-    <Container size="page" as="section" class="works-section">
-        <SectionHeading eyebrow="Reference" title="Coffee Character Wheel" />
-        <p class="wheel-lead">
-            Flavor Wheel と同じ操作でズームできます。公式ポスター由来の SVG（PDF
-            出力）からパスとラベル位置を抽出しており、線や配色は原資料に沿っています。
-        </p>
-        <div class="wheel-frame">
-            <ZoomableWheel
-                segments={characterWheelSegments}
-                footerIdle="カテゴリーをクリックして拡大表示"
-                footerZoomed="詳細用語をクリックして確認"
-                hubRadius={52}
-                viewBoxSize={characterWheelViewBoxSize}
-                zoomFocusRadius={240}
-                zoomViewportSize={420}
-                showHubCircle={false}
-                pathLocalTransform={characterWheelPathMatrix}
-                client:only="react"
+  {
+    organizationWorks.length > 0 && (
+      <Container size="page" as="section" class="works-section">
+        <SectionHeading eyebrow="Collaboration" title="団体作品" />
+        <div class="works-grid">
+          {organizationWorks.map((work) => (
+            <WorksCard
+              title={work.title}
+              subtitle={work.subtitle}
+              url={work.url}
+              githubUrl={work.githubUrl}
+              genre={work.genre}
+              photos={work.photos}
             />
+          ))}
         </div>
-        <p class="wheel-attribution">
-            The coffee character wheel was developed as part of the AgriFutures
-            Australia project <em
-                >Defining terroir of Australian coffee to increase demand and
-                investment</em
-            >, a collaboration between Southern Cross University, Processing
-            Methods Bootcamp and the Australian coffee industry.
-        </p>
-    </Container>
+      </Container>
+    )
+  }
+
+  <Container size="page" as="section" class="works-section">
+    <SectionHeading eyebrow="Reference" title="Flavor Wheel" />
+    <p class="wheel-lead">
+      SCA
+      のフレーバーホイール。カテゴリーをクリックすると拡大して細かい用語まで読めます。
+    </p>
+    <div class="wheel-frame">
+      <ZoomableFlavorWheel segments={flavorWheelSegments} client:only="react" />
+    </div>
+  </Container>
+
+  <Container size="page" as="section" class="works-section">
+    <SectionHeading eyebrow="Reference" title="Coffee Character Wheel" />
+    <p class="wheel-lead">
+      Flavor Wheel と同じ操作でズームできます。公式ポスター由来の SVG（PDF
+      出力）からパスとラベル位置を抽出しており、線や配色は原資料に沿っています。
+    </p>
+    <div class="wheel-frame">
+      <ZoomableWheel
+        segments={characterWheelSegments}
+        footerIdle="カテゴリーをクリックして拡大表示"
+        footerZoomed="詳細用語をクリックして確認"
+        hubRadius={52}
+        viewBoxSize={characterWheelViewBoxSize}
+        zoomFocusRadius={240}
+        zoomViewportSize={420}
+        showHubCircle={false}
+        pathLocalTransform={characterWheelPathMatrix}
+        client:only="react"
+      />
+    </div>
+    <p class="wheel-attribution">
+      The coffee character wheel was developed as part of the AgriFutures
+      Australia project <em
+        >Defining terroir of Australian coffee to increase demand and investment</em
+      >, a collaboration between Southern Cross University, Processing Methods
+      Bootcamp and the Australian coffee industry.
+    </p>
+  </Container>
 </Layout>
 
 <style>
-    .works-section {
-        padding-block: clamp(2rem, 5vw, 3.25rem);
-    }
+  .works-section {
+    padding-block: clamp(2rem, 5vw, 3.25rem);
+  }
 
-    .works-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
-        gap: clamp(1.25rem, 3vw, 1.75rem);
-    }
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    gap: clamp(1.25rem, 3vw, 1.75rem);
+  }
 
-    .wheel-lead {
-        max-width: 38rem;
-        margin-bottom: var(--spacing-lg);
-        color: var(--color-ink-muted);
-        font-size: var(--text-small);
-        line-height: 1.8;
-    }
+  .wheel-lead {
+    max-width: 38rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+    line-height: 1.8;
+  }
 
-    .wheel-frame {
-        max-width: 37.5rem;
-        margin-inline: auto;
-        background: var(--color-surface);
-        border: 1px solid var(--color-line);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-    }
+  .wheel-frame {
+    max-width: 37.5rem;
+    margin-inline: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
 
-    .wheel-attribution {
-        max-width: 38rem;
-        margin: var(--spacing-lg) auto 0;
-        color: var(--color-ink-faint);
-        font-size: var(--text-eyebrow);
-        line-height: 1.7;
-        letter-spacing: 0;
-        text-transform: none;
-    }
+  .wheel-attribution {
+    max-width: 38rem;
+    margin: var(--spacing-lg) auto 0;
+    color: var(--color-ink-faint);
+    font-size: var(--text-eyebrow);
+    line-height: 1.7;
+    letter-spacing: 0;
+    text-transform: none;
+  }
 
-    .wheel-attribution em {
-        font-style: italic;
-    }
+  .wheel-attribution em {
+    font-style: italic;
+  }
 </style>
-
