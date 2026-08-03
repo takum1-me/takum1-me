@@ -105,7 +105,9 @@ export default function RoastLogUploader({
   const [over, setOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const existing = manifest.batches ?? {};
+  // `?? {}` をそのまま書くと、batches が未定義のとき毎レンダリングで
+  // 別の空オブジェクトになり、下の useMemo が毎回作り直しになる
+  const existing = useMemo(() => manifest.batches ?? {}, [manifest.batches]);
 
   /** 読み込んだファイルを Entry にする */
   const addFiles = async (files: FileList | null) => {
