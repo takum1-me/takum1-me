@@ -29,7 +29,14 @@ export interface Props {
 }
 
 const SITE_TITLE = "takum1.me";
-const { pageTitle, title, description, hideHeader = false, og, jsonld } = Astro.props;
+const {
+  pageTitle,
+  title,
+  description,
+  hideHeader = false,
+  og,
+  jsonld,
+} = Astro.props;
 
 const metadata = {
   title: title ?? (pageTitle ? `${pageTitle} - ${SITE_TITLE}` : SITE_TITLE),

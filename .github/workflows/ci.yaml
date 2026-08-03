@@ -1,59 +1,70 @@
 name: CI Checks
 
+# ブランチへの push でも走らせる。PR を開く前に結果を見たいため。
+# pull_request を足すと同じコミットで二重に走るので、あえて push だけにしている
+# （同一リポジトリのブランチなら push 側の実行が PR のチェックとして表示される）。
+# 外部フォークからの PR も検査したくなったら pull_request を足す。
 on:
   push:
 
+# 同じブランチで新しい push があったら、古い実行は打ち切る
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  lint:
+  check:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: "24"
+          # バージョンは .nvmrc に一本化（Cloudflare Pages も同じファイルを見る）
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linter
-        run: npm run lint
-
-  format-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run formatter check
+      # 以降は !cancelled() を付けて、途中で失敗しても残りを最後まで流す。
+      # 1 ジョブにまとめても「どのチェックが落ちたか」が一度に分かるようにするため。
+      - name: Format check
+        if: ${{ !cancelled() }}
         run: npm run format:check
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: ESLint
+        if: ${{ !cancelled() }}
+        run: npm run lint
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "npm"
+      - name: Stylelint (.css)
+        if: ${{ !cancelled() }}
+        run: npm run lint:css
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Stylelint (.astro の <style>)
+        if: ${{ !cancelled() }}
+        run: npm run lint:css:astro
 
-      - name: Run type check
+      - name: Type check
+        if: ${{ !cancelled() }}
         run: npm run typecheck
+
+      # ビルドが通るかまでを CI で見る。ここが無いと、壊れていても
+      # Cloudflare のデプロイ時まで気付けない。
+      #
+      # MICROCMS_COFFEE_* が未登録でも beans / lab が空になるだけでビルドは通る。
+      # 本番と同じページ数を検証したいなら Secrets に 2 つを追加する。
+      - name: Build
+        if: ${{ !cancelled() }}
+        run: npm run build
+        env:
+          MICROCMS_API_URL: ${{ secrets.MICROCMS_API_URL }}
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+          MICROCMS_COFFEE_API_URL: ${{ secrets.MICROCMS_COFFEE_API_URL }}
+          MICROCMS_COFFEE_API_KEY: ${{ secrets.MICROCMS_COFFEE_API_KEY }}

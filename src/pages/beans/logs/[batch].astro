@@ -14,7 +14,10 @@ export async function getStaticPaths() {
   const byId = new Map(beans.map((b) => [b.id, b]));
   return getRoastLogs().map((record) => ({
     params: { batch: record.batchId },
-    props: { record, bean: record.beanId ? byId.get(record.beanId) : undefined },
+    props: {
+      record,
+      bean: record.beanId ? byId.get(record.beanId) : undefined,
+    },
   }));
 }
 

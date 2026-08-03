@@ -1,0 +1,15 @@
+# .gitignore の内容は Prettier が自動で読むので、ここには
+# 「追跡はするが整形はしたくない」ものだけを書く。
+
+# npm が管理するので触らない
+package-lock.json
+
+# Coffee Character Wheel のポスター原本（外部ツールの出力をそのまま置いている）
+Coffee-Character-Wheel-Poster-PDF*
+
+# スクリプトが生成する SVG
+public/character-wheel-*.svg
+public/coffee-character-wheel-reference.svg
+
+# 外部から持ってきた Claude スキル定義（このリポジトリの管理対象外）
+skills/

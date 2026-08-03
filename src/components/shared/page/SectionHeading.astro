@@ -11,7 +11,13 @@ export interface Props {
   class?: string;
 }
 
-const { eyebrow, title, href, linkLabel = "すべて見る", class: className } = Astro.props;
+const {
+  eyebrow,
+  title,
+  href,
+  linkLabel = "すべて見る",
+  class: className,
+} = Astro.props;
 ---
 
 <div class:list={["section-heading", className]}>

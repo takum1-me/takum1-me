@@ -62,7 +62,7 @@ function normalizeUrl(url: string): string {
   if (!url) return url;
 
   // スペースをトリム
-  let normalized = url.trim();
+  const normalized = url.trim();
 
   // 既にhttp://またはhttps://で始まっている場合はそのまま
   if (normalized.startsWith("http://") || normalized.startsWith("https://")) {

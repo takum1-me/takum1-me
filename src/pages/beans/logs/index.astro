@@ -45,7 +45,8 @@ const rows = logs.map((log) => {
  * （押しても 0 件になるボタンを並べない）。
  */
 const beanCounts = new Map<string, number>();
-for (const row of rows) beanCounts.set(row.beanKey, (beanCounts.get(row.beanKey) ?? 0) + 1);
+for (const row of rows)
+  beanCounts.set(row.beanKey, (beanCounts.get(row.beanKey) ?? 0) + 1);
 
 const beanFilters = [...beanCounts.entries()]
   .map(([key, count]) => ({
@@ -88,7 +89,12 @@ const beanFilters = [...beanCounts.entries()]
       beanFilters.length > 1 && (
         <div class="beans" id="bean-filters">
           <span class="beans__label">豆</span>
-          <button type="button" class="chip" data-bean="all" aria-pressed="true">
+          <button
+            type="button"
+            class="chip"
+            data-bean="all"
+            aria-pressed="true"
+          >
             すべて
             <span class="chip__count">{rows.length}</span>
           </button>
@@ -204,7 +210,8 @@ const beanFilters = [...beanCounts.entries()]
     for (const chip of chips) {
       chip.addEventListener("click", () => {
         // 押されているものをもう一度押したら解除して全件に戻す
-        bean = bean === chip.dataset.bean ? "all" : (chip.dataset.bean ?? "all");
+        bean =
+          bean === chip.dataset.bean ? "all" : (chip.dataset.bean ?? "all");
         for (const other of chips) {
           other.setAttribute(
             "aria-pressed",
