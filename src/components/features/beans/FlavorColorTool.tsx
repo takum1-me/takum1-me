@@ -27,6 +27,7 @@ import {
   beanCardFileName,
   type BeanCardData,
 } from "../../../lib/utils/bean-card";
+import type { RoastCurve } from "../../../lib/utils/roast-curve";
 
 /**
  * /beans/color-tool（ローカル専用）で使う色決めツール。
@@ -76,7 +77,21 @@ interface Target {
   mode: TargetMode;
 }
 
-export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
+/** カード背景に敷ける焙煎曲線。豆との紐付けはページ側（index.json）から来る */
+export interface RoastCurveOption extends RoastCurve {
+  /** 紐づく豆 ID（microCMS）。未設定なら「その他」に入る */
+  beanId?: string;
+  /** ログから読んだ焙煎日（"2026-07-29"）。選ぶとカードの焙煎日もこれになる */
+  roastDate?: string;
+}
+
+export default function FlavorColorTool({
+  beans = [],
+  roastCurves = [],
+}: {
+  beans?: Bean[];
+  roastCurves?: RoastCurveOption[];
+}) {
   const [note, setNote] = useState("");
   const [roast, setRoast] = useState("medium");
   // index -> 上書き色の配列（未設定は「自動マッチのまま」）
@@ -87,14 +102,27 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
   const [beanId, setBeanId] = useState<string | null>(null);
   // カードに載せる焙煎日（microCMS に roastDate があればそれ、無ければ今日）
   const [roastDate, setRoastDate] = useState(today());
+  // カード背景に敷く焙煎ログ（バッチ ID）。null なら敷かない
+  const [curveId, setCurveId] = useState<string | null>(null);
+
+  /** 焙煎ログを選ぶ → 背景の曲線と、ログに入っている焙煎日を入れる */
+  const selectCurve = (batchId: string | null) => {
+    setCurveId(batchId);
+    const date = roastCurves.find((c) => c.batchId === batchId)?.roastDate;
+    if (date) setRoastDate(date);
+  };
 
   /** 豆を選ぶ → その豆の flavorNote / flavorColors / 焙煎度を読み込む */
   const loadBean = (bean: Bean) => {
     setBeanId(bean.id);
     setNote(bean.flavorNote ?? "");
     setRoast(toArray(bean.roastLevel)[0] ?? "medium");
-    setRoastDate(bean.roastDate?.slice(0, 10) ?? today());
     setTarget(null);
+    // 紐づくログがあれば、いちばん新しいものを背景に敷いておく
+    const curve = roastCurves.find((c) => c.beanId === bean.id);
+    setCurveId(curve?.batchId ?? null);
+    // 焙煎日は実際に焼いた日（ログ）を最優先。無ければ microCMS、それも無ければ今日
+    setRoastDate(curve?.roastDate ?? bean.roastDate?.slice(0, 10) ?? today());
     const next: Record<number, string[]> = {};
     splitFlavorColors(bean.flavorColors).forEach((slot, i) => {
       if (slot) next[i] = slot;
@@ -108,6 +136,7 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
     setNote("");
     setOverrides({});
     setTarget(null);
+    setCurveId(null);
   };
 
   const notes = useMemo(() => splitFlavorNotes(note), [note]);
@@ -278,6 +307,14 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
 
   // ---- 豆カード（SVG 保存） ----
   const selectedBean = beans.find((b) => b.id === beanId) ?? null;
+
+  // 選択中の豆に紐づくログを先に、残りを「その他」として出す
+  const linkedCurves = roastCurves.filter(
+    (c) => beanId !== null && c.beanId === beanId,
+  );
+  const otherCurves = roastCurves.filter((c) => !linkedCurves.includes(c));
+  const roastCurve = roastCurves.find((c) => c.batchId === curveId) ?? null;
+
   // フォント読込後は文字幅が変わるので、読み込めたら組み直す
   const [fontsReady, setFontsReady] = useState(false);
   useEffect(() => {
@@ -315,10 +352,11 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
       specs,
       roastDate: formatRoastDate(roastDate),
       roastLevel: roast,
+      roastCurve,
     };
     // rows は note/overrides から毎回作られるので、その 2 つを依存にする
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBean, note, overrides, roast, roastDate]);
+  }, [selectedBean, note, overrides, roast, roastDate, roastCurve]);
 
   /** プレビューと保存で同じ SVG を使う */
   const cardSvg = useMemo(
@@ -403,6 +441,35 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
           <span style={S.blockTitle}>Bean Card（名刺 91 × 55mm）</span>
           <div style={S.cardActions}>
             <label style={S.dateLabel}>
+              背景の焙煎グラフ
+              <select
+                value={curveId ?? ""}
+                onChange={(e) => selectCurve(e.target.value || null)}
+                style={S.dateInput}
+                disabled={roastCurves.length === 0}
+              >
+                <option value="">なし</option>
+                {linkedCurves.length > 0 && (
+                  <optgroup label="この豆のログ">
+                    {linkedCurves.map((c) => (
+                      <option key={c.batchId} value={c.batchId}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+                {otherCurves.length > 0 && (
+                  <optgroup label="ほかのログ">
+                    {otherCurves.map((c) => (
+                      <option key={c.batchId} value={c.batchId}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+              </select>
+            </label>
+            <label style={S.dateLabel}>
               焙煎日
               <input
                 type="date"
@@ -431,6 +498,13 @@ export default function FlavorColorTool({ beans = [] }: { beans?: Bean[] }) {
         ) : (
           <p style={S.hint}>
             豆を選ぶとカードを組みます。フレーバーの色を編集すると、その色がそのままカードに反映されます。
+          </p>
+        )}
+        {cardSvg && (
+          <p style={S.cardHint}>
+            {roastCurves.length === 0
+              ? "焙煎ログ（src/data/roast-logs）がまだ無いので、背景のグラフは選べません。"
+              : "背景は豆温度の曲線（点は 1 ハゼ）。線はフレーバー 1 色目の色で、焙煎日はログの日付が入ります。"}
           </p>
         )}
       </div>
@@ -736,7 +810,19 @@ const S: Record<string, React.CSSProperties> = {
     color: "#8b5e34",
   },
   beanFlag: { fontSize: 13, lineHeight: 1 },
-  cardActions: { display: "flex", alignItems: "center", gap: 10 },
+  cardActions: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    gap: 10,
+  },
+  cardHint: {
+    fontSize: 12,
+    lineHeight: 1.7,
+    color: "#b3a795",
+    margin: "8px 0 0",
+  },
   dateLabel: {
     display: "inline-flex",
     alignItems: "center",

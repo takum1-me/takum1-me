@@ -4,6 +4,9 @@ import Container from "../../components/shared/layout/Container.astro";
 import PageHeader from "../../components/shared/page/PageHeader.astro";
 import FlavorColorTool from "../../components/features/beans/FlavorColorTool";
 import { getAllBeans } from "../../lib/microcms/beans-list";
+import { getRoastLogs } from "../../lib/roast-logs";
+import { buildRoastCurve } from "../../lib/utils/roast-curve";
+import { mmss } from "../../lib/utils/klog";
 
 // ローカル専用ツール。本番ではデプロイ・公開しない。
 if (!import.meta.env.DEV) {
@@ -12,6 +15,31 @@ if (!import.meta.env.DEV) {
 
 // 豆を選んで flavorNote を読み込めるように、一覧を渡す
 const beans = await getAllBeans();
+
+/** ISO の日時 → input[type=date] 用の日本時間の日付（"2026-07-29"） */
+function jstDate(iso: string | undefined): string | undefined {
+  if (!iso) return undefined;
+  return new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
+}
+
+// 焙煎ログはカード背景に敷く曲線だけに落として渡す（.klog はビルド時にしか読めず、
+// 生の系列をそのままクライアントへ運ぶと重い）。並びは新しい順のまま。
+const roastCurves = getRoastLogs().flatMap((record) => {
+  const curve = buildRoastCurve(record.log, {
+    batchId: record.batchId,
+    label: `${record.batchId}（1ハゼ ${mmss(record.metrics.firstCrackSec)} / ${mmss(record.metrics.totalSec)}）`,
+  });
+  return curve
+    ? [
+        {
+          ...curve,
+          beanId: record.beanId,
+          // ログを選んだらカードの焙煎日もこれに合わせる
+          roastDate: jstDate(record.roastedAt),
+        },
+      ]
+    : [];
+});
 ---
 
 <Layout
@@ -25,6 +53,10 @@ const beans = await getAllBeans();
       lead="beans カードのグラデを決めるローカル専用ツール。豆を選んで flavorNote を読み込み、生成した flavorColors を microCMS の該当フィールドに貼ってください。"
     />
 
-    <FlavorColorTool beans={beans} client:only="react" />
+    <FlavorColorTool
+      beans={beans}
+      roastCurves={roastCurves}
+      client:only="react"
+    />
   </Container>
 </Layout>

@@ -4,6 +4,7 @@ import {
   SPOT_STOPS,
   BASE_END,
 } from "./flavor-color";
+import type { RoastCurve } from "./roast-curve";
 
 /**
  * 豆 1 件の名刺サイズカードを SVG で組む（/beans/color-tool から保存して印刷する用）。
@@ -101,6 +102,20 @@ const SWATCH_ZOOM = 1.6;
 /** 帯の上端の白ぼかしの高さ */
 const BAND_EDGE = 2 * MM;
 
+/**
+ * 背景に敷く焙煎曲線。線だけを引いて塗りは持たない。
+ * 上端を焙煎日の行より下に置いているのは、終盤の平らな部分が日付と重なるため。
+ * 下端はスペック（VARIETY など）の行の上で止める。左右は断ち落とし。
+ */
+const CURVE_TOP = 12 * MM;
+const CURVE_STROKE = 0.3 * MM;
+const CURVE_STROKE_OPACITY = 0.3;
+/** 曲線の下端とスペックの行の間に空ける量 */
+const CURVE_CLEARANCE = 1.6 * MM;
+/** 1 ハゼの点（ページのグラフと同じく曲線上に打つだけ） */
+const CURVE_MARK_OPACITY = 0.4;
+const CURVE_MARK_RADIUS = 0.5 * MM;
+
 /** カードに載せる内容 */
 export interface BeanCardData {
   name: string;
@@ -114,6 +129,8 @@ export interface BeanCardData {
   roastDate: string;
   /** スウォッチの下地トーンに使う焙煎度 ID */
   roastLevel?: string;
+  /** 背景に薄く敷く焙煎曲線（未指定なら敷かない） */
+  roastCurve?: RoastCurve | null;
 }
 
 /** フォントを読み込んでおく（未読込のまま測ると幅がずれる） */
@@ -149,12 +166,22 @@ export function buildBeanCardSvg(data: BeanCardData): string {
     CARD_HEIGHT - face.bandTop,
   );
 
+  // 曲線は下端を情報面に合わせるので、面を組んでから。色は帯の 1 色目に合わせる
+  const backdrop = data.roastCurve
+    ? roastBackdrop(
+        data.roastCurve,
+        face.curveBottom,
+        normalizeHex(data.notes[0]?.colors[0] ?? ACCENT_STRONG),
+      )
+    : null;
+
   return [
     // width/height は mm。印刷ダイアログで拡大しなければ名刺の原寸で出る
     `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH / MM}mm" height="${CARD_HEIGHT / MM}mm" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" role="img" aria-label="${esc(data.name)}">`,
-    `<defs>${defs}</defs>`,
+    `<defs>${defs}${backdrop?.defs ?? ""}</defs>`,
     // 最下層は白（印刷用）
     `<rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="${SURFACE}"/>`,
+    backdrop?.layer ?? "",
     band,
     face.svg,
     // 断裁の目印になる細い枠（0.2mm）
@@ -226,8 +253,55 @@ function swatchBand(
   };
 }
 
-/** 帯より上の情報面。帯の上端は中身を組んでみないと決まらないので一緒に返す */
-function info(data: BeanCardData): { svg: string; bandTop: number } {
+/**
+ * 背景の焙煎曲線。文字の下に敷く下絵なので線 1 本だけで、塗りも目盛りも置かない。
+ * 正規化された曲線（0〜1）を、左右は断ち落とし・縦は「bottom が 0℃、
+ * CURVE_TOP が温度軸の上限」に伸ばす。色は帯のグラデーションの 1 色目を使う。
+ */
+function roastBackdrop(
+  curve: RoastCurve,
+  bottom: number,
+  color: string,
+): { defs: string; layer: string } | null {
+  if (curve.points.length < 2) return null;
+
+  const height = bottom - CURVE_TOP;
+  if (height <= 0) return null;
+
+  const px = (x: number) => round(x * CARD_WIDTH);
+  const py = (y: number) => round(bottom - y * height);
+
+  const line = curve.points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${px(p.x)} ${py(p.y)}`)
+    .join(" ");
+
+  const layers: string[] = [
+    `<path d="${line}" fill="none" stroke="${color}" stroke-width="${CURVE_STROKE}" stroke-opacity="${CURVE_STROKE_OPACITY}" stroke-linejoin="round" stroke-linecap="round"/>`,
+  ];
+
+  // 1 ハゼだけ曲線の上に点を打つ
+  const firstCrack = curve.marks.find((m) => m.name === "1C");
+  if (firstCrack) {
+    layers.push(
+      `<circle cx="${px(firstCrack.x)}" cy="${py(firstCrack.y)}" r="${CURVE_MARK_RADIUS}" fill="${color}" fill-opacity="${CURVE_MARK_OPACITY}"/>`,
+    );
+  }
+
+  return {
+    defs: `<clipPath id="curve-clip"><rect x="0" y="${round(CURVE_TOP)}" width="${CARD_WIDTH}" height="${round(height)}"/></clipPath>`,
+    layer: `<g clip-path="url(#curve-clip)">${layers.join("")}</g>`,
+  };
+}
+
+/**
+ * 帯より上の情報面。帯の上端と背景の曲線の下端は中身を組んでみないと
+ * 決まらないので、SVG と一緒に返す。
+ */
+function info(data: BeanCardData): {
+  svg: string;
+  bandTop: number;
+  curveBottom: number;
+} {
   const left = PADDING;
   const right = CARD_WIDTH - PADDING;
   const maxWidth = right - left;
@@ -309,7 +383,14 @@ function info(data: BeanCardData): { svg: string; bandTop: number } {
     CARD_HEIGHT - BAND_HEIGHT_MIN,
   );
 
-  return { svg: out.join(""), bandTop: round(bandTop) };
+  return {
+    svg: out.join(""),
+    bandTop: round(bandTop),
+    // 背景の曲線はスペックの行に掛からないよう、その手前で止める
+    curveBottom: round(
+      spec.top === undefined ? bandTop : spec.top - CURVE_CLEARANCE,
+    ),
+  };
 }
 
 /** ノートを 2 行までで折り返して並べる。使った行数は罫線の位置決めに要る */
@@ -404,7 +485,7 @@ function specs(
   left: number,
   maxWidth: number,
   notesBottom: number,
-): { svg: string; ruleY: number; bottom: number } {
+): { svg: string; ruleY: number; top?: number; bottom: number } {
   const shown = list.slice(0, 4);
   if (shown.length === 0)
     return { svg: "", ruleY: notesBottom, bottom: notesBottom };
@@ -490,7 +571,8 @@ function specs(
     })
     .join("");
 
-  return { svg, ruleY, bottom };
+  // top は小見出しの大文字の上端。背景の曲線をここで止める
+  return { svg, ruleY, top: top - capTop, bottom };
 }
 
 interface TextStyle {
