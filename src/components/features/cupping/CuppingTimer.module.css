@@ -1,0 +1,249 @@
+/* 色・寸法はグローバルトークンを参照する。ここで独自のパレットを作らないこと。 */
+.timer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+/* ---- 注いでからの経過（カウントアップ） ---- */
+.elapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg) var(--spacing-md);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: border-color var(--transition);
+}
+
+.elapsed--running {
+  border-color: var(--color-accent);
+}
+
+.elapsed__label {
+  color: var(--color-ink-faint);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  text-transform: uppercase;
+}
+
+/* 数字は等幅にする。桁が変わるたびに横幅が動くと目で追えない */
+.elapsed__time {
+  display: flex;
+  align-items: baseline;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.elapsed__clock {
+  font-size: clamp(3rem, 17vw, 4.5rem);
+  letter-spacing: -0.02em;
+}
+
+.elapsed__cs {
+  color: var(--color-ink-faint);
+  font-size: clamp(1.25rem, 6vw, 1.75rem);
+}
+
+/* ---- ブレイク / 飲み始め ---- */
+
+/* 2 つ並べたまま折り返さない。縦に積むとボタンが画面の外へ出てしまう */
+.marks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.mark {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition:
+    border-color var(--transition),
+    background var(--transition);
+}
+
+.mark--done {
+  border-color: var(--color-accent-strong);
+  background: var(--color-accent-soft);
+}
+
+.mark__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.mark__label {
+  color: var(--color-ink-faint);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+}
+
+.mark__target {
+  color: var(--color-ink-faint);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.mark--done .mark__target {
+  color: var(--color-accent-strong);
+}
+
+.mark__time {
+  display: flex;
+  align-items: baseline;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.mark__clock {
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+
+.mark__cs {
+  color: var(--color-ink-faint);
+  font-size: var(--text-small);
+}
+
+.mark--done .mark__clock {
+  color: var(--color-accent-strong);
+}
+
+/* 走らせる前の数字は、そのまま書き換えられる設定欄。破線だけを足して、
+   大きさと字送りは静止時の数字に揃える */
+.mark__input,
+.mark__select {
+  padding: 0;
+  border: none;
+  border-bottom: 1px dashed var(--color-line-strong);
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+/* 4 桁の打ち込み。mm:ss の 5 文字ぶんを取る */
+.mark__input {
+  width: 3.1em;
+}
+
+/* 指で触る端末はこちら。OS のプルダウンを出したいので矢印だけ消す */
+.mark__select {
+  width: 1.5em;
+  appearance: none;
+  text-align-last: center;
+}
+
+.mark__input:hover,
+.mark__input:focus,
+.mark__select:hover,
+.mark__select:focus {
+  border-bottom-color: var(--color-accent);
+}
+
+.mark__bar {
+  display: block;
+  overflow: hidden;
+  height: 0.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-line);
+}
+
+.mark__fill {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.mark--done .mark__fill {
+  background: var(--color-accent-strong);
+}
+
+/* ---- 3 つまとめて動かすボタン ---- */
+.controls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.primary,
+.secondary {
+  border-radius: var(--radius-pill);
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.primary {
+  flex: 1;
+  padding: 1.05rem 1.5rem;
+  border: 1px solid var(--color-accent-strong);
+  background: var(--color-accent-strong);
+  color: var(--color-surface);
+  font-size: var(--text-lead);
+  letter-spacing: 0.06em;
+}
+
+.primary--running {
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+}
+
+.secondary {
+  padding: 1.05rem 1.25rem;
+  border: 1px solid var(--color-line-strong);
+  background: transparent;
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
+}
+
+.secondary:disabled {
+  color: var(--color-ink-faint);
+  cursor: not-allowed;
+  opacity: 45%;
+}
+
+.status {
+  color: var(--color-ink-faint);
+  font-size: var(--text-small);
+  line-height: var(--text-small--line-height);
+  text-align: center;
+}
+
+/* ---- 音のオンオフ ---- */
+.sound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
+  cursor: pointer;
+}
+
+.sound input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-accent-strong);
+}
