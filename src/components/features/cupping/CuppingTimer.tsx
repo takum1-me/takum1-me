@@ -31,8 +31,15 @@ interface TimerState {
   breakMs: number;
   /** 飲み始めまでの長さ（ms） */
   drinkMs: number;
-  /** 到達時にビープを鳴らすか */
-  sound: boolean;
+  /** ブレイクに着いたら知らせるか */
+  soundBreak: boolean;
+  /** 飲み始めに着いたら知らせるか */
+  soundDrink: boolean;
+}
+
+/** 保存されている中身。区切りごとに分ける前の `sound` が残っていることがある */
+interface StoredState extends Partial<TimerState> {
+  sound?: boolean;
 }
 
 const INITIAL_STATE: TimerState = {
@@ -40,7 +47,8 @@ const INITIAL_STATE: TimerState = {
   carriedMs: 0,
   breakMs: DEFAULT_BREAK_MS,
   drinkMs: DEFAULT_DRINK_MS,
-  sound: true,
+  soundBreak: true,
+  soundDrink: true,
 };
 
 /** どちらの区切りを「もう知らせた」か */
@@ -60,7 +68,9 @@ function loadState(): TimerState {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_STATE;
-    const saved = JSON.parse(raw) as Partial<TimerState>;
+    const saved = JSON.parse(raw) as StoredState;
+    // 分ける前に保存された 1 つのスイッチは、両方の初期値として引き継ぐ
+    const legacySound = saved.sound !== false;
     return {
       startedAt:
         typeof saved.startedAt === "number" && Number.isFinite(saved.startedAt)
@@ -69,7 +79,8 @@ function loadState(): TimerState {
       carriedMs: toMs(saved.carriedMs, 0),
       breakMs: toMs(saved.breakMs, DEFAULT_BREAK_MS),
       drinkMs: toMs(saved.drinkMs, DEFAULT_DRINK_MS),
-      sound: saved.sound !== false,
+      soundBreak: saved.soundBreak ?? legacySound,
+      soundDrink: saved.soundDrink ?? legacySound,
     };
   } catch {
     // 壊れた値でも読み込みごと落とさない。初期値で始める
@@ -83,7 +94,8 @@ function isSameState(a: TimerState, b: TimerState): boolean {
     a.carriedMs === b.carriedMs &&
     a.breakMs === b.breakMs &&
     a.drinkMs === b.drinkMs &&
-    a.sound === b.sound
+    a.soundBreak === b.soundBreak &&
+    a.soundDrink === b.soundDrink
   );
 }
 
@@ -235,19 +247,23 @@ export default function CuppingTimer() {
     };
   }, [running]);
 
+  // 切った区切りは音もバイブも出さない。カードの色だけが変わる
   const notify = useCallback(
-    (beeps: number) => {
+    (kind: "break" | "drink") => {
+      if (!(kind === "break" ? state.soundBreak : state.soundDrink)) return;
+
+      const beeps = kind === "break" ? 1 : 2;
       if (typeof navigator.vibrate === "function") {
         navigator.vibrate(beeps === 1 ? [220] : [180, 120, 180]);
       }
       const ctx = audioRef.current;
-      if (!state.sound || !ctx) return;
+      if (!ctx) return;
       void ctx
         .resume()
         .then(() => playBeep(ctx, beeps))
         .catch(() => undefined);
     },
-    [state.sound],
+    [state.soundBreak, state.soundDrink],
   );
 
   // 区切りを跨いだら知らせる。目標を伸ばして未到達に戻ったら、また鳴らせるよう印を戻す
@@ -258,11 +274,11 @@ export default function CuppingTimer() {
     if (!running) return;
     if (!announced.break && elapsed >= state.breakMs) {
       announced.break = true;
-      notify(1);
+      notify("break");
     }
     if (!announced.drink && elapsed >= state.drinkMs) {
       announced.drink = true;
-      notify(2);
+      notify("drink");
     }
   }, [running, elapsed, state.breakMs, state.drinkMs, notify]);
 
@@ -304,8 +320,20 @@ export default function CuppingTimer() {
   );
 
   const marks = [
-    { key: "breakMs" as const, label: "ブレイク", targetMs: state.breakMs },
-    { key: "drinkMs" as const, label: "飲み始め", targetMs: state.drinkMs },
+    {
+      key: "breakMs" as const,
+      soundKey: "soundBreak" as const,
+      label: "ブレイク",
+      targetMs: state.breakMs,
+      sound: state.soundBreak,
+    },
+    {
+      key: "drinkMs" as const,
+      soundKey: "soundDrink" as const,
+      label: "飲み始め",
+      targetMs: state.drinkMs,
+      sound: state.soundDrink,
+    },
   ];
 
   const elapsedTime = splitClock(elapsed);
@@ -398,19 +426,24 @@ export default function CuppingTimer() {
         </button>
       </div>
 
-      <label className={styles.sound}>
-        <input
-          type="checkbox"
-          checked={state.sound}
-          onChange={(event) =>
-            setState((current) => ({
-              ...current,
-              sound: event.target.checked,
-            }))
-          }
-        />
-        <span>到達したら音を鳴らす</span>
-      </label>
+      <div className={styles.sound}>
+        <span className={styles.sound__label}>到達を知らせる</span>
+        {marks.map((mark) => (
+          <label key={mark.soundKey} className={styles.sound__item}>
+            <input
+              type="checkbox"
+              checked={mark.sound}
+              onChange={(event) =>
+                setState((current) => ({
+                  ...current,
+                  [mark.soundKey]: event.target.checked,
+                }))
+              }
+            />
+            <span>{mark.label}</span>
+          </label>
+        ))}
+      </div>
 
       <p className={styles.status} aria-live="polite">
         {status}
