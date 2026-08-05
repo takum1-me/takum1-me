@@ -124,6 +124,17 @@ function shortClock(ms: number): string {
   return `${Math.floor(total / 60_000)}:${pad(Math.floor(total / 1000) % 60)}`;
 }
 
+/** ブレイクの到達音。飲み始めは合成したビープなので、耳で区別がつく */
+const BREAK_SOUND_URL = "/sounds/cupping-break.mp3";
+
+/** 読み込んだ音を鳴らす */
+function playSample(ctx: AudioContext, buffer: AudioBuffer): void {
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  source.start();
+}
+
 /** 到達を知らせる短いビープ。鳴らす回数で 2 つの区切りを聞き分ける */
 function playBeep(ctx: AudioContext, times: number): void {
   for (let i = 0; i < times; i += 1) {
@@ -150,6 +161,7 @@ export default function CuppingTimer() {
   const elapsed = elapsedOf(state, now);
 
   const audioRef = useRef<AudioContext | null>(null);
+  const breakSoundRef = useRef<AudioBuffer | null>(null);
   const announcedRef = useRef<Announced>({ break: false, drink: false });
 
   // 読み直した直後は「すでに過ぎている区切り」を知らせ済みとして始める。
@@ -258,9 +270,11 @@ export default function CuppingTimer() {
       }
       const ctx = audioRef.current;
       if (!ctx) return;
+      const sample = kind === "break" ? breakSoundRef.current : null;
       void ctx
         .resume()
-        .then(() => playBeep(ctx, beeps))
+        // 読み込みが間に合わなかったときは合成のビープで知らせる
+        .then(() => (sample ? playSample(ctx, sample) : playBeep(ctx, beeps)))
         .catch(() => undefined);
     },
     [state.soundBreak, state.soundDrink],
@@ -290,6 +304,20 @@ export default function CuppingTimer() {
     } catch {
       // 音が出せない環境ではバイブと表示だけで知らせる
     }
+
+    // ブレイクの音はここで先に取って解いておく。鳴らすのは早くても
+    // 4 分後なので、この時点から間に合わなかった場合だけビープに落ちる
+    const ctx = audioRef.current;
+    if (ctx && !breakSoundRef.current) {
+      void fetch(BREAK_SOUND_URL)
+        .then((response) => response.arrayBuffer())
+        .then((bytes) => ctx.decodeAudioData(bytes))
+        .then((buffer) => {
+          breakSoundRef.current = buffer;
+        })
+        .catch(() => undefined);
+    }
+
     return audioRef.current;
   }, []);
 
