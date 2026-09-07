@@ -13,6 +13,10 @@ Coffee, Programming, Design
 • [全学学類・専門学群・総合学域群代表者会議](https://www.zdk.tsukuba.ac.jp/) 前議長
 • [珈琲・俺](https://cafeore.cafe/)
 
+## Experience
+
+• Ethiopian Coffee House（インターン）
+
 ## Interests
 
 ### Coffee
