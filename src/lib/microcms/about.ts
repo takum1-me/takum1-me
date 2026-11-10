@@ -3,6 +3,7 @@ import { fetchAll } from "./api-base";
 export type AboutGenre =
   | "certification"
   | "organization"
+  | "experience"
   | "favorite-flavor"
   | "favorite-coffee"
   | "interest"
