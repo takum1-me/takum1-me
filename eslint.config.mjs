@@ -1,26 +1,27 @@
 // @ts-check
 
+import { defineConfig, globalIgnores } from "eslint/config";
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import eslintPluginAstro from "eslint-plugin-astro";
 import reactHooks from "eslint-plugin-react-hooks";
 
-export default tseslint.config(
+// 設定の組み立ては ESLint 本体の defineConfig を使う
+// （typescript-eslint の tseslint.config は非推奨になった）。
+export default defineConfig(
   // ESLint 9 のデフォルト無視は node_modules と .git だけなので、
   // 生成物・ビルド成果物・外部から持ってきたものは自分で外す。
   // これが無いと dist/ や .claude/worktrees/ まで lint 対象になり、
   // ローカルと CI で「lint」の意味が変わってしまう。
-  {
-    ignores: [
-      "dist/",
-      ".astro/",
-      ".wrangler/",
-      ".claude/",
-      "skills/",
-      "Coffee-Character-Wheel-Poster-PDF_files/",
-    ],
-  },
+  globalIgnores([
+    "dist/",
+    ".astro/",
+    ".wrangler/",
+    ".claude/",
+    "skills/",
+    "Coffee-Character-Wheel-Poster-PDF_files/",
+  ]),
 
   js.configs.recommended,
 
@@ -40,7 +41,13 @@ export default tseslint.config(
   // 一律で咎めてしまうので、ここでは従来の 2 ルールだけを有効にする。
   {
     files: ["**/*.tsx"],
-    plugins: { "react-hooks": reactHooks },
+    // プラグイン本体の configs の型が ESLint の Plugin と噛み合わないだけで、
+    // ルールの実体は問題ない。型の辻褄はここで合わせる。
+    plugins: {
+      "react-hooks": /** @type {import("eslint").ESLint.Plugin} */ (
+        /** @type {unknown} */ (reactHooks)
+      ),
+    },
     rules: {
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",

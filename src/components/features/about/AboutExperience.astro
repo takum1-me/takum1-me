@@ -1,0 +1,94 @@
+---
+import SectionHeading from "../../shared/page/SectionHeading.astro";
+import type { AboutItem } from "../../../lib/microcms";
+import { formatPeriod, formatRolePeriod } from "./date-utils";
+
+interface Props {
+  experiences: AboutItem[];
+}
+
+const { experiences } = Astro.props;
+---
+
+<section>
+  <SectionHeading eyebrow="Experience" title="経験" />
+
+  <ol class="exp-list">
+    {
+      experiences.map((experience) => (
+        <li class="exp-item">
+          {experience.beginDate && (
+            <p class="exp-item__period">
+              {formatPeriod(experience.beginDate, experience.finishDate)}
+            </p>
+          )}
+
+          <h3 class="exp-item__name">
+            {experience.link ? (
+              <a
+                href={experience.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {experience.title}
+              </a>
+            ) : (
+              experience.title
+            )}
+          </h3>
+
+          {experience.specific && (
+            <p class="exp-item__role">
+              {experience.specific}
+              {experience.specificBeiginDate &&
+                `（${formatRolePeriod(experience.specificBeiginDate, experience.specificFinishDate)}）`}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  /* 所属より時系列を読ませたいので、期間を先に置いた縦並びにしている */
+  .exp-list {
+    display: grid;
+    gap: var(--spacing-lg);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .exp-item {
+    display: grid;
+    gap: 0.3rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-line-strong);
+  }
+
+  .exp-item__period {
+    color: var(--color-ink-faint);
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .exp-item__name {
+    font-size: var(--text-h3);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .exp-item__name a {
+    transition: color var(--transition);
+  }
+
+  .exp-item__name a:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .exp-item__role {
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+  }
+</style>

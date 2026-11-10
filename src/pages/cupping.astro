@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Container from "../components/shared/layout/Container.astro";
+import PageHeader from "../components/shared/page/PageHeader.astro";
+import CuppingTimer from "../components/features/cupping/CuppingTimer";
+---
+
+<Layout
+  title="カッピングタイマー - takum1.me"
+  description="カッピング用のタイマー。注いでからの経過と、ブレイク・飲み始めまでの残りを 1 つのボタンで同時に走らせます。"
+>
+  <Container size="page">
+    <!-- 現場で開くページなので、3 つとボタンが 1 画面に収まるよう見出しは詰める -->
+    <PageHeader
+      eyebrow="Cupping"
+      title="カッピングタイマー"
+      lead="注いでからの経過と、ブレイク・飲み始めまでの残りを同時に走らせます。"
+    />
+
+    <CuppingTimer client:only="react" />
+  </Container>
+</Layout>
