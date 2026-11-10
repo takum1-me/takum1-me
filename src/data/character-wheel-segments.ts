@@ -4,7 +4,7 @@ import type { WheelSegment } from "./wheel-segment";
  * Coffee Character Wheel — SVG パス + Coffee-Character-Wheel-Poster-PDF.html の色指定。
  * 再生成: node scripts/extract-character-wheel.mjs
  */
-export const characterWheelViewBoxSize = 884;
+export const characterWheelViewBoxSize = 878;
 
 /** SVG ルート matrix から算出したパスのローカル変換 (ZoomableWheel pathLocalTransform 用) */
 export const characterWheelPathMatrix = "matrix(1.3333333,0,0,-1.3333333,0,0)";
@@ -17,7 +17,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "QUINIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(133.9019)translate(192.2378)rotate(-180)",
+    textTransform:
+      "rotate(133.9019)translate(195.2978)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-126.8753,121.8883)",
@@ -31,7 +32,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "LACTIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(143.7960)translate(187.9666)rotate(-180)",
+    textTransform:
+      "rotate(143.7960)translate(190.5541)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-137.9995,104.7417)",
@@ -45,7 +47,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "ACETIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(160.6823)translate(182.3282)rotate(-180)",
+    textTransform:
+      "rotate(160.6823)translate(184.7582)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-154.1976,67.3193)",
@@ -59,7 +62,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "LOW",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(-131.7506)translate(185.7244)rotate(-180)",
+    textTransform:
+      "rotate(-131.7506)translate(184.3144)rotate(-180)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-132.0052,-186.3249)",
@@ -73,7 +77,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "TARTARIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(174.5633)translate(171.7052)rotate(-180)",
+    textTransform:
+      "rotate(174.5633)translate(174.4727)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-162.2723,13.1725)",
@@ -87,7 +92,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "MEDIUM",
     depth: 2,
     parent: "pdf-17",
-    textTransform: "rotate(-114.1422)translate(178.1367)rotate(-180)",
+    textTransform:
+      "rotate(-114.1422)translate(178.3092)rotate(-180)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-59.2123,-225.6500)",
@@ -101,7 +107,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "PHOSPHORIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(181.6024)translate(163.4249)rotate(-180)",
+    textTransform:
+      "rotate(181.6024)translate(169.9249)rotate(-180)scale(0.841)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-160.3731,-13.3159)",
@@ -115,7 +122,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "CITRIC\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(-146.0549)translate(174.0030)rotate(-180)",
+    textTransform:
+      "rotate(-146.0549)translate(178.3230)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-171.7448,-147.8344)",
@@ -126,10 +134,11 @@ export const characterWheelSegments: WheelSegment[] = [
     id: "pdf-8",
     path: `m 0,0 c -3.142,-6.155 -5.946,-12.51 -8.41,-19.032 -2.439,-6.456 -4.543,-13.076 -6.273,-19.847 -1.705,-6.675 -3.044,-13.494 -4.017,-20.431 l 50.058,-6.893 c 0.729,5.078 1.727,10.069 2.992,14.953 1.282,4.953 2.839,9.794 4.64,14.515 1.818,4.767 3.885,9.412 6.198,13.909 z`,
     color: "rgb(203, 119, 28)",
-    name: "MALIC\nACID",
+    name: "MALIC ACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(-164.2882)translate(178.5185)rotate(-180)",
+    textTransform:
+      "rotate(-164.2882)translate(167.7685)rotate(-180)scale(0.966)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-202.1832,-101.5867)",
@@ -143,7 +152,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "ROUGH",
     depth: 2,
     parent: "pdf-19",
-    textTransform: "rotate(-36.8213)translate(211.3002)rotate(0)",
+    textTransform:
+      "rotate(-36.8213)translate(210.0702)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(215.8236,-148.6384)",
@@ -157,7 +167,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "HIGH",
     depth: 2,
     parent: "pdf-17",
-    textTransform: "rotate(-93.6340)translate(191.0745)rotate(-180)",
+    textTransform:
+      "rotate(-93.6340)translate(192.2220)rotate(-180)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-5.2533,-237.6481)",
@@ -171,7 +182,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "SHORT",
     depth: 2,
     parent: "pdf-18",
-    textTransform: "rotate(66.7281)translate(223.0682)rotate(0)",
+    textTransform:
+      "rotate(66.7281)translate(222.9407)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(73.3893,190.6828)",
@@ -185,7 +197,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "SMOOTH",
     depth: 2,
     parent: "pdf-19",
-    textTransform: "rotate(-64.7047)translate(195.2325)rotate(0)",
+    textTransform:
+      "rotate(-64.7047)translate(193.4625)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(153.1003,-202.6437)",
@@ -199,7 +212,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "PARTICLES",
     depth: 2,
     parent: "pdf-19",
-    textTransform: "rotate(-19.0748)translate(205.3107)rotate(0)",
+    textTransform:
+      "rotate(-19.0748)translate(209.2182)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(257.7805,-77.1965)",
@@ -213,7 +227,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "LONG",
     depth: 2,
     parent: "pdf-18",
-    textTransform: "rotate(52.4222)translate(230.6167)rotate(0)",
+    textTransform:
+      "rotate(52.4222)translate(230.1367)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(144.6555,151.5228)",
@@ -227,7 +242,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "MEDIUM",
     depth: 2,
     parent: "pdf-18",
-    textTransform: "rotate(60.9608)translate(221.2900)rotate(0)",
+    textTransform:
+      "rotate(60.9608)translate(221.4625)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(92.7449,183.9300)",
@@ -241,7 +257,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "COFFEE\nACID",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(173.7545)translate(110.6444)rotate(-180)",
+    textTransform:
+      "rotate(173.7545)translate(112.0769)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-72.3167,81.6640)",
@@ -254,7 +271,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(175, 44, 72)",
     name: "INTENSITY",
     depth: 1,
-    textTransform: "rotate(-108.3956)translate(97.4287)rotate(-180)",
+    textTransform:
+      "rotate(-108.3956)translate(105.9787)rotate(-180)scale(0.868)translate(0,1.92)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(2.1972,-170.3768)",
@@ -267,7 +285,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(198, 63, 77)",
     name: "LENGTH",
     depth: 1,
-    textTransform: "rotate(57.0456)translate(152.0910)rotate(0)",
+    textTransform:
+      "rotate(57.0456)translate(151.1848)rotate(0)translate(0,1.92)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(99.8705,100.3656)",
@@ -280,7 +299,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(212, 190, 26)",
     name: "TEXTURE",
     depth: 1,
-    textTransform: "rotate(-44.9217)translate(130.4925)rotate(0)",
+    textTransform:
+      "rotate(-44.9217)translate(131.1425)rotate(0)scale(0.992)translate(0,1.92)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(194.6816,-53.3283)",
@@ -294,7 +314,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "BODY",
     depth: 2,
     parent: "pdf-23",
-    textTransform: "rotate(18.3624)translate(164.6657)rotate(0)",
+    textTransform:
+      "rotate(18.3624)translate(164.1857)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(206.8860,6.1785)",
@@ -307,7 +328,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(198, 31, 39)",
     name: "ACIDITY",
     depth: 1,
-    textTransform: "rotate(204.6623)translate(62.0000)rotate(-180)",
+    textTransform:
+      "rotate(204.6623)translate(37.3106)rotate(-180)translate(0,1.92)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(9.4283,-105.0883)",
@@ -320,7 +342,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(218, 65, 57)",
     name: "AFTERTASTE",
     depth: 1,
-    textTransform: "rotate(54.1591)translate(69.0910)rotate(0)",
+    textTransform:
+      "rotate(54.1591)translate(80.5910)rotate(0)scale(0.736)translate(0,1.92)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(56.2193,50.5032)",
@@ -333,7 +356,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(225, 172, 21)",
     name: "MOUTHFEEL",
     depth: 1,
-    textTransform: "rotate(-16.4577)translate(65.6718)rotate(0)",
+    textTransform:
+      "rotate(-16.4577)translate(72.2218)rotate(0)scale(0.790)translate(0,1.92)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(139.9681,8.2348)",
@@ -3007,7 +3031,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "WEIGHT",
     depth: 2,
     parent: "pdf-23",
-    textTransform: "rotate(1.0571)translate(222.0966)rotate(0)",
+    textTransform:
+      "rotate(1.0571)translate(222.8466)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(205.0247,-14.0812)",
@@ -3021,7 +3046,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "VISCOSITY",
     depth: 2,
     parent: "pdf-23",
-    textTransform: "rotate(29.6716)translate(215.2153)rotate(0)",
+    textTransform:
+      "rotate(29.6716)translate(219.5428)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(199.1773,66.5763)",
@@ -3189,7 +3215,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "ASTRINGENT",
     depth: 2,
     parent: "pdf-21",
-    textTransform: "rotate(121.6321)translate(218.0050)rotate(-180)",
+    textTransform:
+      "rotate(121.6321)translate(224.5050)rotate(-180)scale(0.880)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-109.4388,188.0796)",
@@ -3203,7 +3230,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "MURKY",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(92.4794)translate(250.8335)rotate(-180)",
+    textTransform:
+      "rotate(92.4794)translate(249.8660)rotate(-180)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-17.9903,231.3852)",
@@ -3217,7 +3245,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "CLEAR",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(87.3109)translate(252.3645)rotate(0)",
+    textTransform:
+      "rotate(87.3109)translate(253.2870)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(12.2557,233.8649)",
@@ -3231,7 +3260,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "DISJOINTED",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(82.1588)translate(236.1723)rotate(0)",
+    textTransform:
+      "rotate(82.1588)translate(243.6723)rotate(0)scale(0.909)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(22.8960,233.5527)",
@@ -3245,7 +3275,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "DRYING",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(110.8958)translate(239.6435)rotate(-180)",
+    textTransform:
+      "rotate(110.8958)translate(241.1810)rotate(-180)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-75.9105,211.4944)",
@@ -3259,7 +3290,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "HIGH\nCOMPLEX",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(102.8952)translate(240.4688)rotate(-180)",
+    textTransform:
+      "rotate(102.8952)translate(240.0488)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(51, 51, 51)",
     groupTransform: "translate(-57.3889,220.2653)",
@@ -3273,7 +3305,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "INTEGRATED",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(76.9795)translate(236.7713)rotate(0)",
+    textTransform:
+      "rotate(76.9795)translate(244.2713)rotate(0)scale(0.859)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(43.2701,231.2580)",
@@ -3287,7 +3320,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "LOW\nCOMPLEX",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(97.6718)translate(241.9488)rotate(-180)",
+    textTransform:
+      "rotate(97.6718)translate(241.5288)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-38.0056,226.9384)",
@@ -3301,7 +3335,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "CLARITY",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(88.9476)translate(176.9748)rotate(0)",
+    textTransform:
+      "rotate(88.9476)translate(179.9673)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(18.9868,165.3419)",
@@ -3312,10 +3347,11 @@ export const characterWheelSegments: WheelSegment[] = [
     id: "pdf-236",
     path: `m 0,0 c -2.863,1.546 -5.629,3.249 -8.29,5.092 -2.672,1.849 -5.239,3.838 -7.686,5.963 -2.45,2.129 -4.778,4.393 -6.98,6.776 L -60.37,-16.718 c 3.454,-3.778 7.116,-7.361 10.965,-10.736 3.846,-3.373 7.881,-6.535 12.086,-9.471 4.192,-2.927 8.548,-5.633 13.06,-8.09 4.485,-2.442 9.124,-4.635 13.892,-6.579 L 8.805,-4.139 C 5.784,-2.917 2.844,-1.536 0,0`,
     color: "rgb(121, 193, 186)",
-    name: "MOUTH-DRYING",
+    name: "MOUTH-\nDRYING",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(113.4923)translate(148.2781)rotate(-180)",
+    textTransform:
+      "rotate(113.4923)translate(168.4156)rotate(-180)translate(0,3.60)",
     textAnchor: "end",
     textColor: "rgb(51, 51, 51)",
     groupTransform: "translate(-43.5657,151.4739)",
@@ -3329,7 +3365,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "COMPLEXITY",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(98.5029)translate(163.6855)rotate(-180)",
+    textTransform:
+      "rotate(98.5029)translate(169.1855)rotate(-180)scale(0.895)translate(0,1.60)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(-19.5476,161.1843)",
@@ -3343,7 +3380,8 @@ export const characterWheelSegments: WheelSegment[] = [
     name: "BALANCE",
     depth: 2,
     parent: "pdf-239",
-    textTransform: "rotate(79.4048)translate(179.2782)rotate(0)",
+    textTransform:
+      "rotate(79.4048)translate(179.8557)rotate(0)translate(0,1.60)",
     textAnchor: "start",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(44.5341,161.0537)",
@@ -3356,7 +3394,8 @@ export const characterWheelSegments: WheelSegment[] = [
     color: "rgb(58, 154, 165)",
     name: "OVERALL",
     depth: 1,
-    textTransform: "rotate(97.3464)translate(101.8242)rotate(-180)",
+    textTransform:
+      "rotate(97.3464)translate(102.0062)rotate(-180)translate(0,1.92)",
     textAnchor: "end",
     textColor: "rgb(255, 255, 255)",
     groupTransform: "translate(26.4335,97.5944)",

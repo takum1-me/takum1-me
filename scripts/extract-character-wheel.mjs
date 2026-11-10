@@ -893,9 +893,63 @@ function main() {
   // anchor=middle で中央置きすると語の内側半分が後描画のウェッジに隠れるため使わない。
   // 中央の白いカップ形状にラベルがかからない最小半径
   // （ポリゴンのベジェ粗サンプリングで entry が過小になる場合の保険）
-  const HUB_CLEAR = 62;
-  /** ラベルのおおよその字幅（component の CSS: d1=12px, それ以外=10px）。やや保守的に見積もる */
-  const charW = (s) => (s.depth === 1 ? 7.9 : 6.9);
+  // 白い穴はハブ中心からずれているので、レイ上の実測（entry）を優先し、下限は小さめに置く
+  const HUB_CLEAR = 30;
+  // ラベルの字幅。1 文字一律の見積もりだと W / M を含む語が実際より短く見積もられ、
+  // 扇からはみ出す。system-ui（600）を Chromium で実測した 1em あたりの送り幅を使う。
+  const GLYPH_EM = {
+    A: 0.67,
+    B: 0.63,
+    C: 0.7,
+    D: 0.69,
+    E: 0.57,
+    F: 0.54,
+    G: 0.72,
+    H: 0.72,
+    I: 0.25,
+    J: 0.54,
+    K: 0.64,
+    L: 0.54,
+    M: 0.85,
+    N: 0.71,
+    O: 0.75,
+    P: 0.6,
+    Q: 0.75,
+    R: 0.63,
+    S: 0.62,
+    T: 0.59,
+    U: 0.7,
+    V: 0.66,
+    W: 0.95,
+    X: 0.67,
+    Y: 0.65,
+    Z: 0.63,
+    " ": 0.2,
+    "-": 0.44,
+    "/": 0.29,
+    "&": 0.69,
+    ".": 0.23,
+  };
+  /** component の CSS（d1 = 12px、それ以外 = 10px）に合わせたフォントサイズ */
+  const fontPx = (s) => (s.depth === 1 ? 12 : 10);
+  /** OS ごとの system-ui の差を見込んだ余裕 */
+  const WIDTH_SAFETY = 1.05;
+  const lineWidth = (line, s) =>
+    [...line].reduce((sum, ch) => sum + (GLYPH_EM[ch] ?? 0.7), 0) *
+    fontPx(s) *
+    WIDTH_SAFETY;
+  /** 折り返し後の最長行の幅（scale 前） */
+  const textWidth = (name, s) =>
+    Math.max(
+      ...String(name)
+        .split("\n")
+        .map((l) => lineWidth(l, s)),
+    );
+  /** 行を積んだときの円周方向の厚み（scale 前）。1 行目は字高ぶんだけ */
+  const textHeight = (name, s) =>
+    fontPx(s) * (0.8 + 1.1 * (String(name).split("\n").length - 1));
+  /** 縮めてよい下限。これより小さくすると全体表示で読めない */
+  const MIN_LABEL_SCALE = 0.68;
 
   // ウェッジ内ラベルはポスターのアンカーではなく扇の角度中心に置く。
   // ポスターのアンカーは 1 行目の書き出し位置なので、2 行ラベル
@@ -916,38 +970,56 @@ function main() {
     s.rayIn = Math.max(entry + 4, HUB_CLEAR);
   }
 
-  /** 折り返し後の最長行の文字数（未折り返しなら全長） */
-  const maxLineChars = (name) =>
-    Math.max(
-      ...String(name)
-        .split("\n")
-        .map((l) => l.length),
+  /** 扇の内側に収めるための縮小率（1 = 縮めない） */
+  const fitScale = (name, s) => {
+    const radialAvail = s.rayOut - s.rayIn - 6;
+    const rMid = (s.rayIn + s.rayOut) / 2;
+    // 区切りの白線ぶんを引いた、ラベル位置での扇の幅
+    const tangentialAvail = rMid * s.span.spanWidth - 8;
+    return Math.min(
+      1,
+      radialAvail / textWidth(name, s),
+      tangentialAvail / textHeight(name, s),
     );
+  };
 
-  // ウェッジの径方向の深さに収まらないラベルはポスターと同様に 2 行へ折り返す
-  // （PHOSPHORIC ACID / TARTARIC ACID 等。はみ出すと白文字が薄い背景に消える）
+  // ウェッジ内ラベルは 1 行と 2 行の折り返し候補から、いちばん大きく出せる組み方を選び、
+  // それでも収まらないぶんだけ縮める。はみ出すと白文字が白い隙間や隣の扇に乗って消える
+  // （PHOSPHORIC / HIGH COMPLEX / AFTERTASTE 等）。
   for (const s of segments) {
-    if (!s.name || !s.labelInside || !/\s/.test(s.name)) continue;
-    const avail = s.rayOut - s.rayIn;
-    if (String(s.name).length * charW(s) <= avail) continue;
-    const words = String(s.name).split(" ");
-    let best = 1;
-    let bestDiff = Infinity;
+    if (!s.name || !s.labelInside) continue;
+    const flat = String(s.name).replace(/\s+/g, " ").trim();
+    const words = flat.split(" ");
+    const candidates = [flat];
     for (let k = 1; k < words.length; k++) {
-      const left = words.slice(0, k).join(" ").length;
-      const right = words.slice(k).join(" ").length;
-      const diff = Math.abs(left - right);
-      if (diff < bestDiff) {
-        bestDiff = diff;
-        best = k;
+      candidates.push(
+        `${words.slice(0, k).join(" ")}\n${words.slice(k).join(" ")}`,
+      );
+    }
+    // MOUTH-DRYING のようなハイフン語はハイフンの後ろでも折り返せる
+    for (const m of flat.matchAll(/-(?=\S)/g)) {
+      const at = m.index + 1;
+      candidates.push(`${flat.slice(0, at)}\n${flat.slice(at)}`);
+    }
+    let bestName = flat;
+    let bestScale = fitScale(flat, s);
+    for (const c of candidates.slice(1)) {
+      const sc = fitScale(c, s);
+      // 1 行で読めるならそのまま。折り返しは目に見えて大きくなるときだけ
+      if (sc > bestScale * 1.08) {
+        bestName = c;
+        bestScale = sc;
       }
     }
-    s.name = `${words.slice(0, best).join(" ")}\n${words.slice(best).join(" ")}`;
+    s.name = bestName;
+    s.labelScale = Math.max(MIN_LABEL_SCALE, bestScale);
   }
 
-  // ウェッジ内ラベルは厚みの中央へ。折り返してもなお収まらない語
-  // （PHOSPHORIC / ASTRINGENT 等）は内外へ同じだけはみ出させる。
-  // 片側だけにはみ出させると白い隙間の上に白文字が乗って消える。
+  /** scale 込みのラベルの径方向の長さ */
+  const scaledLength = (s) => textWidth(s.name, s) * (s.labelScale ?? 1);
+
+  // ウェッジ内ラベルは厚みの中央へ。下限まで縮めても収まらない語は
+  // 内外へ同じだけはみ出させる（片側だけだと白い隙間の上で白文字が消える）。
   // 外周ティックラベルはティック弧のすぐ外から書き始める。
   for (const s of segments) {
     if (!s.name) continue;
@@ -955,8 +1027,7 @@ function main() {
       s.labelRadius = s.span.rMax + 8;
       continue;
     }
-    const textLen = maxLineChars(s.name) * charW(s);
-    const slack = s.rayOut - s.rayIn - textLen;
+    const slack = s.rayOut - s.rayIn - scaledLength(s);
     s.labelRadius = Math.max(HUB_CLEAR, s.rayIn + slack / 2);
   }
 
@@ -972,8 +1043,7 @@ function main() {
       let dAng = Math.abs(outer.labelAngleDeg - inner.labelAngleDeg) % 360;
       if (dAng > 180) dAng = 360 - dAng;
       if (dAng > 4) continue;
-      const innerEnd =
-        inner.labelRadius + maxLineChars(inner.name) * charW(inner);
+      const innerEnd = inner.labelRadius + scaledLength(inner);
       if (outer.labelRadius < innerEnd + 4) outer.labelRadius = innerEnd + 4;
     }
   }
@@ -982,7 +1052,18 @@ function main() {
     if (!s.name) continue;
     const ang = s.labelAngleDeg;
     const rightSide = Math.cos((ang * Math.PI) / 180) >= 0;
-    s.textTransform = `rotate(${ang.toFixed(4)})translate(${s.labelRadius.toFixed(4)})rotate(${rightSide ? 0 : -180})`;
+    const scale =
+      s.labelScale && s.labelScale < 0.995
+        ? `scale(${s.labelScale.toFixed(3)})`
+        : "";
+    // component は 1 行なら dy=.2em、複数行なら ±0.55em ずつベースラインを振り分ける。
+    // 字は大文字だけなのでベースラインから上へ字高ぶん伸び、塊の中心が扇の中心から
+    // 片側へずれる（2 行で約 0.36em、1 行で約 0.16em）。ウェッジ内ラベルだけ戻す。
+    const lineCount = String(s.name).split("\n").length;
+    const nudge = s.labelInside
+      ? `translate(0,${((lineCount > 1 ? 0.36 : 0.16) * fontPx(s)).toFixed(2)})`
+      : "";
+    s.textTransform = `rotate(${ang.toFixed(4)})translate(${s.labelRadius.toFixed(4)})rotate(${rightSide ? 0 : -180})${scale}${nudge}`;
     s.textAnchor = rightSide ? "start" : "end";
     s.zoomAngleDeg = ang;
   }
@@ -994,8 +1075,7 @@ function main() {
     const pw = pdfToWorld(s.tx, s.ty);
     maxAbs = Math.max(maxAbs, Math.abs(pw.x - hubW.x), Math.abs(pw.y - hubW.y));
     if (s.name) {
-      const textLen = maxLineChars(s.name) * 7.2;
-      maxAbs = Math.max(maxAbs, (s.labelRadius || 0) + textLen);
+      maxAbs = Math.max(maxAbs, (s.labelRadius || 0) + scaledLength(s));
     }
   }
 
