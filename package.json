@@ -17,6 +17,7 @@
     "lint:css:astro": "node check-astro-styles.js",
     "character-wheel:data": "node scripts/extract-character-wheel.mjs",
     "character-wheel:debug": "node scripts/debug-character-wheel.mjs",
+    "microcms": "node --env-file=.env scripts/microcms-import.mjs",
     "c-all": "npm run format:check && npm run lint && npm run lint:css && npm run lint:css:astro && npm run typecheck",
     "fix": "npm run format && npm run lint -- --fix && npm run lint:css:fix",
     "prepare": "husky"
