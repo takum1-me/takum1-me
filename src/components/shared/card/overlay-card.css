@@ -7,18 +7,11 @@
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition:
-    border-color var(--transition),
-    box-shadow var(--transition),
-    transform var(--transition);
+  transition: border-color var(--transition);
 }
 
 .entry-card:hover {
-  --media-zoom: 1.03;
-
   border-color: var(--color-line-strong);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
 }
 
 /* --- 画像 -------------------------------------------------------------- */
@@ -34,23 +27,16 @@
   aspect-ratio: 1;
 }
 
-/* ズーム量は変数で受け取り、ホバー時にカード側から書き換える */
 .entry-card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(var(--media-zoom, 1));
-  transition: transform 400ms var(--ease-out);
 }
 
 .entry-card__placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    var(--color-bg-subtle),
-    var(--color-line)
-  );
+  background: var(--color-bg-subtle);
 }
 
 /* --- 本文 -------------------------------------------------------------- */

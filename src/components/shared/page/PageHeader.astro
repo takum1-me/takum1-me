@@ -1,23 +1,20 @@
 ---
 /**
- * 全ページ共通のページ見出し。
- * eyebrow（英字ラベル）→ title → lead → 罫線、の一定のリズムを作る。
+ * 全ページ共通のページ見出し。title → lead → 罫線。
+ * aside スロットには補足やページ内の関連リンクを置く。
  */
 export interface Props {
-  eyebrow?: string;
   title: string;
   lead?: string;
-  /** 見出しより一段小さい補足を title の直後に置く場合 */
   align?: "start" | "center";
 }
 
-const { eyebrow, title, lead, align = "start" } = Astro.props;
+const { title, lead, align = "start" } = Astro.props;
 const hasAside = Astro.slots.has("aside");
 ---
 
 <header class:list={["page-header", `is-${align}`, { "has-aside": hasAside }]}>
   <div class="page-header__main">
-    {eyebrow && <p class="page-header__eyebrow">{eyebrow}</p>}
     <h1 class="page-header__title">{title}</h1>
     {lead && <p class="page-header__lead">{lead}</p>}
   </div>
@@ -53,15 +50,6 @@ const hasAside = Astro.slots.has("aside");
     min-width: 0;
   }
 
-  .page-header__eyebrow {
-    margin-bottom: 0.85rem;
-    color: var(--color-accent);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
-  }
-
   .page-header__title {
     font-family: var(--font-serif);
     font-size: var(--text-display);
@@ -84,9 +72,7 @@ const hasAside = Astro.slots.has("aside");
 
   .page-header__aside {
     align-self: end;
-    padding-left: 1.15rem;
-    border-left: 2px solid var(--color-accent);
-    color: var(--color-ink-faint);
+    color: var(--color-ink-muted);
     font-size: var(--text-small);
     line-height: var(--text-small--line-height);
   }

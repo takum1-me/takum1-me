@@ -384,8 +384,8 @@ export function ZoomableFlavorWheel({
   return (
     <ZoomableWheel
       segments={segments}
-      footerIdle="カテゴリーをクリックして拡大表示"
-      footerZoomed="具体的なフレーバーをクリックして選択"
+      footerIdle="カテゴリーを押すと拡大します"
+      footerZoomed="フレーバーを押すと選べます"
       flavorIntegration
     />
   );

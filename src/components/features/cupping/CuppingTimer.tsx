@@ -367,12 +367,11 @@ export default function CuppingTimer() {
   const elapsedTime = splitClock(elapsed);
   const isPristine = !running && elapsed === 0;
 
-  let status =
-    "スタートを押すと、3 つのタイマーが同時に走ります。数字を押すと時間を変えられます。";
+  let status = "数字を押すと時間を変えられます。";
   if (running) {
-    status = "計測中。画面を消しても、閉じても、開き直せば続きから表示します。";
+    status = "計測中。ページを閉じても、開き直せば続きから表示します。";
   } else if (elapsed > 0) {
-    status = "一時停止中。再開を押すと続きから進みます。";
+    status = "一時停止中";
   }
 
   return (

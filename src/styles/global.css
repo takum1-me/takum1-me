@@ -17,7 +17,7 @@
      These are the only sizes the site uses. */
   --text-eyebrow: 0.6875rem;
   --text-eyebrow--line-height: 1.4;
-  --text-eyebrow--letter-spacing: 0.18em;
+  --text-eyebrow--letter-spacing: 0.06em;
   --text-eyebrow--font-weight: 700;
   --text-small: 0.8125rem;
   --text-small--line-height: 1.7;
@@ -140,6 +140,18 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+
+  /* PageHeader の aside は各ページのスロットなので、スコープ外のここで下線を付ける */
+  .page-header__aside a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-underline-offset: 0.25em;
+    transition: color var(--transition);
+  }
+
+  .page-header__aside a:hover {
+    color: var(--color-accent-strong);
   }
 }
 
