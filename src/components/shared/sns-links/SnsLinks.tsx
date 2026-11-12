@@ -1,30 +1,11 @@
+import { SNS_LINKS, type SnsVariant } from "../../../data/site-links";
 import InstagramIcon from "../../../assets/Instagram_Glyph_Gradient.svg?url";
 
 interface SnsLinksProps {
   className?: string;
 }
 
-type Variant = "twitter" | "instagram" | "github";
-
-const snsData: { name: string; href: string; variant: Variant }[] = [
-  {
-    name: "X (Twitter)",
-    href: "https://twitter.com/takum1_me",
-    variant: "twitter",
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com/takum1_me",
-    variant: "instagram",
-  },
-  {
-    name: "GitHub",
-    href: "https://github.com/takum1-me",
-    variant: "github",
-  },
-];
-
-const renderIcon = (variant: Variant) => {
+const renderIcon = (variant: SnsVariant) => {
   switch (variant) {
     case "twitter":
       return (
@@ -48,7 +29,7 @@ const renderIcon = (variant: Variant) => {
 export default function SnsLinks({ className = "" }: SnsLinksProps) {
   return (
     <div className={`sns-links ${className}`.trim()}>
-      {snsData.map((sns) => (
+      {SNS_LINKS.map((sns) => (
         <a
           key={sns.name}
           href={sns.href}

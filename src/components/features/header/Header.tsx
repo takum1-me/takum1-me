@@ -1,27 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import SnsLinks from "../../shared/sns-links/SnsLinks";
+import { NAV_ITEMS, SNS_LINKS } from "../../../data/site-links";
 import "./header.css";
 
-const navItems = [
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Works", href: "/works" },
-  { label: "Lab", href: "/lab" },
-  { label: "Beans", href: "/beans" },
-];
-
+/**
+ * 罫線グリッドのヘッダー（A-1）。現在地のナビは墨のベタで示す。
+ * スマホではメニューボタンからドロワーを開く。
+ */
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [path, setPath] = useState("");
 
   useEffect(() => {
     setPath(window.location.pathname);
-
-    const onScroll = () => setIsScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // メニューを開いている間だけ背面のスクロールを止める
@@ -46,7 +36,7 @@ export default function Header() {
 
   const renderLinks = (className: string) => (
     <nav className={className} aria-label="サイトナビゲーション">
-      {navItems.map((item) => (
+      {NAV_ITEMS.map((item) => (
         <a
           key={item.href}
           href={item.href}
@@ -61,7 +51,7 @@ export default function Header() {
   );
 
   return (
-    <header className={`site-header${isScrolled ? " is-scrolled" : ""}`}>
+    <header className="site-header">
       <div className="site-header__inner">
         <a className="site-header__brand" href="/">
           takum1.me
@@ -76,25 +66,33 @@ export default function Header() {
           aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
           aria-expanded={isMenuOpen}
         >
-          <span className={`toggle-icon${isMenuOpen ? " is-open" : ""}`}>
-            <span className="toggle-icon__bar toggle-icon__bar--top" />
-            <span className="toggle-icon__bar toggle-icon__bar--bottom" />
+          <span aria-hidden="true">{isMenuOpen ? "Close" : "Menu"}</span>
+          <span
+            className={`toggle-icon${isMenuOpen ? " is-open" : ""}`}
+            aria-hidden="true"
+          >
+            +
           </span>
         </button>
       </div>
-
-      <div
-        className={`site-header__scrim${isMenuOpen ? " is-open" : ""}`}
-        onClick={() => setIsMenuOpen(false)}
-        aria-hidden="true"
-      />
 
       <div
         className={`site-header__drawer${isMenuOpen ? " is-open" : ""}`}
         inert={!isMenuOpen}
       >
         {renderLinks("site-header__drawer-nav")}
-        <SnsLinks className="site-header__drawer-sns" />
+        <div className="site-header__drawer-sns">
+          {SNS_LINKS.map((sns) => (
+            <a
+              key={sns.href}
+              href={sns.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {sns.short} ↗
+            </a>
+          ))}
+        </div>
       </div>
     </header>
   );
