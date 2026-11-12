@@ -1,90 +1,90 @@
 ---
 /**
- * 全ページ共通のページ見出し。title → lead → 罫線。
- * aside スロットには補足やページ内の関連リンクを置く。
+ * 全ページ共通のページ見出し（A-1 グリッド）。
+ * 左の大きなマスに英単語（word）を巨大に組み、右のマスに導入文を置く。
+ * aside スロットは導入文の下に墨のマスとして出す（関連ページへのリンクなど）。
+ *
+ * ルート自体が Grid なので、<Container size="frame"> の中で本文の Grid と
+ * 並べると、境目の罫線は 1 本にまとまる。
  */
+import Grid from "../grid/Grid.astro";
+import Cell from "../grid/Cell.astro";
+
 export interface Props {
+  /** 日本語の見出し。word があるときはその上のラベルになる */
   title: string;
+  /** マスいっぱいに組む英単語（"Works" など）。無いときは title を見出しにする */
+  word?: string;
   lead?: string;
-  align?: "start" | "center";
 }
 
-const { title, lead, align = "start" } = Astro.props;
+const { title, word, lead } = Astro.props;
 const hasAside = Astro.slots.has("aside");
+const hasSide = Boolean(lead) || hasAside;
 ---
 
-<header class:list={["page-header", `is-${align}`, { "has-aside": hasAside }]}>
-  <div class="page-header__main">
-    <h1 class="page-header__title">{title}</h1>
-    {lead && <p class="page-header__lead">{lead}</p>}
-  </div>
+<Grid as="header" class="page-header">
+  <Cell
+    col={hasSide ? "1 / 9" : "1 / 13"}
+    row={hasAside ? "span 2" : "auto"}
+    spread
+    fit={Boolean(word)}
+    class="page-header__main"
+  >
+    {
+      word ? (
+        <>
+          <p class="grid-label grid-label--accent">{title}</p>
+          <h1 class="grid-giant page-header__word">{word}</h1>
+        </>
+      ) : (
+        <>
+          <span class="grid-label grid-label--accent">Page</span>
+          <h1 class="grid-serif-l">{title}</h1>
+        </>
+      )
+    }
+  </Cell>
+
+  {
+    lead && (
+      <Cell col="9 / 13" spread>
+        <span class="grid-label grid-label--accent">Intro</span>
+        <p class="grid-statement">{lead}</p>
+      </Cell>
+    )
+  }
 
   {
     hasAside && (
-      <div class="page-header__aside">
+      <Cell col="9 / 13" tone="ink" class="page-header__aside">
         <slot name="aside" />
-      </div>
+      </Cell>
     )
   }
-</header>
+</Grid>
 
 <style>
-  .page-header {
-    padding-block: clamp(2.5rem, 6vw, 4rem) 1.75rem;
-    border-bottom: 1px solid var(--color-line-strong);
-    margin-bottom: clamp(2rem, 5vw, 3rem);
-  }
-
-  .page-header.has-aside {
-    display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(14rem, 0.85fr);
-    gap: 1.3rem clamp(2rem, 6vw, 5rem);
-    align-items: end;
-  }
-
-  .page-header.is-center {
-    text-align: center;
-  }
-
   .page-header__main {
-    min-width: 0;
+    min-height: clamp(12rem, 22vw, 20rem);
   }
 
-  .page-header__title {
-    font-family: var(--font-serif);
-    font-size: var(--text-display);
-    font-weight: 400;
-    line-height: var(--text-display--line-height);
-    letter-spacing: var(--text-display--letter-spacing);
-  }
-
-  .page-header__lead {
-    max-width: 34rem;
-    margin-top: 1.1rem;
-    color: var(--color-ink-muted);
-    font-size: var(--text-body);
-    line-height: var(--text-body--line-height);
-  }
-
-  .page-header.is-center .page-header__lead {
-    margin-inline: auto;
+  /* 巨大な英単語は字面の下端をマスの罫線に寄せる */
+  .page-header__word {
+    margin-left: -0.04em;
+    margin-bottom: -0.04em;
   }
 
   .page-header__aside {
-    align-self: end;
-    color: var(--color-ink-muted);
+    justify-content: center;
+    gap: var(--spacing-sm);
     font-size: var(--text-small);
     line-height: var(--text-small--line-height);
   }
 
   @media (width <= 48rem) {
-    .page-header.has-aside {
-      grid-template-columns: 1fr;
-      align-items: start;
-    }
-
-    .page-header__aside {
-      max-width: 32rem;
+    .page-header__main {
+      min-height: 10rem;
     }
   }
 </style>

@@ -2,6 +2,8 @@
 import Layout from "../../../layouts/Layout.astro";
 import Container from "../../../components/shared/layout/Container.astro";
 import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import Grid from "../../../components/shared/grid/Grid.astro";
+import Cell from "../../../components/shared/grid/Cell.astro";
 import { getRoastLogs } from "../../../lib/roast-logs";
 import { mmss, percent, celsius } from "../../../lib/utils/klog";
 import { getAllBeans } from "../../../lib/microcms/beans-list";
@@ -61,109 +63,132 @@ const beanFilters = [...beanCounts.entries()]
   title="焙煎ログ - Beans - takum1.me"
   description="Kaffelogic nano 7 で焙煎したバッチのログ一覧。"
 >
-  <Container size="page">
+  <Container size="frame">
     <PageHeader
+      word="Logs"
       title="焙煎ログ"
       lead="Kaffelogic nano 7 の焙煎ログです。バッチを開くと温度と RoR の記録が見られます。"
     >
-      <p slot="aside">ID は「焙煎機のログ番号 - 焙煎日」です。</p>
+      <p slot="aside">
+        ID は「焙煎機のログ番号 - 焙煎日」です。<br />
+        <a href="/beans">← 焙煎豆リスト</a>
+      </p>
     </PageHeader>
 
-    <div class="tools">
-      <label class="search">
-        <span class="search__label">検索</span>
-        <input
-          type="search"
-          id="log-search"
-          placeholder="バッチ ID / 豆 / プロファイル / 日付"
-          autocomplete="off"
-        />
-      </label>
-      <p class="count" id="log-count">{rows.length} 件</p>
-    </div>
+    <Grid class="logs-grid">
+      {
+        beanFilters.length > 1 && (
+          <Cell col="1 / 9" class="beans" id="bean-filters">
+            <span class="grid-label grid-label--accent">Bean — 豆で絞る</span>
+            <div class="chips">
+              <button
+                type="button"
+                class="chip"
+                data-bean="all"
+                aria-pressed="true"
+              >
+                すべて
+                <span class="chip__count">{rows.length}</span>
+              </button>
+              {beanFilters.map((filter) => (
+                <button
+                  type="button"
+                  class="chip"
+                  data-bean={filter.key}
+                  aria-pressed="false"
+                >
+                  {filter.label}
+                  <span class="chip__count">{filter.count}</span>
+                </button>
+              ))}
+            </div>
+          </Cell>
+        )
+      }
 
-    {
-      beanFilters.length > 1 && (
-        <div class="beans" id="bean-filters">
-          <span class="beans__label">豆</span>
-          <button
-            type="button"
-            class="chip"
-            data-bean="all"
-            aria-pressed="true"
-          >
-            すべて
-            <span class="chip__count">{rows.length}</span>
-          </button>
-          {beanFilters.map((filter) => (
-            <button
-              type="button"
-              class="chip"
-              data-bean={filter.key}
-              aria-pressed="false"
-            >
-              {filter.label}
-              <span class="chip__count">{filter.count}</span>
-            </button>
-          ))}
+      <Cell
+        col={beanFilters.length > 1 ? "9 / 13" : "1 / 13"}
+        tone="ink"
+        spread
+        class="tools"
+      >
+        <label class="search">
+          <span class="grid-label">Search — 検索</span>
+          <input
+            type="search"
+            id="log-search"
+            placeholder="バッチ ID / 豆 / プロファイル / 日付"
+            autocomplete="off"
+          />
+        </label>
+        <p class="grid-label count" id="log-count">{rows.length} 件</p>
+      </Cell>
+
+      <Cell col="1 / 13" class="logs-cell">
+        <div class="logs-head" aria-hidden="true">
+          <span class="grid-label grid-label--accent">ID</span>
+          <span class="grid-label grid-label--accent">豆 / 日時</span>
+          <span class="grid-label grid-label--accent logs-head__stats">
+            1ハゼ · 合計 · DTR · 煎り上げ
+          </span>
         </div>
-      )
-    }
-
-    {
-      rows.length === 0 ? (
-        <p class="empty">まだ焙煎ログがありません。</p>
-      ) : (
-        <ul class="logs" id="log-list">
-          {rows.map((row) => (
-            <li
-              class="logs__item"
-              data-haystack={row.haystack}
-              data-bean={row.beanKey}
-            >
-              <a class="logs__link" href={`/beans/logs/${row.batchId}`}>
-                <span class="logs__id">{row.batchId}</span>
-                <span class="logs__main">
-                  <span class="logs__bean">{row.bean ?? "豆の紐付けなし"}</span>
-                  <span class="logs__meta">
-                    {row.date}
-                    {row.profileName && ` · ${row.profileName}`}
-                  </span>
-                </span>
-                <span class="logs__stats">
-                  <span class="stat">
-                    <span class="stat__label">1ハゼ</span>
-                    <span class="stat__value">
-                      {mmss(row.metrics.firstCrackSec)}
+        {
+          rows.length === 0 ? (
+            <p class="empty">まだ焙煎ログがありません。</p>
+          ) : (
+            <ul class="logs" id="log-list">
+              {rows.map((row) => (
+                <li
+                  class="logs__item"
+                  data-haystack={row.haystack}
+                  data-bean={row.beanKey}
+                >
+                  <a class="logs__link" href={`/beans/logs/${row.batchId}`}>
+                    <span class="logs__id">{row.batchId}</span>
+                    <span class="logs__main">
+                      <span class="logs__bean">
+                        {row.bean ?? "豆の紐付けなし"}
+                      </span>
+                      <span class="logs__meta">
+                        {row.date}
+                        {row.profileName && ` · ${row.profileName}`}
+                      </span>
                     </span>
-                  </span>
-                  <span class="stat">
-                    <span class="stat__label">合計</span>
-                    <span class="stat__value">
-                      {mmss(row.metrics.totalSec)}
+                    <span class="logs__stats">
+                      <span class="stat">
+                        <span class="stat__label">1ハゼ</span>
+                        <span class="stat__value">
+                          {mmss(row.metrics.firstCrackSec)}
+                        </span>
+                      </span>
+                      <span class="stat">
+                        <span class="stat__label">合計</span>
+                        <span class="stat__value">
+                          {mmss(row.metrics.totalSec)}
+                        </span>
+                      </span>
+                      <span class="stat">
+                        <span class="stat__label">DTR</span>
+                        <span class="stat__value">
+                          {percent(row.metrics.developmentPercent)}
+                        </span>
+                      </span>
+                      <span class="stat">
+                        <span class="stat__label">煎り上げ</span>
+                        <span class="stat__value">
+                          {celsius(row.metrics.endTemp)}
+                        </span>
+                      </span>
                     </span>
-                  </span>
-                  <span class="stat">
-                    <span class="stat__label">DTR</span>
-                    <span class="stat__value">
-                      {percent(row.metrics.developmentPercent)}
-                    </span>
-                  </span>
-                  <span class="stat">
-                    <span class="stat__label">煎り上げ</span>
-                    <span class="stat__value">
-                      {celsius(row.metrics.endTemp)}
-                    </span>
-                  </span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-
-    <p class="none" id="log-none" hidden>該当する焙煎ログがありません。</p>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        <p class="none" id="log-none" hidden>該当する焙煎ログがありません。</p>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
 
@@ -219,150 +244,133 @@ const beanFilters = [...beanCounts.entries()]
 </script>
 
 <style>
-  .tools {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
+  .logs-grid {
+    grid-auto-rows: auto;
   }
 
-  .search {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    max-width: 24rem;
-  }
+  /* --- 絞り込み ---------------------------------------------------------- */
 
-  .search__label {
-    color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
-  }
-
-  .search input {
-    width: 100%;
-    padding: 0.55rem 0.7rem;
-    border: 1px solid var(--color-line-strong);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface);
-    color: var(--color-ink);
-    font-family: inherit;
-    font-size: var(--text-body);
-  }
-
-  .search input:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 1px;
-  }
-
-  .count {
-    color: var(--color-ink-faint);
-    font-size: var(--text-small);
-  }
-
-  .beans {
+  .chips {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .beans__label {
-    color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
+    margin-top: var(--spacing-md);
+    border-top: 1px solid var(--color-rule);
+    border-left: 1px solid var(--color-rule);
   }
 
   .chip {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.4rem;
-    padding: 0.35rem 0.8rem;
-    border: 1px solid var(--color-line-strong);
-    border-radius: var(--radius-pill);
-    background: var(--color-surface);
-    color: var(--color-ink-muted);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg);
+    border: 0;
+    border-right: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
+    color: var(--color-ink);
     font-family: inherit;
     font-size: var(--text-small);
+    font-weight: 700;
     cursor: pointer;
     transition:
-      border-color var(--transition),
-      background var(--transition),
+      background-color var(--transition),
       color var(--transition);
   }
 
   .chip:hover {
-    border-color: var(--color-accent);
-    color: var(--color-ink);
+    background: var(--color-bg-subtle);
   }
 
   .chip[aria-pressed="true"] {
-    border-color: var(--color-accent-strong);
-    background: var(--color-accent-strong);
-    color: var(--color-surface);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
   }
 
   .chip__count {
-    font-size: var(--text-eyebrow);
-    font-variant-numeric: tabular-nums;
+    font-family: var(--font-serif);
+    font-weight: 400;
     opacity: 70%;
   }
 
-  .logs {
+  /* --- 検索（墨のマス）--------------------------------------------------- */
+
+  .search {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .search input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    border: 1px solid var(--color-ink-muted);
+    color: var(--color-on-ink);
+    font: inherit;
+    font-size: var(--text-small);
+  }
+
+  .search input::placeholder {
+    color: var(--color-line-strong);
+  }
+
+  .search input:focus-visible {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  /* --- 一覧 -------------------------------------------------------------- */
+
+  .logs-head,
+  .logs__link {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr) auto;
+    gap: var(--spacing-lg);
+    align-items: baseline;
+  }
+
+  .logs-head {
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .logs-head__stats {
+    text-align: right;
+  }
+
+  .logs {
+    margin: 0;
+    padding: 0;
     list-style: none;
   }
 
+  .logs__item + .logs__item {
+    border-top: 1px solid var(--color-line-strong);
+  }
+
   .logs__link {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--spacing-md);
-    align-items: center;
-    padding: 0.9rem 1.1rem;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-    color: inherit;
-    text-decoration: none;
-    transition:
-      border-color var(--transition),
-      box-shadow var(--transition);
+    padding-block: var(--spacing-md);
+    transition: background-color var(--transition);
   }
 
   .logs__link:hover {
-    border-color: var(--color-line-strong);
-    box-shadow: var(--shadow-hover);
+    background: var(--color-bg-subtle);
   }
 
   .logs__id {
-    color: var(--color-accent-strong);
-    font-size: var(--text-small);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
+    font-family: var(--font-serif);
+    font-size: var(--text-lead);
   }
 
   .logs__main {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: var(--spacing-xs);
     min-width: 0;
   }
 
   .logs__bean {
-    overflow: hidden;
-    color: var(--color-ink);
-    font-size: var(--text-body);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 700;
   }
 
   .logs__meta {
@@ -372,47 +380,45 @@ const beanFilters = [...beanCounts.entries()]
 
   .logs__stats {
     display: flex;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
   }
 
   .stat {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
-    text-align: right;
+    align-items: flex-end;
   }
 
   .stat__label {
     color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    letter-spacing: 0.06em;
+    font-size: var(--text-label);
+    font-weight: 700;
   }
 
   .stat__value {
-    color: var(--color-ink-muted);
-    font-size: var(--text-small);
-    font-variant-numeric: tabular-nums;
+    font-family: var(--font-serif);
+    font-size: var(--text-lead);
   }
 
   .empty,
   .none {
-    padding-block: var(--spacing-xl);
-    color: var(--color-ink-faint);
-    font-size: var(--text-body);
+    padding-block: var(--spacing-md);
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
   }
 
   @media (width <= 48rem) {
+    .logs-head {
+      display: none;
+    }
+
     .logs__link {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--spacing-sm);
     }
 
-    .logs__stats {
-      justify-content: space-between;
-    }
-
     .stat {
-      text-align: left;
+      align-items: flex-start;
     }
   }
 </style>

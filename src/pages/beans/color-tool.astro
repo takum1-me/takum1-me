@@ -2,6 +2,8 @@
 import Layout from "../../layouts/Layout.astro";
 import Container from "../../components/shared/layout/Container.astro";
 import PageHeader from "../../components/shared/page/PageHeader.astro";
+import Grid from "../../components/shared/grid/Grid.astro";
+import Cell from "../../components/shared/grid/Cell.astro";
 import FlavorColorTool from "../../components/features/beans/FlavorColorTool";
 import { getAllBeans } from "../../lib/microcms/beans-list";
 import { getRoastLogs } from "../../lib/roast-logs";
@@ -46,16 +48,28 @@ const roastCurves = getRoastLogs().flatMap((record) => {
   title="Flavor Color Tool"
   description="beans の flavorColors を作るローカル専用ツール"
 >
-  <Container size="page">
+  <Container size="frame">
     <PageHeader
       title="Flavor Color Tool（開発用）"
       lead="beans カードのグラデを決めるローカル専用ツール。豆を選んで flavorNote を読み込み、生成した flavorColors を microCMS の該当フィールドに貼ってください。"
     />
 
-    <FlavorColorTool
-      beans={beans}
-      roastCurves={roastCurves}
-      client:only="react"
-    />
+    <Grid class="tool-grid">
+      <Cell>
+        <Container size="page">
+          <FlavorColorTool
+            beans={beans}
+            roastCurves={roastCurves}
+            client:only="react"
+          />
+        </Container>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
+
+<style>
+  .tool-grid {
+    grid-auto-rows: auto;
+  }
+</style>

@@ -1,15 +1,21 @@
 ---
+/**
+ * About（A-1 グリッド）。microCMS の about を genre ごとにマスへ振り分ける。
+ */
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
-import SnsLinks from "../components/shared/sns-links/SnsLinks";
-import AboutInterests from "../components/features/about/AboutInterests.astro";
-import AboutEntryList from "../components/features/about/AboutEntryList.astro";
-import AboutQualifications from "../components/features/about/AboutQualifications.astro";
+import Grid from "../components/shared/grid/Grid.astro";
+import Cell from "../components/shared/grid/Cell.astro";
 import { getAllAbout, type AboutItem } from "../lib/microcms";
-import "../components/shared/sns-links/sns-links.css";
+import { matchFlavorColor } from "../lib/utils/flavor-color";
+import { SNS_LINKS } from "../data/site-links";
+import {
+  formatDate,
+  formatPeriod,
+  formatRolePeriod,
+} from "../components/features/about/date-utils";
 
-// microCMSからデータを取得
 let aboutItems: AboutItem[] = [];
 try {
   const response = await getAllAbout();
@@ -19,69 +25,309 @@ try {
   console.error("Failed to fetch about data:", error);
 }
 
-// genreで分類
-const favoriteItems = aboutItems.filter((item) =>
-  item.genre.includes("favorite-item"),
+const byGenre = (genre: AboutItem["genre"][number]) =>
+  aboutItems.filter((item) => item.genre.includes(genre));
+
+const favoriteItems = byGenre("favorite-item");
+const favoriteCoffees = byGenre("favorite-coffee");
+const favoriteFlavors = byGenre("favorite-flavor").map((item) =>
+  matchFlavorColor(item.title),
 );
-const favoriteCoffees = aboutItems.filter((item) =>
-  item.genre.includes("favorite-coffee"),
+const interests = byGenre("interest");
+const organizations = byGenre("organization");
+const certifications = byGenre("certification");
+const experiences = byGenre("experience").sort((a, b) =>
+  (b.beginDate ?? "").localeCompare(a.beginDate ?? ""),
 );
-const favoriteFlavors = aboutItems.filter((item) =>
-  item.genre.includes("favorite-flavor"),
-);
-const interests = aboutItems.filter((item) => item.genre.includes("interest"));
-const organizations = aboutItems.filter((item) =>
-  item.genre.includes("organization"),
-);
-const certifications = aboutItems.filter((item) =>
-  item.genre.includes("certification"),
-);
-const experiences = aboutItems
-  .filter((item) => item.genre.includes("experience"))
-  .sort((a, b) => (b.beginDate ?? "").localeCompare(a.beginDate ?? ""));
+
+const pad = (n: number) => String(n).padStart(2, "0");
 ---
 
 <Layout title="About">
-  <Container size="page">
-    <PageHeader title="takum1 について" />
+  <Container size="frame">
+    <PageHeader
+      word="About"
+      title="takum1 について"
+      lead="コーヒーが好きです。大学ではプログラミングをしています。"
+    />
 
-    <div class="content-grid">
-      <AboutInterests
-        favoriteItems={favoriteItems}
-        favoriteCoffees={favoriteCoffees}
-        favoriteFlavors={favoriteFlavors}
-        interests={interests}
-      />
-      <AboutEntryList title="所属" items={organizations} />
-      <AboutEntryList title="経験" items={experiences} />
-      <AboutQualifications certifications={certifications} />
-    </div>
+    <Grid>
+      <!-- 使用器具 -->
+      <Cell col="1 / 5">
+        <p class="grid-label grid-label--accent">Gear — 使用器具</p>
+        <ol class="about-rows">
+          {
+            favoriteItems.map((item, i) => (
+              <li class="about-row about-row--inline">
+                <span class="grid-number about-row__no">{pad(i + 1)}</span>
+                <span class="grid-entry">{item.title}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </Cell>
 
-    <div class="about-contact">
-      <p class="about-contact__label">連絡先</p>
-      <SnsLinks />
-    </div>
+      <!-- 産地・品種 -->
+      <Cell col="5 / 9">
+        <p class="grid-label grid-label--accent">
+          Origin — お気に入りの産地・品種
+        </p>
+        <ul class="about-chips">
+          {
+            favoriteCoffees.map((item) => (
+              <li class="grid-label">{item.title}</li>
+            ))
+          }
+        </ul>
+      </Cell>
+
+      <!-- 好きなフレーバー -->
+      <Cell col="9 / 13" tone="accent" spread>
+        <p class="grid-label">Flavor — 好きなフレーバー</p>
+        <div>
+          <div class="about-band">
+            {
+              favoriteFlavors.map((flavor) => (
+                <span style={`background: ${flavor.color}`} />
+              ))
+            }
+          </div>
+          <div class="grid-tag about-band__labels">
+            {
+              favoriteFlavors.map((flavor) => (
+                <span class="grid-label">{flavor.label}</span>
+              ))
+            }
+          </div>
+        </div>
+      </Cell>
+
+      <!-- 所属 -->
+      {
+        organizations.length > 0 && (
+          <Cell col="1 / 9">
+            <div class="grid-tag">
+              <p class="grid-label grid-label--accent">Affiliation — 所属</p>
+              <p class="grid-label">{pad(organizations.length)}</p>
+            </div>
+            <ul class="about-rows">
+              {organizations.map((item) => (
+                <li class="about-row">
+                  <span class="about-row__period">
+                    {formatPeriod(item.beginDate, item.finishDate)}
+                  </span>
+                  <span class="about-row__body">
+                    <span class="grid-entry">
+                      {item.link ? (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        item.title
+                      )}
+                    </span>
+                    {item.specific && (
+                      <span class="about-row__role">
+                        {item.specific}
+                        {item.specificBeiginDate &&
+                          `（${formatRolePeriod(item.specificBeiginDate, item.specificFinishDate)}）`}
+                      </span>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        )
+      }
+
+      <!-- 資格 -->
+      {
+        certifications.length > 0 && (
+          <Cell col="9 / 13">
+            <p class="grid-label grid-label--accent">Certification — 資格</p>
+            <ul class="about-rows">
+              {certifications.map((item) => (
+                <li class="about-row about-row--soft">
+                  <span class="about-cert">{item.title}</span>
+                  {item.beginDate && (
+                    <span class="grid-number about-cert__date">
+                      {formatDate(item.beginDate)}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        )
+      }
+
+      <!-- 経験 -->
+      {
+        experiences.length > 0 && (
+          <Cell col="1 / 9">
+            <p class="grid-label grid-label--accent">Experience — 経験</p>
+            <ul class="about-rows">
+              {experiences.map((item) => (
+                <li class="about-row">
+                  <span class="about-row__period">
+                    {formatPeriod(item.beginDate, item.finishDate)}
+                  </span>
+                  <span class="about-row__body">
+                    <span class="grid-entry">{item.title}</span>
+                    {item.specific && (
+                      <span class="about-row__role">{item.specific}</span>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        )
+      }
+
+      <!-- その他の関心 -->
+      <Cell
+        col={experiences.length > 0 ? "9 / 13" : "1 / 13"}
+        tone="subtle"
+        spread
+      >
+        <p class="grid-label grid-label--accent">Interests — その他の関心</p>
+        <p class="grid-statement">
+          {interests.map((item) => item.title).join("、")}
+        </p>
+      </Cell>
+
+      <!-- 連絡先 -->
+      {
+        SNS_LINKS.map((sns, i) => (
+          <Cell
+            col={`${1 + i * 4} / ${5 + i * 4}`}
+            sp={i === 2 ? "span 2" : "span 1"}
+            tone={i === 0 ? "ink" : "base"}
+            spread
+            href={sns.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div class="grid-tag">
+              <span
+                class:list={["grid-label", { "grid-label--accent": i > 0 }]}
+              >
+                Contact
+              </span>
+              <span class="grid-label" aria-hidden="true">
+                ↗
+              </span>
+            </div>
+            <span class="grid-serif-l">{sns.short}</span>
+          </Cell>
+        ))
+      }
+    </Grid>
   </Container>
 </Layout>
 
 <style>
-  .content-grid {
+  .about-rows {
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .about-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-md) var(--spacing-lg);
+    padding-block: var(--spacing-md);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .about-row--soft {
+    border-top-color: var(--color-line-strong);
+  }
+
+  .about-row__no {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  .about-row__period {
+    flex: none;
+    width: 12rem;
+    font-family: var(--font-serif);
+    font-size: var(--text-lead);
+  }
+
+  .about-row__body {
     display: flex;
     flex-direction: column;
-    gap: clamp(2rem, 5vw, 3rem);
+    gap: var(--spacing-xs);
   }
 
-  .about-contact {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    margin-top: clamp(2.5rem, 6vw, 3.5rem);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--color-line);
-  }
-
-  .about-contact__label {
+  .about-row__role {
     color: var(--color-ink-muted);
     font-size: var(--text-small);
+  }
+
+  .about-cert {
+    flex: 1;
+    font-size: var(--text-small);
+    font-weight: 700;
+  }
+
+  .about-cert__date {
+    color: var(--color-ink-faint);
+  }
+
+  /* 罫線で囲った札。隣り合う札の罫線は 1 本にまとめる */
+  .about-chips {
+    display: flex;
+    flex-wrap: wrap;
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-rule);
+    border-left: 1px solid var(--color-rule);
+  }
+
+  .about-chips li {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-right: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .about-band {
+    display: flex;
+    height: 4rem;
+    border: 1px solid var(--color-rule);
+  }
+
+  .about-band span {
+    flex: 1;
+  }
+
+  .about-band__labels {
+    margin-top: var(--spacing-sm);
+  }
+
+  @media (width <= 48rem) {
+    .about-row {
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .about-row__period {
+      width: auto;
+    }
+
+    .about-row--soft,
+    .about-row--inline {
+      flex-direction: row;
+    }
   }
 </style>

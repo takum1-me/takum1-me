@@ -1,0 +1,120 @@
+---
+/**
+ * Grid.astro の 1 マス。
+ *
+ * col / row は PC（12 カラム）での grid-column / grid-row、
+ * sp はスマホ（2 カラム）での grid-column。既定は全幅（span 2）。
+ * tone でマスの地色を変える: base（生成り）/ subtle（一段濃い生成り）/
+ * ink（墨のベタ）/ accent（銅色のベタ）。
+ */
+export interface Props {
+  col?: string;
+  row?: string;
+  sp?: string;
+  tone?: "base" | "subtle" | "ink" | "accent";
+  /** 上下に要素を振り分ける（ラベルを上、本文を下に置くマス向け） */
+  spread?: boolean;
+  /** 余白なしで中身を端まで敷く（写真など） */
+  bleed?: boolean;
+  /** マス幅に追従する文字（--text-giant）を使うときに付ける */
+  fit?: boolean;
+  as?: "div" | "section" | "article" | "a" | "header" | "nav" | "figure";
+  href?: string;
+  target?: string;
+  rel?: string;
+  class?: string;
+}
+
+const {
+  col = "1 / -1",
+  row = "auto",
+  sp = "span 2",
+  tone = "base",
+  spread = false,
+  bleed = false,
+  fit = false,
+  as,
+  href,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const Tag = as ?? (href ? "a" : "div");
+const placement = `--cell-col: ${col}; --cell-row: ${row}; --cell-sp: ${sp};`;
+---
+
+<!-- 動的タグなので rest（呼び出し元の data-astro-cid-*）を必ず渡す -->
+<Tag
+  class:list={[
+    "cell",
+    `cell--${tone}`,
+    { "is-spread": spread, "is-bleed": bleed, "is-fit": fit, "is-link": href },
+    className,
+  ]}
+  style={placement}
+  href={href}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: var(--spacing-cell);
+    overflow: hidden;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    grid-column: var(--cell-col);
+    grid-row: var(--cell-row);
+  }
+
+  .cell--subtle {
+    background: var(--color-bg-subtle);
+  }
+
+  .cell--ink {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  .cell--accent {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .is-spread {
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+  }
+
+  .is-bleed {
+    padding: 0;
+  }
+
+  .is-fit {
+    container-type: inline-size;
+  }
+
+  .is-link {
+    transition: background-color var(--transition);
+  }
+
+  .cell--base.is-link:hover {
+    background: var(--color-bg-subtle);
+  }
+
+  .cell--ink.is-link:hover {
+    background: var(--color-accent-strong);
+  }
+
+  @media (width <= 48rem) {
+    .cell {
+      grid-column: var(--cell-sp);
+      grid-row: auto;
+    }
+  }
+</style>

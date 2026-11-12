@@ -1,66 +1,99 @@
 ---
-import SnsLinks from "../../shared/sns-links/SnsLinks";
-import "../../shared/sns-links/sns-links.css";
+/**
+ * 罫線グリッドのフッター（A-1）。ワードマーク・ナビ・SNS を 3 マスに区切る。
+ * 直前のグリッドと罫線を共有するため、上辺の罫線は持たない。
+ */
+import Container from "../../shared/layout/Container.astro";
+import Grid from "../../shared/grid/Grid.astro";
+import Cell from "../../shared/grid/Cell.astro";
+import { NAV_ITEMS, SNS_LINKS } from "../../../data/site-links";
 
 const currentYear = new Date().getFullYear();
-
-const links = [
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Works", href: "/works" },
-  { label: "Lab", href: "/lab" },
-  { label: "Beans", href: "/beans" },
-];
 ---
 
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <nav class="site-footer__nav" aria-label="フッターナビゲーション">
-      {links.map((link) => <a href={link.href}>{link.label}</a>)}
-    </nav>
-
-    <SnsLinks />
-
-    <p class="site-footer__copyright">© {currentYear} takum1</p>
-  </div>
-</footer>
+<Container size="frame" as="footer" class="site-footer">
+  <Grid class="site-footer__grid">
+    <Cell col="1 / 4" class="site-footer__cell">
+      <a class="site-footer__brand" href="/">takum1</a>
+    </Cell>
+    <Cell col="4 / 10" class="site-footer__cell">
+      <nav class="site-footer__nav" aria-label="フッターナビゲーション">
+        {
+          NAV_ITEMS.map((link) => (
+            <a class="grid-label" href={link.href}>
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+    </Cell>
+    <Cell col="10 / 13" class="site-footer__cell site-footer__end">
+      <div class="site-footer__sns">
+        {
+          SNS_LINKS.map((sns) => (
+            <a
+              class="grid-label"
+              href={sns.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {sns.short}
+            </a>
+          ))
+        }
+      </div>
+      <p class="grid-label grid-label--faint">© {currentYear}</p>
+    </Cell>
+  </Grid>
+</Container>
 
 <style>
+  /* ページが短いときは本文から離れるので上辺の罫線も持つ。本文のグリッドに
+     接するときは 1px 重ねて、罫線が 2 本にならないようにする */
   .site-footer {
-    margin-top: var(--spacing-3xl);
-    padding-block: var(--spacing-2xl);
-    border-top: 1px solid var(--color-line);
+    margin-top: -1px;
   }
 
-  .site-footer__inner {
-    display: flex;
-    flex-direction: column;
+  .site-footer__grid {
+    grid-auto-rows: auto;
+  }
+
+  .site-footer__cell {
+    flex-direction: row;
     align-items: center;
     gap: var(--spacing-lg);
-    width: min(100% - var(--gutter) * 2, var(--container-page));
-    margin-inline: auto;
-    text-align: center;
   }
 
-  .site-footer__nav {
+  .site-footer__end {
+    justify-content: space-between;
+  }
+
+  .site-footer__brand {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    line-height: 1;
+  }
+
+  .site-footer__nav,
+  .site-footer__sns {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-sm) var(--spacing-lg);
   }
 
-  .site-footer__nav a {
-    color: var(--color-ink-muted);
-    font-size: var(--text-small);
+  .site-footer__nav a,
+  .site-footer__sns a {
     transition: color var(--transition);
   }
 
-  .site-footer__nav a:hover {
+  .site-footer__nav a:hover,
+  .site-footer__sns a:hover {
     color: var(--color-accent-strong);
   }
 
-  .site-footer__copyright {
-    color: var(--color-ink-faint);
-    font-size: var(--text-small);
+  @media (width <= 48rem) {
+    .site-footer__end {
+      flex-wrap: wrap;
+    }
   }
 </style>

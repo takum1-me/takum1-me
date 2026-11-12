@@ -1,7 +1,14 @@
 ---
+/**
+ * Lab の記事（A-1 グリッド）。
+ * 左の細い列に目次（本文の h2 から作る）を貼り付け、右の広い列に本文を組む。
+ */
 import { getAllLabArticles, getLabArticleById } from "../../lib/microcms/lab";
 import Layout from "../../layouts/Layout.astro";
 import Container from "../../components/shared/layout/Container.astro";
+import Grid from "../../components/shared/grid/Grid.astro";
+import Cell from "../../components/shared/grid/Cell.astro";
+import { formatDotDate } from "../../lib/utils/dot-date";
 import "../../styles/prose.css";
 
 export async function getStaticPaths() {
@@ -21,97 +28,148 @@ if (!article) {
   return Astro.redirect("/404");
 }
 
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Asia/Tokyo",
-  });
+// 本文の h2 に id を振り、その一覧を目次にする
+const toc: { id: string; text: string }[] = [];
+const content = article.content.replace(
+  /<h2(\s[^>]*)?>([\s\S]*?)<\/h2>/g,
+  (match, attrs = "", inner: string) => {
+    const text = inner.replace(/<[^>]+>/g, "").trim();
+    if (!text) return match;
+    const existing = /\sid="([^"]+)"/.exec(attrs);
+    const id = existing ? existing[1] : `section-${toc.length + 1}`;
+    toc.push({ id, text });
+    return existing ? match : `<h2${attrs} id="${id}">${inner}</h2>`;
+  },
+);
 ---
 
 <Layout title={article.title}>
-  <Container size="prose" as="article" class="article">
-    <a class="article__back" href="/lab">
-      <span aria-hidden="true">←</span> Lab 一覧に戻る
-    </a>
+  <Container size="frame" as="article">
+    <Grid class="article-grid">
+      <Cell col="1 / 4" href="/lab" class="article-back">
+        <span class="grid-label">← Lab 一覧</span>
+      </Cell>
+      <Cell col="4 / 13">
+        <div class="grid-tag">
+          <span class="grid-label grid-label--accent">
+            {(article.category ?? []).map((tag) => `#${tag}`).join(" ")}
+          </span>
+          <time class="grid-number" datetime={article.publishedAt}>
+            {formatDotDate(article.publishedAt)}
+          </time>
+        </div>
+      </Cell>
 
-    <header class="article__header">
-      <p class="article__meta">
-        <time datetime={article.publishedAt}>
-          {formatDate(article.publishedAt)}
-        </time>
-        {
-          article.category?.map((category) => (
-            <span class="article__tag">#{category}</span>
-          ))
-        }
-      </p>
-      <h1 class="article__title">{article.title}</h1>
-    </header>
+      <Cell col={article.eyecatch ? "1 / 9" : "1 / 13"} class="article-title">
+        <h1 class="grid-serif-l">{article.title}</h1>
+      </Cell>
+      {
+        article.eyecatch && (
+          <Cell col="9 / 13" bleed class="article-eyecatch">
+            <img src={article.eyecatch.url} alt="" loading="lazy" />
+          </Cell>
+        )
+      }
 
-    {
-      article.eyecatch && (
-        <img
-          class="article__eyecatch"
-          src={article.eyecatch.url}
-          alt=""
-          loading="lazy"
-        />
-      )
-    }
+      {
+        toc.length > 0 && (
+          <Cell col="1 / 4" class="article-toc">
+            <nav class="article-toc__inner" aria-label="目次">
+              <p class="grid-label grid-label--accent">Contents</p>
+              <ol class="article-toc__list">
+                {toc.map((item, i) => (
+                  <li>
+                    <a href={`#${item.id}`}>
+                      <span class="grid-number article-toc__no">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span>{item.text}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </Cell>
+        )
+      }
 
-    <div class="prose" set:html={article.content} />
+      <Cell col={toc.length > 0 ? "4 / 13" : "1 / 13"} class="article-body">
+        <div class="prose" set:html={content} />
+      </Cell>
+
+      <Cell col="1 / 13" href="/lab" class="article-back">
+        <span class="grid-label">← Lab 一覧に戻る</span>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
 
 <style>
-  .article {
-    padding-block: var(--spacing-xl) var(--spacing-3xl);
+  .article-grid {
+    grid-auto-rows: auto;
   }
 
-  .article__back {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--color-ink-faint);
+  .article-back {
+    justify-content: center;
+  }
+
+  .article-title {
+    padding-block: clamp(2rem, 5vw, 4rem) var(--spacing-cell);
+  }
+
+  .article-eyecatch img {
+    flex: 1;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  /* 目次を画面に貼り付けるため、マスのはみ出し隠しをこの列だけ外す */
+  .article-toc.article-toc {
+    overflow: visible;
+  }
+
+  .article-toc__inner {
+    position: sticky;
+    top: calc(var(--header-height) + var(--spacing-cell));
+  }
+
+  .article-toc__list {
+    margin: var(--spacing-md) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-toc__list a {
+    display: flex;
+    gap: var(--spacing-md);
+    padding-block: var(--spacing-sm);
+    border-top: 1px solid var(--color-line-strong);
     font-size: var(--text-small);
-    font-weight: 600;
+    line-height: 1.5;
     transition: color var(--transition);
   }
 
-  .article__back:hover {
+  .article-toc__list a:hover {
     color: var(--color-accent-strong);
   }
 
-  .article__header {
-    margin-block: var(--spacing-xl) var(--spacing-lg);
-    padding-bottom: var(--spacing-lg);
-    border-bottom: 1px solid var(--color-line-strong);
+  .article-toc__no {
+    flex: none;
+    color: var(--color-accent);
+    font-size: var(--text-small);
   }
 
-  .article__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 0.85rem;
-    color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
+  .article-body {
+    padding-block: var(--spacing-xl) var(--spacing-3xl);
   }
 
-  .article__title {
-    font-size: var(--text-h1);
-    font-weight: 700;
-    line-height: var(--text-h1--line-height);
-    letter-spacing: var(--text-h1--letter-spacing);
+  .article-body .prose {
+    max-width: var(--container-prose);
   }
 
-  .article__eyecatch {
-    width: 100%;
-    height: auto;
-    margin-bottom: var(--spacing-xl);
-    border-radius: var(--radius-md);
+  @media (width <= 48rem) {
+    .article-toc__inner {
+      position: static;
+    }
   }
 </style>

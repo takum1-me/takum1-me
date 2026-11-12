@@ -4,7 +4,8 @@
  * ページ側で margin-left / max-width を持たせないこと。
  */
 export interface Props {
-  size?: "prose" | "page" | "wide" | "full";
+  /** frame: 罫線グリッド用。ガターを持たずに端まで伸び、90rem で止まる */
+  size?: "prose" | "page" | "wide" | "full" | "frame";
   as?: "div" | "section" | "article" | "main" | "header" | "footer" | "nav";
   class?: string;
 }
@@ -43,5 +44,12 @@ const {
 
   .container--full {
     --container-width: 100%;
+  }
+
+  /* Tailwind の .container ユーティリティがブレークポイントごとに max-width を
+     付けるので、ここで外しておかないと 80rem で止まる */
+  .container--frame {
+    width: min(100%, var(--container-frame));
+    max-width: none;
   }
 </style>

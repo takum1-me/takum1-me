@@ -1,48 +1,30 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/shared/layout/Container.astro";
+import PageHeader from "../components/shared/page/PageHeader.astro";
+import Grid from "../components/shared/grid/Grid.astro";
+import Cell from "../components/shared/grid/Cell.astro";
 ---
 
 <Layout title="ページが見つかりません">
-  <Container size="prose" class="notfound">
-    <h1 class="notfound__title">ページが見つかりません</h1>
-    <p class="notfound__body">
-      URL が変わったか、ページを消したのかもしれません。
-    </p>
-    <a class="notfound__link" href="/"> トップへ </a>
+  <Container size="frame">
+    <PageHeader
+      word="404"
+      title="ページが見つかりません"
+      lead="URL が変わったか、ページを消したのかもしれません。"
+    />
+    <Grid>
+      <Cell col="1 / 9" tone="subtle" />
+      <Cell col="9 / 13" tone="ink" href="/" class="notfound-home">
+        <span class="grid-label">Home</span>
+        <span class="grid-serif-l">トップへ →</span>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
 
 <style>
-  .notfound {
-    display: grid;
-    justify-items: start;
-    gap: var(--spacing-md);
-    padding-block: clamp(4rem, 15vh, 8rem);
-  }
-
-  .notfound__title {
-    font-size: var(--text-h2);
-    font-weight: 700;
-  }
-
-  .notfound__body {
-    color: var(--color-ink-muted);
-  }
-
-  .notfound__link {
-    margin-top: var(--spacing-md);
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--color-line-strong);
-    font-size: var(--text-small);
-    font-weight: 600;
-    transition:
-      color var(--transition),
-      border-color var(--transition);
-  }
-
-  .notfound__link:hover {
-    border-bottom-color: var(--color-accent);
-    color: var(--color-accent-strong);
+  .notfound-home {
+    justify-content: space-between;
   }
 </style>

@@ -3,7 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
 import SectionHeading from "../components/shared/page/SectionHeading.astro";
-import WorksCard from "../components/shared/card/WorksCard.astro";
+import Grid from "../components/shared/grid/Grid.astro";
+import Cell from "../components/shared/grid/Cell.astro";
+import WorkCell from "../components/features/works/WorkCell.astro";
 import { getAllWorks, type Work as MicroCMSWork } from "../lib/microcms";
 import {
   ZoomableFlavorWheel,
@@ -15,7 +17,6 @@ import {
   characterWheelPathMatrix,
 } from "../data/character-wheel-segments";
 import { flavorWheelSegments } from "../data/flavor-wheel-segments";
-import "../components/shared/card/overlay-card.css";
 
 // microCMSからworksデータを取得
 const worksResponse = await getAllWorks();
@@ -102,52 +103,54 @@ const personalWorks = displayWorks.filter((work) => work.type === "personal");
 const organizationWorks = displayWorks.filter(
   (work) => work.type === "organization",
 );
+
+const groups = [
+  { label: "Personal", title: "ひとりで作ったもの", works: personalWorks },
+  { label: "Team", title: "チームで作ったもの", works: organizationWorks },
+].filter((group) => group.works.length > 0);
 ---
 
 <Layout title="Works">
-  <Container size="page">
-    <PageHeader title="つくったもの" lead="作ったものを置いています。" />
+  <Container size="frame">
+    <PageHeader
+      word="Works"
+      title="つくったもの"
+      lead="作ったものを置いています。"
+    />
+
+    {
+      groups.map((group) => (
+        <Grid as="section" class="works-grid">
+          <Cell col="1 / 13" class="works-heading">
+            <div class="grid-tag">
+              <h2 class="grid-label grid-label--accent">
+                {group.label} — {group.title}
+              </h2>
+              <span class="grid-label">
+                {String(group.works.length).padStart(2, "0")}
+              </span>
+            </div>
+          </Cell>
+          {group.works.map((work, i) => (
+            <WorkCell
+              index={i + 1}
+              label={group.label}
+              col={i % 2 === 0 ? "1 / 7" : "7 / 13"}
+              title={work.title}
+              subtitle={work.subtitle}
+              url={work.url}
+              githubUrl={work.githubUrl}
+              genre={work.genre}
+              photos={work.photos}
+            />
+          ))}
+          {group.works.length % 2 === 1 && (
+            <Cell col="7 / 13" tone="subtle" class="works-filler" />
+          )}
+        </Grid>
+      ))
+    }
   </Container>
-
-  {
-    personalWorks.length > 0 && (
-      <Container size="page" as="section" class="works-section">
-        <SectionHeading title="ひとりで作ったもの" />
-        <div class="works-grid">
-          {personalWorks.map((work) => (
-            <WorksCard
-              title={work.title}
-              subtitle={work.subtitle}
-              url={work.url}
-              githubUrl={work.githubUrl}
-              genre={work.genre}
-              photos={work.photos}
-            />
-          ))}
-        </div>
-      </Container>
-    )
-  }
-
-  {
-    organizationWorks.length > 0 && (
-      <Container size="page" as="section" class="works-section">
-        <SectionHeading title="チームで作ったもの" />
-        <div class="works-grid">
-          {organizationWorks.map((work) => (
-            <WorksCard
-              title={work.title}
-              subtitle={work.subtitle}
-              url={work.url}
-              githubUrl={work.githubUrl}
-              genre={work.genre}
-              photos={work.photos}
-            />
-          ))}
-        </div>
-      </Container>
-    )
-  }
 
   {
     SHOW_WHEELS && (
@@ -203,10 +206,15 @@ const organizationWorks = displayWorks.filter(
     padding-block: clamp(2rem, 5vw, 3.25rem);
   }
 
+  /* 見出しの行まで最小の行高で伸ばさないよう、行の高さは中身に任せる */
   .works-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
-    gap: clamp(1.25rem, 3vw, 1.75rem);
+    grid-auto-rows: auto;
+  }
+
+  @media (width <= 48rem) {
+    .works-filler {
+      display: none;
+    }
   }
 
   .wheel-lead {

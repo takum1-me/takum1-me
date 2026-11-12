@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
+import Grid from "../components/shared/grid/Grid.astro";
+import Cell from "../components/shared/grid/Cell.astro";
 import CuppingTimer from "../components/features/cupping/CuppingTimer";
 ---
 
@@ -9,13 +11,25 @@ import CuppingTimer from "../components/features/cupping/CuppingTimer";
   title="カッピングタイマー - takum1.me"
   description="カッピング用のタイマー。注いでからの経過と、ブレイク・飲み始めまでの残りを 1 つのボタンで同時に走らせます。"
 >
-  <Container size="page">
+  <Container size="frame">
     <!-- 現場で開くページなので、3 つとボタンが 1 画面に収まるよう見出しは詰める -->
     <PageHeader
       title="カッピングタイマー"
       lead="注いでからの経過と、ブレイク・飲み始めまでの残りを同時に走らせます。"
     />
 
-    <CuppingTimer client:only="react" />
+    <Grid class="tool-grid">
+      <Cell>
+        <Container size="page">
+          <CuppingTimer client:only="react" />
+        </Container>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
+
+<style>
+  .tool-grid {
+    grid-auto-rows: auto;
+  }
+</style>
