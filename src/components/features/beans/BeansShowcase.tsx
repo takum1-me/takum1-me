@@ -83,19 +83,19 @@ function BeanModal({
     };
   }, [onClose]);
 
-  // 下部スペックは Origin → Variety → Process → Roast の 4 つ（genre はヘッダー右上へ）
+  // 下部スペックは 産地 → 品種 → 精製 → 焙煎度 の 4 つ（genre はヘッダー右上へ）
   const specs: { label: string; value: string }[] = [];
   if (view.countries.length)
     specs.push({
-      label: "Origin",
+      label: "産地",
       value: view.countries.map((c) => `${c.flag} ${c.label}`).join(", "),
     });
   if (view.varieties.length)
-    specs.push({ label: "Variety", value: view.varieties.join(", ") });
+    specs.push({ label: "品種", value: view.varieties.join(", ") });
   if (view.processes.length)
-    specs.push({ label: "Process", value: view.processes.join(", ") });
+    specs.push({ label: "精製", value: view.processes.join(", ") });
   if (view.roasts.length)
-    specs.push({ label: "Roast", value: view.roasts.join(", ") });
+    specs.push({ label: "焙煎度", value: view.roasts.join(", ") });
 
   return (
     <div
@@ -129,7 +129,7 @@ function BeanModal({
 
           {notes.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>Flavor</h3>
+              <h3 className={styles["block-title"]}>フレーバー</h3>
               <div
                 className={styles.hero}
                 style={{ background: view.background }}
@@ -156,7 +156,7 @@ function BeanModal({
 
           {specs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>Spec</h3>
+              <h3 className={styles["block-title"]}>豆のこと</h3>
               <dl className={styles.specs}>
                 {specs.map((s) => (
                   <div key={s.label} className={styles["spec-row"]}>
@@ -170,7 +170,7 @@ function BeanModal({
 
           {logs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>Roast logs</h3>
+              <h3 className={styles["block-title"]}>焙煎ログ</h3>
               <ul className={styles["log-list"]}>
                 {logs.map((log) => (
                   <li key={log.batchId}>
@@ -198,7 +198,9 @@ function BeanModal({
             data-available={bean.isAvailable}
           >
             <span className={styles["status-dot"]} />
-            {bean.isAvailable ? "In Stock — 焙煎できます" : "Sold Out"}
+            {bean.isAvailable
+              ? "生豆があるので焙煎できます"
+              : "生豆が切れています"}
           </div>
         </div>
       </div>
@@ -206,15 +208,7 @@ function BeanModal({
   );
 }
 
-function BeanCard({
-  view,
-  index,
-  onOpen,
-}: {
-  view: BeanView;
-  index: number;
-  onOpen: () => void;
-}) {
+function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
   const { bean, notes } = view;
   const visibleNotes = notes.slice(0, 4);
   const rest = notes.length - visibleNotes.length;
@@ -232,12 +226,9 @@ function BeanCard({
     <a className={styles.card} href={beanPath(bean)} onClick={onClick}>
       <div className={styles.body}>
         <div className={styles["card-top"]}>
-          <span className={styles.index}>
-            {String(index + 1).padStart(2, "0")}
-          </span>
           <span className={styles.status} data-available={bean.isAvailable}>
             <span className={styles["status-dot"]} />
-            {bean.isAvailable ? "In Stock" : "Sold Out"}
+            {bean.isAvailable ? "焙煎できます" : "生豆切れ"}
           </span>
         </div>
 
@@ -347,10 +338,7 @@ export default function BeansShowcase({
   if (beans.length === 0) {
     return (
       <div className={styles.wrapper}>
-        <p className={styles.empty}>
-          まだ豆が登録されていません。microCMS の beans-list
-          に追加すると、ここに雰囲気つきで並びます。
-        </p>
+        <p className={styles.empty}>まだ豆がありません。</p>
       </div>
     );
   }
@@ -366,7 +354,7 @@ export default function BeansShowcase({
           onClick={() => setFilter("all")}
           type="button"
         >
-          All ({views.length})
+          すべて ({views.length})
         </button>
         <button
           className={styles.filter}
@@ -374,19 +362,18 @@ export default function BeansShowcase({
           onClick={() => setFilter("available")}
           type="button"
         >
-          In Stock ({availableCount})
+          焙煎できる豆 ({availableCount})
         </button>
       </div>
 
       {filtered.length === 0 ? (
-        <p className={styles.empty}>該当する豆がありません。</p>
+        <p className={styles.empty}>いま焙煎できる豆はありません。</p>
       ) : (
         <div className={styles.grid}>
-          {filtered.map((view, i) => (
+          {filtered.map((view) => (
             <BeanCard
               key={view.bean.id}
               view={view}
-              index={i}
               onOpen={() => open(view.bean.id)}
             />
           ))}

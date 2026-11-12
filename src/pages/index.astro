@@ -17,27 +17,24 @@ const songsData = await loadSongsData();
 
 <Layout title="takum1.me">
   <Container size="page" as="section" class="hero">
-    <p class="hero__eyebrow">Coffee · Programming</p>
     <h1 class="hero__title">takum1</h1>
     <p class="hero__lead">
-      Undergraduate / Brewer.<br />
-      最近、焙煎も始めました。
+      大学でプログラミングをしています。<br />
+      コーヒーが好きで、最近は焙煎も始めました。
     </p>
     <div class="hero__actions">
-      <a class="hero__cta" href="/beans"
-        >焙煎している豆を見る <span aria-hidden="true">→</span></a
-      >
+      <a class="hero__cta" href="/beans">焙煎している豆</a>
       <SnsLinks />
     </div>
   </Container>
 
   <Container size="page" as="section" class="section">
-    <SectionHeading eyebrow="Playlist" title="よく聴いているもの" />
+    <SectionHeading title="よく聴いているもの" />
     <SongList songs={songsData} limit={8} />
   </Container>
 
   <Container size="page" as="section" class="section">
-    <SectionHeading eyebrow="Photo" title="日々の記録" />
+    <SectionHeading title="写真" />
     <PhotoGallery photos={latestPhotos} client:visible />
   </Container>
 </Layout>
@@ -47,15 +44,6 @@ const songsData = await loadSongsData();
 
   .hero {
     padding-block: clamp(3.5rem, 12vh, 7rem) clamp(3rem, 8vh, 5rem);
-  }
-
-  .hero__eyebrow {
-    margin-bottom: 1.1rem;
-    color: var(--color-accent);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
   }
 
   /* ワードマークも見出しと同じセリフ（EB Garamond）で組む。
@@ -85,9 +73,6 @@ const songsData = await loadSongsData();
   }
 
   .hero__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
     padding-bottom: 0.3rem;
     border-bottom: 1px solid var(--color-line-strong);
     color: var(--color-ink);
@@ -99,17 +84,9 @@ const songsData = await loadSongsData();
       border-color var(--transition);
   }
 
-  .hero__cta span {
-    transition: transform var(--transition);
-  }
-
   .hero__cta:hover {
     border-bottom-color: var(--color-accent);
     color: var(--color-accent-strong);
-  }
-
-  .hero__cta:hover span {
-    transform: translateX(0.2rem);
   }
 
   /* --- セクション ------------------------------------------------------- */

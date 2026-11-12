@@ -43,11 +43,7 @@ const experiences = aboutItems
 
 <Layout title="About">
   <Container size="page">
-    <PageHeader
-      eyebrow="About"
-      title="takum1 について"
-      lead="コーヒーと、プログラミング。好きなものと所属をまとめています。"
-    />
+    <PageHeader title="takum1 について" />
 
     <div class="content-grid">
       <AboutInterests
@@ -56,17 +52,13 @@ const experiences = aboutItems
         favoriteFlavors={favoriteFlavors}
         interests={interests}
       />
-      <AboutEntryList
-        eyebrow="Affiliation"
-        title="所属"
-        items={organizations}
-      />
-      <AboutEntryList eyebrow="Experience" title="経験" items={experiences} />
+      <AboutEntryList title="所属" items={organizations} />
+      <AboutEntryList title="経験" items={experiences} />
       <AboutQualifications certifications={certifications} />
     </div>
 
     <div class="about-contact">
-      <p class="about-contact__label">Contact</p>
+      <p class="about-contact__label">連絡先</p>
       <SnsLinks />
     </div>
   </Container>
@@ -89,10 +81,7 @@ const experiences = aboutItems
   }
 
   .about-contact__label {
-    color: var(--color-accent);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
   }
 </style>

@@ -5,14 +5,11 @@ import Container from "../components/shared/layout/Container.astro";
 
 <Layout title="ページが見つかりません">
   <Container size="prose" class="notfound">
-    <p class="notfound__code">404</p>
     <h1 class="notfound__title">ページが見つかりません</h1>
     <p class="notfound__body">
-      お探しのページは存在しないか、移動された可能性があります。
+      URL が変わったか、ページを消したのかもしれません。
     </p>
-    <a class="notfound__link" href="/">
-      トップページに戻る <span aria-hidden="true">→</span>
-    </a>
+    <a class="notfound__link" href="/"> トップへ </a>
   </Container>
 </Layout>
 
@@ -22,14 +19,6 @@ import Container from "../components/shared/layout/Container.astro";
     justify-items: start;
     gap: var(--spacing-md);
     padding-block: clamp(4rem, 15vh, 8rem);
-  }
-
-  .notfound__code {
-    color: var(--color-accent);
-    font-family: var(--font-serif);
-    font-size: clamp(4rem, 14vw, 8rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
   }
 
   .notfound__title {
@@ -42,9 +31,6 @@ import Container from "../components/shared/layout/Container.astro";
   }
 
   .notfound__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
     margin-top: var(--spacing-md);
     padding-bottom: 0.3rem;
     border-bottom: 1px solid var(--color-line-strong);
@@ -55,16 +41,8 @@ import Container from "../components/shared/layout/Container.astro";
       border-color var(--transition);
   }
 
-  .notfound__link span {
-    transition: transform var(--transition);
-  }
-
   .notfound__link:hover {
     border-bottom-color: var(--color-accent);
     color: var(--color-accent-strong);
-  }
-
-  .notfound__link:hover span {
-    transform: translateX(0.2rem);
   }
 </style>

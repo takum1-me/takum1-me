@@ -63,13 +63,10 @@ const beanFilters = [...beanCounts.entries()]
 >
   <Container size="page">
     <PageHeader
-      eyebrow="Roast logs"
       title="焙煎ログ"
-      lead="Kaffelogic nano 7 の焙煎ログです。バッチごとに ID がついていて、温度と RoR の記録を開けます。"
+      lead="Kaffelogic nano 7 の焙煎ログです。バッチを開くと温度と RoR の記録が見られます。"
     >
-      <p slot="aside">
-        ID は「焙煎機のログ番号 - 焙煎日」です。豆の焙煎ログもぜひご覧ください。
-      </p>
+      <p slot="aside">ID は「焙煎機のログ番号 - 焙煎日」です。</p>
     </PageHeader>
 
     <div class="tools">
@@ -115,10 +112,7 @@ const beanFilters = [...beanCounts.entries()]
 
     {
       rows.length === 0 ? (
-        <p class="empty">
-          まだ焙煎ログがありません。<code>src/data/roast-logs/</code> に .klog
-          を置くとここに並びます。
-        </p>
+        <p class="empty">まだ焙煎ログがありません。</p>
       ) : (
         <ul class="logs" id="log-list">
           {rows.map((row) => (

@@ -102,17 +102,13 @@ const organizationWorks = displayWorks.filter(
 
 <Layout title="Works">
   <Container size="page">
-    <PageHeader
-      eyebrow="Works"
-      title="つくったもの"
-      lead="趣味その他、作成したものをまとめています。"
-    />
+    <PageHeader title="つくったもの" lead="作ったものを置いています。" />
   </Container>
 
   {
     personalWorks.length > 0 && (
       <Container size="page" as="section" class="works-section">
-        <SectionHeading eyebrow="Personal" title="個人制作" />
+        <SectionHeading title="ひとりで作ったもの" />
         <div class="works-grid">
           {personalWorks.map((work) => (
             <WorksCard
@@ -132,7 +128,7 @@ const organizationWorks = displayWorks.filter(
   {
     organizationWorks.length > 0 && (
       <Container size="page" as="section" class="works-section">
-        <SectionHeading eyebrow="Collaboration" title="団体作品" />
+        <SectionHeading title="チームで作ったもの" />
         <div class="works-grid">
           {organizationWorks.map((work) => (
             <WorksCard
@@ -150,27 +146,23 @@ const organizationWorks = displayWorks.filter(
   }
 
   <Container size="page" as="section" class="works-section">
-    <SectionHeading eyebrow="Reference" title="Flavor Wheel" />
-    <p class="wheel-lead">
-      SCA
-      のフレーバーホイール。カテゴリーをクリックすると拡大して細かい用語まで読めます。
-    </p>
+    <SectionHeading title="Flavor Wheel" />
+    <p class="wheel-lead">SCA のフレーバーホイールです。</p>
     <div class="wheel-frame">
       <ZoomableFlavorWheel segments={flavorWheelSegments} client:only="react" />
     </div>
   </Container>
 
   <Container size="page" as="section" class="works-section">
-    <SectionHeading eyebrow="Reference" title="Coffee Character Wheel" />
+    <SectionHeading title="Coffee Character Wheel" />
     <p class="wheel-lead">
-      Flavor Wheel と同じ操作でズームできます。公式ポスター由来の SVG（PDF
-      出力）からパスとラベル位置を抽出しており、線や配色は原資料に沿っています。
+      フレーバー以外の、酸や口当たり、余韻を表す言葉のホイールです。元のポスターから描き起こしました。
     </p>
     <div class="wheel-frame">
       <ZoomableWheel
         segments={characterWheelSegments}
-        footerIdle="カテゴリーをクリックして拡大表示"
-        footerZoomed="詳細用語をクリックして確認"
+        footerIdle="カテゴリーを押すと拡大します"
+        footerZoomed="余白を押すと戻ります"
         hubRadius={52}
         viewBoxSize={characterWheelViewBoxSize}
         zoomFocusRadius={240}

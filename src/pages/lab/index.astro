@@ -26,18 +26,11 @@ const formatDate = (date: string) =>
 <Layout title="Lab">
   <Container size="prose">
     <PageHeader
-      eyebrow="Lab"
-      title="興味関心はここから"
-      lead="コーヒーまわりでやったことの記録。抽出用カスタムウォーターのレシピ、3D プリンターで作った道具のモデル配布、焙煎プロファイルの公開など。"
+      title="試したこと"
+      lead="コーヒーまわりで試したことの記録です。抽出用の水のレシピや、3D プリンターで作った道具のデータ、焙煎プロファイルを置いています。"
     />
 
-    {
-      loadError && (
-        <p class="lab-empty">
-          記事を取得できませんでした。時間をおいて再度お試しください。
-        </p>
-      )
-    }
+    {loadError && <p class="lab-empty">記事を読み込めませんでした。</p>}
 
     {
       !loadError && articles.length === 0 && (

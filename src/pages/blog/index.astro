@@ -43,17 +43,11 @@ try {
 
 <Layout title="Blog">
   <Container size="page">
-    <PageHeader
-      eyebrow="Blog"
-      title="書いたもの"
-      lead="note に書いた記事です。コーヒーのこと、つくったもののこと、日々考えていること。"
-    />
+    <PageHeader title="書いたもの" lead="note に書いた記事です。" />
 
     {
       noteArticles.length === 0 ? (
-        <p class="blog-empty">
-          記事の取得に失敗しました。ネットワークを確認してください。
-        </p>
+        <p class="blog-empty">記事を読み込めませんでした。</p>
       ) : (
         <>
           <div class="blog-grid">

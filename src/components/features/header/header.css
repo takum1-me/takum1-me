@@ -11,9 +11,8 @@
 }
 
 .site-header.is-scrolled {
-  background: rgb(250 248 245 / 88%);
+  background: var(--color-bg);
   border-bottom-color: var(--color-line);
-  backdrop-filter: blur(0.75rem) saturate(150%);
 }
 
 .site-header__inner {

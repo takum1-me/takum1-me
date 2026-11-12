@@ -87,18 +87,17 @@
   /* カードは <a>（共有リンク）なので、下線と文字色を打ち消す */
   color: inherit;
   text-decoration: none;
-  transition:
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
+  transition: border-color 0.2s ease;
 }
 
-.card:hover,
-.card:focus-visible {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgb(42 37 33 / 10%);
+.card:hover {
   border-color: var(--color-line-strong);
-  outline: none;
+}
+
+.card:focus-visible {
+  border-color: var(--color-line-strong);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .body {
@@ -115,23 +114,12 @@
   margin-bottom: 1.15rem;
 }
 
-/* 通し番号（エディトリアルなアクセント） */
-.index {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--color-ink-faint);
-  font-variant-numeric: tabular-nums;
-}
-
 .status {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.63rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--color-ink-faint);
 }
 
@@ -153,7 +141,7 @@
   gap: 0.4rem;
   font-size: 0.64rem;
   font-weight: 700;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink-faint);
   margin-bottom: 0.4rem;
@@ -260,8 +248,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  background: rgb(28 22 17 / 48%);
-  backdrop-filter: blur(8px);
+  background: rgb(28 22 17 / 55%);
   animation: fade 0.22s ease;
 }
 
@@ -281,21 +268,7 @@
   max-height: 88vh;
   overflow-y: auto;
   background: var(--color-surface);
-  border-radius: 18px;
-  box-shadow: 0 28px 70px rgb(28 22 17 / 30%);
-  animation: rise 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes rise {
-  from {
-    transform: translateY(14px);
-    opacity: 0%;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 100%;
-  }
+  border-radius: var(--radius-lg);
 }
 
 .close {
@@ -358,7 +331,7 @@
   margin-top: 0.2rem;
   font-size: 0.63rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-brown);
   border: 1px solid var(--color-line-strong);
@@ -383,10 +356,8 @@
 
 .block-title {
   margin: 0;
-  font-size: 0.63rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--color-ink-faint);
 }
 
@@ -447,7 +418,7 @@
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   color: var(--color-ink-faint);
   padding-top: 0.12rem;
 }

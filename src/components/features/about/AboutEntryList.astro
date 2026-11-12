@@ -4,18 +4,17 @@ import type { AboutItem } from "../../../lib/microcms";
 import { formatPeriod, formatRolePeriod } from "./date-utils";
 
 interface Props {
-  eyebrow: string;
   title: string;
   items: AboutItem[];
 }
 
-const { eyebrow, title, items } = Astro.props;
+const { title, items } = Astro.props;
 ---
 
 {
   items.length > 0 && (
     <section>
-      <SectionHeading eyebrow={eyebrow} title={title} />
+      <SectionHeading title={title} />
 
       <ul class="entry-list">
         {items.map((item) => (
