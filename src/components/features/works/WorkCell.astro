@@ -32,7 +32,11 @@ if (genre === "design" && photos && photos.length > 0) {
 }
 ---
 
-<Cell col={col} spread class="work">
+<Cell
+  col={col}
+  spread
+  class:list={["work", "is-link", { "is-external": isExternal }]}
+>
   <div class="grid-tag">
     <span class="grid-label grid-label--accent">
       {label} — W{String(index).padStart(2, "0")}
@@ -40,12 +44,12 @@ if (genre === "design" && photos && photos.length > 0) {
     {
       githubUrl && (
         <a
-          class="grid-label work__github"
+          class="grid-label text-link work__github"
           href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          GitHub ↗
+          GitHub
         </a>
       )
     }

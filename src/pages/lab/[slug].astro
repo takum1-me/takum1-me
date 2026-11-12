@@ -46,8 +46,8 @@ const content = article.content.replace(
 <Layout title={article.title}>
   <Container size="frame" as="article">
     <Grid class="article-grid">
-      <Cell col="1 / 4" href="/lab" class="article-back">
-        <span class="grid-label">← Lab 一覧</span>
+      <Cell col="1 / 4" href="/lab" class="article-back is-back">
+        <span class="grid-label">Lab 一覧</span>
       </Cell>
       <Cell col="4 / 13">
         <div class="grid-tag">
@@ -79,7 +79,7 @@ const content = article.content.replace(
               <ol class="article-toc__list">
                 {toc.map((item, i) => (
                   <li>
-                    <a href={`#${item.id}`}>
+                    <a class="link-row" href={`#${item.id}`}>
                       <span class="grid-number article-toc__no">
                         {String(i + 1).padStart(2, "0")}
                       </span>
@@ -97,8 +97,8 @@ const content = article.content.replace(
         <div class="prose" set:html={content} />
       </Cell>
 
-      <Cell col="1 / 13" href="/lab" class="article-back">
-        <span class="grid-label">← Lab 一覧に戻る</span>
+      <Cell col="1 / 13" href="/lab" class="article-back is-back">
+        <span class="grid-label">Lab 一覧に戻る</span>
       </Cell>
     </Grid>
   </Container>

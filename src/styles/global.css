@@ -189,6 +189,172 @@
   }
 }
 
+/* --- 短いページでも本文の罫線グリッドをフッターまで伸ばす ---------------
+   Layout の .site-main は縦の flex。最後のグリッドの行が残りの高さを分け合い、
+   フッターとのあいだに空白を作らない。React の島（astro-island）は
+   display: contents なので、その子を伸ばす。 */
+:where(.site-main) > .container--frame {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+:where(.site-main > .container--frame) > .grid:last-child,
+:where(.site-main > .container--frame > astro-island:last-child) > * {
+  flex: 1;
+}
+
+/* --- 押せる場所の目印 ----------------------------------------------------
+   罫線グリッドでは、押せるマスと押せないマスが同じ形をしている。見分けが
+   つくよう、押せるものには次の目印を必ず付ける（押せないものには付けない）。
+   - マス全体がリンク: 右上の角に罫線で囲った矢印の札（サイト内 → / 外部 ↗）
+   - 一覧の行のリンク: 行の右端の矢印（.link-row）
+   - 文中のリンク: 銅色の下線（.text-link）
+   - ボタン: 罫線で囲った箱（.box-button）
+   札はカーソルを乗せると墨のベタに反転する。
+   Cell の scoped style より後に効かせるため、ここはレイヤーに入れない。 */
+:where(.cell.is-link, .link-card) {
+  cursor: pointer;
+}
+
+:where(.cell.is-link, .link-card)::after {
+  content: "→";
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  border-bottom: 1px solid var(--color-rule);
+  border-left: 1px solid var(--color-rule);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-size: var(--text-lead);
+  line-height: 1;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+:where(.cell.is-external, .link-card.is-external)::after {
+  content: "↗";
+}
+
+:where(.cell.is-back)::after {
+  content: "←";
+}
+
+/* 墨のマスでは札を銅色に、銅色のマスでは墨にして、地と札を分ける */
+:where(.cell--ink.is-link)::after {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+:where(.cell--accent.is-link)::after {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+:where(.cell.is-link, .link-card):hover::after,
+:where(.cell.is-link, .link-card):focus-visible::after {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+:where(.cell--ink.is-link, .cell--accent.is-link):hover::after {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.cell--accent.is-link:hover {
+  background: var(--color-accent-strong);
+}
+
+/* 札と重ならないよう、マスの 1 行目（ラベルの行）は右を空けておく */
+:where(.cell.is-link, .link-card) > :where(.grid-tag:first-child) {
+  padding-right: var(--spacing-2xl);
+}
+
+/* 一覧の行のリンク */
+.link-row {
+  position: relative;
+  padding-right: var(--spacing-xl);
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.link-row::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-xs);
+  color: var(--color-accent);
+  font-size: var(--text-body);
+  line-height: 1;
+  transform: translateY(-50%);
+  transition: transform var(--transition);
+}
+
+.link-row[target="_blank"]::after {
+  content: "↗";
+}
+
+.link-row:hover {
+  background: var(--color-bg-subtle);
+}
+
+.link-row:hover::after {
+  transform: translate(0.2rem, -50%);
+}
+
+/* 文中・ラベルの中のリンク */
+.text-link {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: color var(--transition);
+}
+
+.text-link:hover {
+  color: var(--color-accent-strong);
+}
+
+/* ボタン。押せることが形でわかるよう、罫線で囲った箱にする */
+.box-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-rule);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--text-label);
+  font-weight: var(--text-label--font-weight);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    opacity var(--transition);
+}
+
+.box-button:disabled {
+  opacity: 30%;
+  cursor: default;
+}
+
+.box-button:hover:not(:disabled),
+.box-button[aria-pressed="true"] {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
 /* --- 罫線グリッドの文字（A-1）-------------------------------------------
    Cell の中身はページ側のマークアップなので、全ページ共通の型はここに置く。
    色は親のマス（tone）から継ぐので、ここでは色を持たせない。 */

@@ -144,14 +144,19 @@
 }
 
 .site-header__drawer-sns a {
+  display: flex;
   flex: 1;
-  padding: var(--spacing-md) 0;
+  justify-content: center;
+  padding: var(--spacing-lg) 0;
   border-right: 1px solid var(--color-rule);
-  font-size: var(--text-label);
-  font-weight: var(--text-label--font-weight);
-  letter-spacing: 0.14em;
-  text-align: center;
-  text-transform: uppercase;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.site-header__drawer-sns a:hover {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
 }
 
 .site-header__drawer-sns a:last-child {

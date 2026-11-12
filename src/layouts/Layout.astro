@@ -102,13 +102,19 @@ const jsonldStringfy = JSON.stringify({
 
       /* 幅の制御は Container.astro だけが持つ。ここでは持たせない。 */
       .site-main {
+        display: flex;
         flex: 1;
+        flex-direction: column;
         padding-top: var(--header-height);
       }
     </style>
   </head>
   <body>
-    {!hideHeader && <ReactHeader client:load />}
+    {
+      !hideHeader && (
+        <ReactHeader client:load currentPath={Astro.url.pathname} />
+      )
+    }
     <main class="site-main">
       <slot />
     </main>

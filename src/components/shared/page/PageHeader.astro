@@ -16,9 +16,13 @@ export interface Props {
   /** マスいっぱいに組む英単語（"Works" など）。無いときは title を見出しにする */
   word?: string;
   lead?: string;
+  /** 見出しのマスを詰める（現場で 1 画面に収めたいページ向け） */
+  compact?: boolean;
 }
 
-const { title, word, lead } = Astro.props;
+const { title, word, lead, compact = false } = Astro.props;
+// 下に伸びる字（g / j / p / q / y）があるときだけ、字面を罫線に寄せずに余白を残す
+const hasDescender = word ? /[gjpqy]/.test(word) : false;
 const hasAside = Astro.slots.has("aside");
 const hasSide = Boolean(lead) || hasAside;
 ---
@@ -29,13 +33,21 @@ const hasSide = Boolean(lead) || hasAside;
     row={hasAside ? "span 2" : "auto"}
     spread
     fit={Boolean(word)}
-    class="page-header__main"
+    class:list={["page-header__main", { "is-compact": compact }]}
   >
     {
       word ? (
         <>
           <p class="grid-label grid-label--accent">{title}</p>
-          <h1 class="grid-giant page-header__word">{word}</h1>
+          <h1
+            class:list={[
+              "grid-giant",
+              "page-header__word",
+              { "has-descender": hasDescender },
+            ]}
+          >
+            {word}
+          </h1>
         </>
       ) : (
         <>
@@ -69,10 +81,20 @@ const hasSide = Boolean(lead) || hasAside;
     min-height: clamp(12rem, 22vw, 20rem);
   }
 
+  .page-header__main.is-compact {
+    min-height: 0;
+  }
+
   /* 巨大な英単語は字面の下端をマスの罫線に寄せる */
   .page-header__word {
     margin-left: -0.04em;
     margin-bottom: -0.04em;
+  }
+
+  /* g や y の下に伸びる部分はマスで切らずに見せる */
+  .page-header__word.has-descender {
+    margin-bottom: 0;
+    padding-bottom: 0.2em;
   }
 
   .page-header__aside {

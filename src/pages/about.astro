@@ -10,6 +10,7 @@ import Cell from "../components/shared/grid/Cell.astro";
 import { getAllAbout, type AboutItem } from "../lib/microcms";
 import { matchFlavorColor } from "../lib/utils/flavor-color";
 import { SNS_LINKS } from "../data/site-links";
+import SnsIcon from "../components/shared/sns-links/SnsIcon";
 import {
   formatDate,
   formatPeriod,
@@ -120,6 +121,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
                     <span class="grid-entry">
                       {item.link ? (
                         <a
+                          class="text-link"
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -213,6 +215,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
             href={sns.href}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={sns.name}
           >
             <div class="grid-tag">
               <span
@@ -220,11 +223,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
               >
                 Contact
               </span>
-              <span class="grid-label" aria-hidden="true">
-                ↗
-              </span>
             </div>
-            <span class="grid-serif-l">{sns.short}</span>
+            <SnsIcon variant={sns.variant} size={56} className="about-sns" />
           </Cell>
         ))
       }
