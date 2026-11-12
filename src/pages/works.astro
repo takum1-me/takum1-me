@@ -94,6 +94,10 @@ const displayWorks = [
   ...additionalWorks,
 ];
 
+// Flavor Wheel と Coffee Character Wheel はいったん非表示にしている。
+// コンポーネントとデータは残してあるので、true に戻せば再び表示される。
+const SHOW_WHEELS = false;
+
 const personalWorks = displayWorks.filter((work) => work.type === "personal");
 const organizationWorks = displayWorks.filter(
   (work) => work.type === "organization",
@@ -145,41 +149,53 @@ const organizationWorks = displayWorks.filter(
     )
   }
 
-  <Container size="page" as="section" class="works-section">
-    <SectionHeading title="Flavor Wheel" />
-    <p class="wheel-lead">SCA のフレーバーホイールです。</p>
-    <div class="wheel-frame">
-      <ZoomableFlavorWheel segments={flavorWheelSegments} client:only="react" />
-    </div>
-  </Container>
+  {
+    SHOW_WHEELS && (
+      <>
+        <Container size="page" as="section" class="works-section">
+          <SectionHeading title="Flavor Wheel" />
+          <p class="wheel-lead">SCA のフレーバーホイールです。</p>
+          <div class="wheel-frame">
+            <ZoomableFlavorWheel
+              segments={flavorWheelSegments}
+              client:only="react"
+            />
+          </div>
+        </Container>
 
-  <Container size="page" as="section" class="works-section">
-    <SectionHeading title="Coffee Character Wheel" />
-    <p class="wheel-lead">
-      フレーバー以外の、酸や口当たり、余韻を表す言葉のホイールです。元のポスターから描き起こしました。
-    </p>
-    <div class="wheel-frame">
-      <ZoomableWheel
-        segments={characterWheelSegments}
-        footerIdle="カテゴリーを押すと拡大します"
-        footerZoomed="余白を押すと戻ります"
-        hubRadius={52}
-        viewBoxSize={characterWheelViewBoxSize}
-        zoomFocusRadius={240}
-        zoomViewportSize={420}
-        showHubCircle={false}
-        pathLocalTransform={characterWheelPathMatrix}
-        client:only="react"
-      />
-    </div>
-    <p class="wheel-attribution">
-      The coffee character wheel was developed as part of the AgriFutures
-      Australia project <em
-        >Defining terroir of Australian coffee to increase demand and investment</em
-      >, a collaboration between Southern Cross University, Processing Methods
-      Bootcamp and the Australian coffee industry.
-    </p>
-  </Container>
+        <Container size="page" as="section" class="works-section">
+          <SectionHeading title="Coffee Character Wheel" />
+          <p class="wheel-lead">
+            フレーバー以外の、酸や口当たり、余韻を表す言葉のホイールです。元のポスターから描き起こしました。
+          </p>
+          <div class="wheel-frame">
+            <ZoomableWheel
+              segments={characterWheelSegments}
+              footerIdle="カテゴリーを押すと拡大します"
+              footerZoomed="余白を押すと戻ります"
+              hubRadius={52}
+              viewBoxSize={characterWheelViewBoxSize}
+              zoomFocusRadius={240}
+              zoomViewportSize={420}
+              showHubCircle={false}
+              pathLocalTransform={characterWheelPathMatrix}
+              client:only="react"
+            />
+          </div>
+          <p class="wheel-attribution">
+            The coffee character wheel was developed as part of the AgriFutures
+            Australia project{" "}
+            <em>
+              Defining terroir of Australian coffee to increase demand and
+              investment
+            </em>
+            , a collaboration between Southern Cross University, Processing
+            Methods Bootcamp and the Australian coffee industry.
+          </p>
+        </Container>
+      </>
+    )
+  }
 </Layout>
 
 <style>
