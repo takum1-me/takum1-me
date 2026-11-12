@@ -21,6 +21,7 @@ import { loadSongsData } from "../lib/songs-loader";
 import { flavorColors } from "../lib/utils/flavor-color";
 import { processLabel, roastLabel } from "../data/bean-meta";
 import { SNS_LINKS } from "../data/site-links";
+import SnsIcon from "../components/shared/sns-links/SnsIcon";
 
 // --- データ ---------------------------------------------------------------
 // どれか 1 つの取得に失敗しても、残りのマスは出せるようにしておく
@@ -134,7 +135,6 @@ const photoSrc = (url: string, width: number) =>
         class="top-cta"
       >
         <span class="grid-serif-l">Beans</span>
-        <span class="grid-serif-l top-cta__arrow" aria-hidden="true">→</span>
       </Cell>
 
       <!-- プロフィール -->
@@ -148,12 +148,12 @@ const photoSrc = (url: string, width: number) =>
           {
             SNS_LINKS.map((sns) => (
               <a
-                class="grid-label"
                 href={sns.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={sns.name}
               >
-                {sns.short}
+                <SnsIcon variant={sns.variant} size={20} />
               </a>
             ))
           }
@@ -165,14 +165,14 @@ const photoSrc = (url: string, width: number) =>
         <div class="grid-tag top-rule">
           <span class="grid-label grid-label--accent">Writing — 書いたもの</span
           >
-          <a class="grid-label" href="/blog">All →</a>
+          <a class="grid-label text-link" href="/blog">All</a>
         </div>
         <ul class="top-posts">
           {
             latestArticles.map((article) => (
               <li>
                 <a
-                  class="top-post"
+                  class="top-post link-row"
                   href={article.link}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -229,7 +229,7 @@ const photoSrc = (url: string, width: number) =>
             tracks.map((track, i) => (
               <li>
                 <a
-                  class="top-track"
+                  class="top-track link-row"
                   href={track.appleMusicUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -273,9 +273,6 @@ const photoSrc = (url: string, width: number) =>
           >
             <div class="grid-tag">
               <span class="grid-label grid-label--accent">W—0{i + 1}</span>
-              <span class="grid-label" aria-hidden="true">
-                ↗
-              </span>
             </div>
             <div>
               <p class="grid-serif-m">{work.title}</p>
@@ -350,10 +347,6 @@ const photoSrc = (url: string, width: number) =>
     justify-content: space-between;
   }
 
-  .top-cta__arrow {
-    color: var(--color-accent);
-  }
-
   /* --- プロフィール ----------------------------------------------------- */
 
   .top-intro__sns {
@@ -363,11 +356,14 @@ const photoSrc = (url: string, width: number) =>
   }
 
   .top-intro__sns a {
+    display: flex;
     flex: 1;
+    justify-content: center;
     padding-block: var(--spacing-md);
     border-right: 1px solid var(--color-rule);
-    text-align: center;
-    transition: background-color var(--transition);
+    transition:
+      background-color var(--transition),
+      color var(--transition);
   }
 
   .top-intro__sns a:last-child {
@@ -375,7 +371,8 @@ const photoSrc = (url: string, width: number) =>
   }
 
   .top-intro__sns a:hover {
-    background: var(--color-bg-subtle);
+    background: var(--color-ink);
+    color: var(--color-on-ink);
   }
 
   /* --- 書いたもの・よく聴いているもの ----------------------------------- */

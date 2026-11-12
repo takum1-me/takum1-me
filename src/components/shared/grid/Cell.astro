@@ -35,6 +35,7 @@ const {
   fit = false,
   as,
   href,
+  target,
   class: className,
   ...rest
 } = Astro.props;
@@ -48,11 +49,18 @@ const placement = `--cell-col: ${col}; --cell-row: ${row}; --cell-sp: ${sp};`;
   class:list={[
     "cell",
     `cell--${tone}`,
-    { "is-spread": spread, "is-bleed": bleed, "is-fit": fit, "is-link": href },
+    {
+      "is-spread": spread,
+      "is-bleed": bleed,
+      "is-fit": fit,
+      "is-link": href,
+      "is-external": href && target === "_blank",
+    },
     className,
   ]}
   style={placement}
   href={href}
+  target={target}
   {...rest}
 >
   <slot />

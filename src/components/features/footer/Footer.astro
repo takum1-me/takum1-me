@@ -7,6 +7,7 @@ import Container from "../../shared/layout/Container.astro";
 import Grid from "../../shared/grid/Grid.astro";
 import Cell from "../../shared/grid/Cell.astro";
 import { NAV_ITEMS, SNS_LINKS } from "../../../data/site-links";
+import SnsIcon from "../../shared/sns-links/SnsIcon";
 
 const currentYear = new Date().getFullYear();
 ---
@@ -32,12 +33,12 @@ const currentYear = new Date().getFullYear();
         {
           SNS_LINKS.map((sns) => (
             <a
-              class="grid-label"
               href={sns.href}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={sns.name}
             >
-              {sns.short}
+              <SnsIcon variant={sns.variant} size={18} />
             </a>
           ))
         }
@@ -83,6 +84,8 @@ const currentYear = new Date().getFullYear();
 
   .site-footer__nav a,
   .site-footer__sns a {
+    display: flex;
+    align-items: center;
     transition: color var(--transition);
   }
 

@@ -70,7 +70,7 @@ const [latest, ...rest] = noteArticles;
                 rel="noopener noreferrer"
               >
                 <div class="grid-tag">
-                  <span class="grid-label">Latest — note ↗</span>
+                  <span class="grid-label">Latest — note</span>
                   <span class="grid-number">
                     {formatDotDate(latest.pubDate)}
                   </span>
@@ -106,9 +106,6 @@ const [latest, ...rest] = noteArticles;
                 <span class="grid-number blog-card__date">
                   {formatDotDate(article.pubDate)}
                 </span>
-                <span class="grid-label" aria-hidden="true">
-                  ↗
-                </span>
               </div>
               <div>
                 {article.thumbnail && (
@@ -124,11 +121,7 @@ const [latest, ...rest] = noteArticles;
 
           <Cell col="1 / 13" class="pagination">
             <nav class="grid-tag pagination__inner" aria-label="ページ送り">
-              <button
-                id="prev-page"
-                class="grid-label pagination__btn"
-                disabled
-              >
+              <button id="prev-page" class="box-button" disabled>
                 ← Back
               </button>
               <p class="grid-number pagination__count">
@@ -136,7 +129,7 @@ const [latest, ...rest] = noteArticles;
                 <span aria-hidden="true"> / </span>
                 <span id="total-pages">1</span>
               </p>
-              <button id="next-page" class="grid-label pagination__btn">
+              <button id="next-page" class="box-button">
                 Next →
               </button>
             </nav>
@@ -202,27 +195,6 @@ const [latest, ...rest] = noteArticles;
     line-height: var(--text-small--line-height);
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-  }
-
-  .pagination__btn {
-    padding: 0;
-    background: none;
-    border: 0;
-    color: inherit;
-    font-family: inherit;
-    cursor: pointer;
-    transition:
-      color var(--transition),
-      opacity var(--transition);
-  }
-
-  .pagination__btn:disabled {
-    opacity: 25%;
-    cursor: default;
-  }
-
-  .pagination__btn:hover:not(:disabled) {
-    color: var(--color-accent-strong);
   }
 
   .pagination__inner {

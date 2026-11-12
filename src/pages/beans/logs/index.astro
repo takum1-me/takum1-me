@@ -143,7 +143,10 @@ const beanFilters = [...beanCounts.entries()]
                   data-haystack={row.haystack}
                   data-bean={row.beanKey}
                 >
-                  <a class="logs__link" href={`/beans/logs/${row.batchId}`}>
+                  <a
+                    class="logs__link link-row"
+                    href={`/beans/logs/${row.batchId}`}
+                  >
                     <span class="logs__id">{row.batchId}</span>
                     <span class="logs__main">
                       <span class="logs__bean">

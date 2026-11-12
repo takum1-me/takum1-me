@@ -2,8 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
-import Grid from "../components/shared/grid/Grid.astro";
-import Cell from "../components/shared/grid/Cell.astro";
 import CuppingTimer from "../components/features/cupping/CuppingTimer";
 ---
 
@@ -16,20 +14,10 @@ import CuppingTimer from "../components/features/cupping/CuppingTimer";
     <PageHeader
       title="カッピングタイマー"
       lead="注いでからの経過と、ブレイク・飲み始めまでの残りを同時に走らせます。"
+      compact
     />
 
-    <Grid class="tool-grid">
-      <Cell>
-        <Container size="page">
-          <CuppingTimer client:only="react" />
-        </Container>
-      </Cell>
-    </Grid>
+    <!-- タイマー自体が罫線グリッドなので、マスには包まずにそのまま続ける -->
+    <CuppingTimer client:only="react" />
   </Container>
 </Layout>
-
-<style>
-  .tool-grid {
-    grid-auto-rows: auto;
-  }
-</style>

@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { NAV_ITEMS, SNS_LINKS } from "../../../data/site-links";
+import SnsIcon from "../../shared/sns-links/SnsIcon";
 import "./header.css";
 
 /**
  * 罫線グリッドのヘッダー（A-1）。現在地のナビは墨のベタで示す。
  * スマホではメニューボタンからドロワーを開く。
  */
-export default function Header() {
+export default function Header({
+  currentPath = "",
+}: {
+  /** サーバー側で分かっている現在の URL。最初の描画から現在地を塗っておく */
+  currentPath?: string;
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [path, setPath] = useState("");
+  const [path, setPath] = useState(currentPath);
 
   useEffect(() => {
     setPath(window.location.pathname);
@@ -88,8 +94,9 @@ export default function Header() {
               href={sns.href}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={sns.name}
             >
-              {sns.short} ↗
+              <SnsIcon variant={sns.variant} size={20} />
             </a>
           ))}
         </div>

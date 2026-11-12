@@ -243,7 +243,11 @@ function BeanCard({
   };
 
   return (
-    <a className={styles.card} href={beanPath(bean)} onClick={onClick}>
+    <a
+      className={`${styles.card} link-card`}
+      href={beanPath(bean)}
+      onClick={onClick}
+    >
       <div className={styles.body}>
         <div className={styles["card-top"]}>
           <span className={styles.label}>
@@ -372,16 +376,16 @@ export default function BeansShowcase({
         <span className={styles.label}>Filter</span>
         <div className={styles["filter-buttons"]}>
           <button
-            className={`${styles.filter} ${styles.label}`}
-            data-active={filter === "all"}
+            className="box-button"
+            aria-pressed={filter === "all"}
             onClick={() => setFilter("all")}
             type="button"
           >
             すべて ({views.length})
           </button>
           <button
-            className={`${styles.filter} ${styles.label}`}
-            data-active={filter === "available"}
+            className="box-button"
+            aria-pressed={filter === "available"}
             onClick={() => setFilter("available")}
             type="button"
           >

@@ -38,29 +38,8 @@
 
 .filter-buttons {
   display: flex;
-  gap: var(--spacing-lg);
-}
-
-.filter {
-  padding: 0;
-  background: none;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  color: var(--color-ink-faint);
-  font-family: inherit;
-  cursor: pointer;
-  transition:
-    color var(--transition),
-    border-color var(--transition);
-}
-
-.filter:hover {
-  color: var(--color-ink);
-}
-
-.filter[data-active="true"] {
-  border-bottom-color: var(--color-accent);
-  color: var(--color-accent);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .empty {
@@ -71,7 +50,9 @@
 
 /* ---- カード ---- */
 
+/* 右上の矢印の札（global.css の .link-card）を載せるので relative にする */
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   grid-column: span 4;
@@ -97,7 +78,9 @@
   padding: var(--spacing-cell);
 }
 
+/* 右上の札と在庫の札が重ならないよう、右を空けておく */
 .card-top {
+  padding-right: var(--spacing-xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
