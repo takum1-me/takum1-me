@@ -1,8 +1,15 @@
 ---
+/**
+ * Lab 一覧（A-1 グリッド）。最新の記事を銅色の大きなマスに置き、
+ * 右にタグごとの件数、残りの記事は 2 列のマスに並べる。
+ */
 import { getAllLabArticles, type LabArticle } from "../../lib/microcms/lab";
 import Layout from "../../layouts/Layout.astro";
 import Container from "../../components/shared/layout/Container.astro";
 import PageHeader from "../../components/shared/page/PageHeader.astro";
+import Grid from "../../components/shared/grid/Grid.astro";
+import Cell from "../../components/shared/grid/Cell.astro";
+import { formatDotDate } from "../../lib/utils/dot-date";
 
 let articles: LabArticle[] = [];
 let loadError = false;
@@ -14,51 +21,94 @@ try {
   loadError = true;
 }
 
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Asia/Tokyo",
-  });
+const [featured, ...rest] = articles;
+
+// タグごとの件数（多い順）
+const tagCounts = [
+  ...articles
+    .flatMap((article) => article.category ?? [])
+    .reduce(
+      (map, tag) => map.set(tag, (map.get(tag) ?? 0) + 1),
+      new Map<string, number>(),
+    ),
+].sort((a, b) => b[1] - a[1]);
 ---
 
 <Layout title="Lab">
-  <Container size="prose">
+  <Container size="frame">
     <PageHeader
+      word="Lab"
       title="試したこと"
       lead="コーヒーまわりで試したことの記録です。抽出用の水のレシピや、3D プリンターで作った道具のデータ、焙煎プロファイルを置いています。"
     />
 
-    {loadError && <p class="lab-empty">記事を読み込めませんでした。</p>}
-
-    {
-      !loadError && articles.length === 0 && (
-        <p class="lab-empty">まだ記事がありません。</p>
-      )
-    }
-
-    <ul class="lab-list">
+    <Grid>
       {
-        articles.map((article) => (
-          <li class="lab-list__item">
-            <a class="lab-list__link" href={`/lab/${article.id}`}>
-              <time class="lab-list__date" datetime={article.publishedAt}>
-                {formatDate(article.publishedAt)}
+        !featured && (
+          <Cell>
+            <p class="lab-empty">
+              {loadError
+                ? "記事を読み込めませんでした。"
+                : "まだ記事がありません。"}
+            </p>
+          </Cell>
+        )
+      }
+
+      {
+        featured && (
+          <Cell
+            col={tagCounts.length > 0 ? "1 / 9" : "1 / 13"}
+            tone="accent"
+            spread
+            href={`/lab/${featured.id}`}
+            class="lab-featured"
+          >
+            <div class="grid-tag">
+              <span class="grid-label">
+                {(featured.category ?? []).map((tag) => `#${tag}`).join(" ")}
+              </span>
+              <time class="grid-number" datetime={featured.publishedAt}>
+                {formatDotDate(featured.publishedAt)}
               </time>
-              <h2 class="lab-list__title">{article.title}</h2>
-              {article.category && article.category.length > 0 && (
-                <p class="lab-list__tags">
-                  {article.category.map((category) => (
-                    <span>#{category}</span>
-                  ))}
-                </p>
-              )}
-            </a>
-          </li>
+            </div>
+            <h2 class="grid-serif-l lab-featured__title">{featured.title}</h2>
+          </Cell>
+        )
+      }
+
+      {
+        tagCounts.length > 0 && (
+          <Cell col="9 / 13">
+            <p class="grid-label grid-label--accent">Tags</p>
+            <ul class="lab-tags">
+              {tagCounts.map(([tag, count]) => (
+                <li class="lab-tags__row">
+                  <span class="lab-tags__name">#{tag}</span>
+                  <span class="grid-number lab-tags__count">{count}</span>
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        )
+      }
+
+      {
+        rest.map((article) => (
+          <Cell col="span 6" spread href={`/lab/${article.id}`}>
+            <div class="grid-tag">
+              <span class="grid-label grid-label--accent">
+                {(article.category ?? []).map((tag) => `#${tag}`).join(" ")}
+              </span>
+              <time class="grid-number" datetime={article.publishedAt}>
+                {formatDotDate(article.publishedAt)}
+              </time>
+            </div>
+            <h2 class="grid-entry">{article.title}</h2>
+          </Cell>
         ))
       }
-    </ul>
+    </Grid>
   </Container>
 </Layout>
 
@@ -67,54 +117,39 @@ const formatDate = (date: string) =>
     color: var(--color-ink-faint);
   }
 
-  /* 上の罫線は PageHeader が持っているので、ここでは引かない */
-  .lab-list {
-    margin: 0;
+  .lab-featured {
+    min-height: clamp(14rem, 24vw, 22rem);
+  }
+
+  .lab-featured:hover {
+    background: var(--color-accent-strong);
+    color: var(--color-on-ink);
+  }
+
+  .lab-featured__title {
+    max-width: 18em;
+  }
+
+  .lab-tags {
+    margin: var(--spacing-md) 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .lab-list__item {
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  /* 記事一覧は面を持たせず、罫線だけで区切る */
-  .lab-list__link {
-    display: grid;
-    gap: 0.4rem;
-    padding: 1.35rem 0.75rem 1.45rem;
-    margin-inline: -0.75rem;
-    transition: background-color var(--transition);
-  }
-
-  .lab-list__link:hover {
-    background: var(--color-accent-soft);
-  }
-
-  .lab-list__date {
-    color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .lab-list__title {
-    font-size: var(--text-h3);
-    font-weight: 700;
-    line-height: 1.55;
-    transition: color var(--transition);
-  }
-
-  .lab-list__link:hover .lab-list__title {
-    color: var(--color-accent-strong);
-  }
-
-  .lab-list__tags {
+  .lab-tags__row {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    color: var(--color-ink-faint);
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: var(--spacing-sm);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .lab-tags__name {
     font-size: var(--text-small);
+    font-weight: 700;
+  }
+
+  .lab-tags__count {
+    color: var(--color-accent);
   }
 </style>

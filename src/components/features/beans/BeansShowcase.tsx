@@ -106,21 +106,27 @@ function BeanModal({
       aria-label={bean.name}
     >
       <div className={styles.modal}>
-        <button className={styles.close} onClick={onClose} aria-label="閉じる">
-          ×
+        <button
+          className={`${styles.close} ${styles.label}`}
+          onClick={onClose}
+          aria-label="閉じる"
+        >
+          Close ×
         </button>
 
         <div className={styles["modal-inner"]}>
           <div className={styles["modal-head"]}>
             <div className={styles["modal-head-main"]}>
-              <span className={styles.country}>
-                {view.countries.map((c) => `${c.flag} ${c.label}`).join(" · ")}
+              <span className={`${styles.label} ${styles.genre}`}>
+                {[
+                  view.countries.map((c) => c.label).join(" · "),
+                  ...view.genres,
+                ]
+                  .filter(Boolean)
+                  .join(" / ")}
               </span>
               <h2 className={styles["modal-name"]}>{bean.name}</h2>
             </div>
-            {view.genres.length > 0 && (
-              <span className={styles.genre}>{view.genres.join(" / ")}</span>
-            )}
           </div>
 
           {bean.expalanation && (
@@ -129,7 +135,9 @@ function BeanModal({
 
           {notes.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>フレーバー</h3>
+              <h3 className={`${styles["block-title"]} ${styles.label}`}>
+                Flavor — フレーバー
+              </h3>
               <div
                 className={styles.hero}
                 style={{ background: view.background }}
@@ -156,7 +164,9 @@ function BeanModal({
 
           {specs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>豆のこと</h3>
+              <h3 className={`${styles["block-title"]} ${styles.label}`}>
+                Spec — 豆のこと
+              </h3>
               <dl className={styles.specs}>
                 {specs.map((s) => (
                   <div key={s.label} className={styles["spec-row"]}>
@@ -170,7 +180,9 @@ function BeanModal({
 
           {logs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={styles["block-title"]}>焙煎ログ</h3>
+              <h3 className={`${styles["block-title"]} ${styles.label}`}>
+                Roast logs — 焙煎ログ
+              </h3>
               <ul className={styles["log-list"]}>
                 {logs.map((log) => (
                   <li key={log.batchId}>
@@ -208,7 +220,15 @@ function BeanModal({
   );
 }
 
-function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
+function BeanCard({
+  view,
+  index,
+  onOpen,
+}: {
+  view: BeanView;
+  index: number;
+  onOpen: () => void;
+}) {
   const { bean, notes } = view;
   const visibleNotes = notes.slice(0, 4);
   const rest = notes.length - visibleNotes.length;
@@ -226,15 +246,16 @@ function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
     <a className={styles.card} href={beanPath(bean)} onClick={onClick}>
       <div className={styles.body}>
         <div className={styles["card-top"]}>
+          <span className={styles.label}>
+            No. {String(index).padStart(2, "0")}
+          </span>
           <span className={styles.status} data-available={bean.isAvailable}>
-            <span className={styles["status-dot"]} />
             {bean.isAvailable ? "焙煎できます" : "生豆切れ"}
           </span>
         </div>
 
         {view.countries.length > 0 && (
-          <span className={styles.country}>
-            <span className={styles.flag}>{view.countries[0].flag}</span>
+          <span className={`${styles.country} ${styles.label}`}>
             {view.countries.map((c) => c.label).join(" / ")}
           </span>
         )}
@@ -261,16 +282,14 @@ function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
           </ul>
         )}
 
-        <div className={styles["card-foot"]}>
+        <div className={`${styles["card-foot"]} ${styles.label}`}>
           <span>{view.roasts.join(" / ") || "—"}</span>
           <span className={styles["foot-divider"]} />
           <span>{view.processes.join(" / ") || "—"}</span>
         </div>
       </div>
 
-      <div className={styles.swatch} style={{ background: view.background }}>
-        <span className={styles["swatch-edge"]} />
-      </div>
+      <div className={styles.swatch} style={{ background: view.background }} />
     </a>
   );
 }
@@ -338,46 +357,57 @@ export default function BeansShowcase({
   if (beans.length === 0) {
     return (
       <div className={styles.wrapper}>
-        <p className={styles.empty}>まだ豆がありません。</p>
+        <p className={`${styles.cell} ${styles.empty}`}>まだ豆がありません。</p>
       </div>
     );
   }
 
   const availableCount = views.filter((v) => v.bean.isAvailable).length;
+  // 3 列の最終行が欠けたとき、罫線の地色がのぞかないよう埋め草のマスで塞ぐ
+  const fillerCount = (3 - (filtered.length % 3)) % 3;
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.filters}>
-        <button
-          className={styles.filter}
-          data-active={filter === "all"}
-          onClick={() => setFilter("all")}
-          type="button"
-        >
-          すべて ({views.length})
-        </button>
-        <button
-          className={styles.filter}
-          data-active={filter === "available"}
-          onClick={() => setFilter("available")}
-          type="button"
-        >
-          焙煎できる豆 ({availableCount})
-        </button>
+      <div className={`${styles.cell} ${styles.filters}`}>
+        <span className={styles.label}>Filter</span>
+        <div className={styles["filter-buttons"]}>
+          <button
+            className={`${styles.filter} ${styles.label}`}
+            data-active={filter === "all"}
+            onClick={() => setFilter("all")}
+            type="button"
+          >
+            すべて ({views.length})
+          </button>
+          <button
+            className={`${styles.filter} ${styles.label}`}
+            data-active={filter === "available"}
+            onClick={() => setFilter("available")}
+            type="button"
+          >
+            焙煎できる豆 ({availableCount})
+          </button>
+        </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className={styles.empty}>いま焙煎できる豆はありません。</p>
+        <p className={`${styles.cell} ${styles.empty}`}>
+          いま焙煎できる豆はありません。
+        </p>
       ) : (
-        <div className={styles.grid}>
-          {filtered.map((view) => (
+        <>
+          {filtered.map((view, i) => (
             <BeanCard
               key={view.bean.id}
               view={view}
+              index={i + 1}
               onOpen={() => open(view.bean.id)}
             />
           ))}
-        </div>
+          {Array.from({ length: fillerCount }, (_, i) => (
+            <div key={`filler-${i}`} className={styles.filler} />
+          ))}
+        </>
       )}
 
       {openView && (

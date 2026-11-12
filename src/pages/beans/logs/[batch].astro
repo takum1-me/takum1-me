@@ -2,6 +2,8 @@
 import Layout from "../../../layouts/Layout.astro";
 import Container from "../../../components/shared/layout/Container.astro";
 import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import Grid from "../../../components/shared/grid/Grid.astro";
+import Cell from "../../../components/shared/grid/Cell.astro";
 import { getRoastLogs } from "../../../lib/roast-logs";
 import { buildRoastChartSvg } from "../../../lib/utils/roast-chart";
 import { mmss, percent, celsius, type KlogLog } from "../../../lib/utils/klog";
@@ -94,7 +96,7 @@ const description = [
   description={description}
   og={{ type: "article", title: `${record.batchId} - 焙煎ログ - takum1.me` }}
 >
-  <Container size="page">
+  <Container size="frame">
     <PageHeader title={record.batchId} lead={description}>
       <p slot="aside">
         <a href="/beans/logs">← 焙煎ログ一覧</a>
@@ -109,110 +111,78 @@ const description = [
       </p>
     </PageHeader>
 
-    {record.note && <p class="note">{record.note}</p>}
+    <Grid class="batch-grid">
+      {
+        record.note && (
+          <Cell col="1 / 13" tone="subtle">
+            <p class="grid-label grid-label--accent">Note — メモ</p>
+            <p class="note">{record.note}</p>
+          </Cell>
+        )
+      }
 
-    <figure class="chart">
-      <Fragment set:html={chart} />
-      <figcaption>
-        左軸が温度、右軸が RoR（℃/min）。投入直後の RoR
-        は枠外まで跳ねるので、焙煎中が読める範囲に軸を合わせています。
-      </figcaption>
-    </figure>
+      <Cell col="1 / 13" as="figure" class="chart">
+        <div class="grid-tag">
+          <span class="grid-label grid-label--accent">Curve — 温度と RoR</span>
+          <span class="grid-label">{record.batchId}</span>
+        </div>
+        <Fragment set:html={chart} />
+        <figcaption>
+          左軸が温度、右軸が RoR（℃/min）。投入直後の RoR
+          は枠外まで跳ねるので、焙煎中が読める範囲に軸を合わせています。
+        </figcaption>
+      </Cell>
 
-    <div class="panels">
-      <section class="panel">
-        <h2>焙煎ログ</h2>
-        <dl class="rows">
-          {
-            metricRows.map(([label, value]) => (
-              <div class="row">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </section>
-
-      <section class="panel">
-        <h2>フェーズ</h2>
-        <dl class="rows">
-          {
-            phaseRows.map(([label, value]) => (
-              <div class="row">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </section>
-
-      <section class="panel">
-        <h2>焙煎の記録</h2>
-        <dl class="rows">
-          {
-            recordRows.map(([label, value]) => (
-              <div class="row">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </section>
-    </div>
+      {
+        [
+          ["Log — 焙煎ログ", metricRows],
+          ["Phase — フェーズ", phaseRows],
+          ["Record — 焙煎の記録", recordRows],
+        ].map(([title, rows], i) => (
+          <Cell col={`${1 + i * 4} / ${5 + i * 4}`} as="section">
+            <h2 class="grid-label grid-label--accent">{title as string}</h2>
+            <dl class="rows">
+              {(rows as [string, string][]).map(([label, value]) => (
+                <div class="row">
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Cell>
+        ))
+      }
+    </Grid>
   </Container>
 </Layout>
 
 <style>
+  .batch-grid {
+    grid-auto-rows: auto;
+  }
+
   .note {
-    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-sm);
     color: var(--color-ink-muted);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
   }
 
   .chart {
-    padding: var(--spacing-md);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
+    gap: var(--spacing-md);
+    margin: 0;
   }
 
   .chart figcaption {
-    margin-top: var(--spacing-sm);
     color: var(--color-ink-faint);
     font-size: var(--text-small);
     line-height: var(--text-small--line-height);
   }
 
-  .panels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: var(--spacing-md);
-    margin-block: var(--spacing-xl);
-  }
-
-  .panel {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-  }
-
-  .panel h2 {
-    margin-bottom: var(--spacing-sm);
-    color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
-    text-transform: uppercase;
-  }
-
   .rows {
     display: flex;
     flex-direction: column;
+    margin-top: var(--spacing-md);
   }
 
   .row {
@@ -220,12 +190,8 @@ const description = [
     align-items: baseline;
     justify-content: space-between;
     gap: var(--spacing-sm);
-    padding-block: 0.4rem;
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  .row:last-child {
-    border-bottom: 0;
+    padding-block: var(--spacing-sm);
+    border-top: 1px solid var(--color-rule);
   }
 
   .row dt {
@@ -234,8 +200,8 @@ const description = [
   }
 
   .row dd {
-    color: var(--color-ink);
-    font-size: var(--text-body);
+    font-family: var(--font-serif);
+    font-size: var(--text-lead);
     font-variant-numeric: tabular-nums;
     text-align: right;
   }

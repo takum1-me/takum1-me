@@ -4,6 +4,7 @@
  * 段を積まず、12 カラムの罫線グリッドに大小のマスを詰めて 1 画面半に収める。
  */
 import Layout from "../layouts/Layout.astro";
+import { formatDotDate } from "../lib/utils/dot-date";
 import Container from "../components/shared/layout/Container.astro";
 import Grid from "../components/shared/grid/Grid.astro";
 import Cell from "../components/shared/grid/Cell.astro";
@@ -54,12 +55,6 @@ const roastingMeta = roasting
   : "";
 
 const latestArticles = articles.slice(0, 3);
-const formatDate = (value: string) => {
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
-};
 
 const works = worksResponse.contents
   .filter((work) => work.link)
@@ -183,7 +178,7 @@ const photoSrc = (url: string, width: number) =>
                   rel="noopener noreferrer"
                 >
                   <span class="grid-number top-post__date">
-                    {formatDate(article.pubDate)}
+                    {formatDotDate(article.pubDate)}
                   </span>
                   <span class="grid-entry">{article.title}</span>
                 </a>
@@ -215,7 +210,7 @@ const photoSrc = (url: string, width: number) =>
               <figcaption class="top-photo__caption">
                 {leadPhoto.place}
                 <br />
-                {formatDate(leadPhoto.date)}
+                {formatDotDate(leadPhoto.date)}
               </figcaption>
             </>
           )

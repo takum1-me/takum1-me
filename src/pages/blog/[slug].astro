@@ -2,6 +2,8 @@
 import { getAllBlog, getBlogById } from "../../lib/microcms";
 import Layout from "../../layouts/Layout.astro";
 import Container from "../../components/shared/layout/Container.astro";
+import Grid from "../../components/shared/grid/Grid.astro";
+import Cell from "../../components/shared/grid/Cell.astro";
 import BlogToc from "../../components/features/blog/BlogToc.tsx";
 import "../../styles/prose.css";
 
@@ -37,40 +39,50 @@ const formatDate = (dateString: string) => {
 ---
 
 <Layout title={title}>
-  <Container size="wide" class="blog-layout">
-    <article class="article">
-      <a class="article__back" href="/blog">
-        <span aria-hidden="true">←</span> ブログ一覧に戻る
-      </a>
+  <Container size="frame">
+    <Grid class="article-grid">
+      <Cell>
+        <Container size="wide" class="blog-layout">
+          <article class="article">
+            <a class="article__back" href="/blog">
+              <span aria-hidden="true">←</span> ブログ一覧に戻る
+            </a>
 
-      <header class="article__header">
-        <p class="article__meta">
-          <time datetime={publishedAt}>{formatDate(publishedAt)}</time>
-        </p>
-        <h1 class="article__title">{title}</h1>
-      </header>
+            <header class="article__header">
+              <p class="article__meta">
+                <time datetime={publishedAt}>{formatDate(publishedAt)}</time>
+              </p>
+              <h1 class="article__title">{title}</h1>
+            </header>
 
-      {
-        thumbnail && (
-          <img
-            class="article__eyecatch"
-            src={thumbnail.url}
-            alt=""
-            loading="lazy"
-          />
-        )
-      }
+            {
+              thumbnail && (
+                <img
+                  class="article__eyecatch"
+                  src={thumbnail.url}
+                  alt=""
+                  loading="lazy"
+                />
+              )
+            }
 
-      <div class="prose" set:html={content} />
-    </article>
+            <div class="prose" set:html={content} />
+          </article>
 
-    <div class="blog-layout__toc">
-      <BlogToc client:only="react" />
-    </div>
+          <div class="blog-layout__toc">
+            <BlogToc client:only="react" />
+          </div>
+        </Container>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
 
 <style>
+  .article-grid {
+    grid-auto-rows: auto;
+  }
+
   .blog-layout {
     display: grid;
     grid-template-columns: minmax(0, var(--container-prose)) minmax(0, 15rem);

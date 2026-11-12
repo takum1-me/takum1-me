@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { formatDotDate } from "../../lib/utils/dot-date";
 import Container from "../../components/shared/layout/Container.astro";
 import PageHeader from "../../components/shared/page/PageHeader.astro";
 import {
@@ -7,8 +8,8 @@ import {
   fetchThumbnailsForArticles,
   type NoteArticle,
 } from "../../lib/note-rss";
-import ArticleCard from "../../components/shared/card/ArticleCard";
-import "../../components/shared/card/overlay-card.css";
+import Grid from "../../components/shared/grid/Grid.astro";
+import Cell from "../../components/shared/grid/Cell.astro";
 
 // note.comのRSSから記事を取得
 let noteArticles: NoteArticle[];
@@ -39,107 +40,176 @@ try {
   console.error("Error fetching Note articles:", error);
   noteArticles = [];
 }
+
+// 最新の 1 本だけ大きく出し、残りをページ送りの対象にする
+const [latest, ...rest] = noteArticles;
 ---
 
 <Layout title="Blog">
-  <Container size="page">
-    <PageHeader title="書いたもの" lead="note に書いた記事です。" />
+  <Container size="frame">
+    <PageHeader word="Blog" title="書いたもの" lead="note に書いた記事です。" />
 
     {
       noteArticles.length === 0 ? (
-        <p class="blog-empty">記事を読み込めませんでした。</p>
+        <Grid>
+          <Cell>
+            <p class="blog-empty">記事を読み込めませんでした。</p>
+          </Cell>
+        </Grid>
       ) : (
-        <>
-          <div class="blog-grid">
-            {noteArticles.map((article) => (
-              <div class="blog-card-cell">
-                <ArticleCard
-                  title={article.title}
-                  summary={article.description}
-                  publishedAt={article.pubDate}
-                  thumbnail={
-                    article.thumbnail ? { url: article.thumbnail } : undefined
-                  }
-                  link={article.link}
-                  category="note"
-                />
+        <Grid>
+          {latest && (
+            <>
+              <Cell
+                col={latest.thumbnail ? "1 / 9" : "1 / 13"}
+                row="span 2"
+                tone="ink"
+                spread
+                href={latest.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="grid-tag">
+                  <span class="grid-label">Latest — note ↗</span>
+                  <span class="grid-number">
+                    {formatDotDate(latest.pubDate)}
+                  </span>
+                </div>
+                <div>
+                  <p class="blog-latest__title">{latest.title}</p>
+                  <p class="blog-latest__summary">{latest.description}</p>
+                </div>
+              </Cell>
+              {latest.thumbnail && (
+                <Cell
+                  col="9 / 13"
+                  row="span 2"
+                  bleed
+                  class="blog-latest__photo"
+                >
+                  <img src={latest.thumbnail} alt="" loading="lazy" />
+                </Cell>
+              )}
+            </>
+          )}
+
+          {rest.map((article) => (
+            <Cell
+              col="span 4"
+              spread
+              href={article.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="blog-card-cell"
+            >
+              <div class="grid-tag">
+                <span class="grid-number blog-card__date">
+                  {formatDotDate(article.pubDate)}
+                </span>
+                <span class="grid-label" aria-hidden="true">
+                  ↗
+                </span>
               </div>
-            ))}
-          </div>
+              <div>
+                {article.thumbnail && (
+                  <div class="blog-card__thumb">
+                    <img src={article.thumbnail} alt="" loading="lazy" />
+                  </div>
+                )}
+                <p class="grid-entry">{article.title}</p>
+                <p class="blog-card__summary">{article.description}</p>
+              </div>
+            </Cell>
+          ))}
 
-          <nav class="pagination" aria-label="ページ送り">
-            <button id="prev-page" class="pagination__btn" disabled>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M10 12L6 8L10 4"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              back
-            </button>
-
-            <p class="pagination__count">
-              <span id="current-page">1</span>
-              <span class="pagination__sep" aria-hidden="true">
-                /
-              </span>
-              <span id="total-pages">1</span>
-            </p>
-
-            <button id="next-page" class="pagination__btn">
-              next
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M6 4L10 8L6 12"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-          </nav>
-        </>
+          <Cell col="1 / 13" class="pagination">
+            <nav class="grid-tag pagination__inner" aria-label="ページ送り">
+              <button
+                id="prev-page"
+                class="grid-label pagination__btn"
+                disabled
+              >
+                ← Back
+              </button>
+              <p class="grid-number pagination__count">
+                <span id="current-page">1</span>
+                <span aria-hidden="true"> / </span>
+                <span id="total-pages">1</span>
+              </p>
+              <button id="next-page" class="grid-label pagination__btn">
+                Next →
+              </button>
+            </nav>
+          </Cell>
+        </Grid>
       )
     }
   </Container>
 </Layout>
 
 <style>
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
-    gap: clamp(1.25rem, 3vw, 1.75rem);
-  }
-
   .blog-empty {
     color: var(--color-ink-muted);
   }
 
-  .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-block: var(--spacing-2xl) var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--color-line);
+  .blog-latest__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .blog-latest__summary {
+    display: -webkit-box;
+    margin-top: var(--spacing-md);
+    overflow: hidden;
+    color: var(--color-line-strong);
+    font-size: var(--text-small);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .blog-latest__photo img {
+    flex: 1;
+    width: 100%;
+    min-height: 14rem;
+    object-fit: cover;
+  }
+
+  .blog-card__date {
+    color: var(--color-accent);
+  }
+
+  .blog-card__thumb {
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    border: 1px solid var(--color-rule);
+  }
+
+  .blog-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .blog-card__summary {
+    display: -webkit-box;
+    margin-top: var(--spacing-sm);
+    overflow: hidden;
+    color: var(--color-ink-muted);
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   .pagination__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0;
+    padding: 0;
     background: none;
     border: 0;
-    color: var(--color-ink-muted);
+    color: inherit;
     font-family: inherit;
-    font-size: var(--text-small);
-    font-weight: 600;
-    letter-spacing: 0.04em;
     cursor: pointer;
     transition:
       color var(--transition),
@@ -155,12 +225,8 @@ try {
     color: var(--color-accent-strong);
   }
 
-  .pagination__count {
-    display: flex;
-    gap: 0.4rem;
-    color: var(--color-ink-faint);
-    font-size: var(--text-small);
-    font-variant-numeric: tabular-nums;
+  .pagination__inner {
+    align-items: center;
   }
 
   @media (width <= 47.9375rem) {

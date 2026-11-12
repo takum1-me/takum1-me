@@ -2,6 +2,8 @@
 import Layout from "../../../layouts/Layout.astro";
 import Container from "../../../components/shared/layout/Container.astro";
 import PageHeader from "../../../components/shared/page/PageHeader.astro";
+import Grid from "../../../components/shared/grid/Grid.astro";
+import Cell from "../../../components/shared/grid/Cell.astro";
 import RoastLogUploader from "../../../components/features/beans/RoastLogUploader";
 import { getAllBeans } from "../../../lib/microcms/beans-list";
 import { getRoastLogs } from "../../../lib/roast-logs";
@@ -27,7 +29,7 @@ const saved = getRoastLogs().map((log) => ({
   title="Roast Log Uploader"
   description="焙煎ログをリポジトリに取り込むローカル専用ツール"
 >
-  <Container size="page">
+  <Container size="frame">
     <PageHeader
       title="焙煎ログの取り込み（開発用）"
       lead=".klog を読んでバッチ ID と指標を確認し、豆を紐付けて、リポジトリに取り込みます。"
@@ -38,11 +40,23 @@ const saved = getRoastLogs().map((log) => ({
       </p>
     </PageHeader>
 
-    <RoastLogUploader
-      beans={beans}
-      manifest={manifest}
-      saved={saved}
-      client:only="react"
-    />
+    <Grid class="tool-grid">
+      <Cell>
+        <Container size="page">
+          <RoastLogUploader
+            beans={beans}
+            manifest={manifest}
+            saved={saved}
+            client:only="react"
+          />
+        </Container>
+      </Cell>
+    </Grid>
   </Container>
 </Layout>
+
+<style>
+  .tool-grid {
+    grid-auto-rows: auto;
+  }
+</style>

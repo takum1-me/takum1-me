@@ -1,47 +1,57 @@
-/* 色はグローバルトークンを参照する。ここで独自のパレットを定義しないこと。 */
-.wrapper {
-  --spacing-card-radius: var(--radius-lg);
-  --color-brown: var(--color-accent-strong);
-  --color-cream: var(--color-bg);
+/* 焙煎豆リスト（A-1 グリッド）。
+   PageHeader のグリッドの直下に続く 12 カラムの罫線グリッドとして組む。
+   client:only の島に包まれるので、Grid.astro の「重ねたら上辺を消す」が
+   効かない。上辺の罫線はここで外しておく。 */
 
-  width: 100%;
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--color-rule);
+  border: 1px solid var(--color-rule);
+  border-top: 0;
 }
 
-/* ---- filters ---- */
+.cell {
+  min-width: 0;
+  padding: var(--spacing-cell);
+  background: var(--color-bg);
+}
+
+.label {
+  font-size: var(--text-label);
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+}
+
+/* ---- 絞り込み ---- */
+
 .filters {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 1.25rem;
-  margin-bottom: 1.75rem;
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid var(--color-line);
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  grid-column: 1 / -1;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: var(--spacing-lg);
 }
 
 .filter {
-  position: relative;
-  appearance: none;
-  border: none;
+  padding: 0;
   background: none;
-  padding: 0 0 0.3rem;
+  border: 0;
+  border-bottom: 1px solid transparent;
   color: var(--color-ink-faint);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-family: inherit;
   cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.filter::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.95rem;
-  height: 2px;
-  background: var(--color-brown);
-  transform: scaleX(0);
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    color var(--transition),
+    border-color var(--transition);
 }
 
 .filter:hover {
@@ -49,197 +59,150 @@
 }
 
 .filter[data-active="true"] {
-  color: var(--color-ink);
-}
-
-.filter[data-active="true"]::after {
-  transform: scaleX(1);
-}
-
-.grid {
-  display: grid;
-
-  /* min() で狭い画面でもカードが container からはみ出さないようにする */
-  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
-  gap: 1.35rem;
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .empty {
-  color: var(--color-ink-faint);
-  font-size: 0.95rem;
-  padding: 2rem 0;
+  grid-column: 1 / -1;
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
 }
 
-/* ---- card ---- */
+/* ---- カード ---- */
+
 .card {
-  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 310px;
-  padding: 0;
-  border: 1px solid var(--color-line);
-  border-radius: var(--spacing-card-radius);
-  overflow: hidden;
-  cursor: pointer;
-  background: var(--color-surface);
-  text-align: left;
-
-  /* カードは <a>（共有リンク）なので、下線と文字色を打ち消す */
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 0.2s ease;
+  grid-column: span 4;
+  min-width: 0;
+  background: var(--color-bg);
+  transition: background-color var(--transition);
 }
 
 .card:hover {
-  border-color: var(--color-line-strong);
+  background: var(--color-bg-subtle);
 }
 
-.card:focus-visible {
-  border-color: var(--color-line-strong);
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+.filler {
+  grid-column: span 4;
+  background: var(--color-bg-subtle);
 }
 
 .body {
-  flex: 1 1 auto;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  padding: 1.25rem 1.3rem 1.15rem;
+  gap: var(--spacing-md);
+  padding: var(--spacing-cell);
 }
 
 .card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.15rem;
+  gap: var(--spacing-md);
+  color: var(--color-accent);
 }
 
+/* 在庫の札。焙煎できるときだけ緑のベタにする */
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-ink-faint);
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: currentcolor;
-  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--color-rule);
+  color: var(--color-ink);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 .status[data-available="true"] {
-  color: var(--color-positive);
+  background: var(--color-positive);
+  border-color: var(--color-positive);
+  color: var(--color-on-ink);
 }
 
 .country {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
-  margin-bottom: 0.4rem;
+  margin-top: var(--spacing-md);
+  color: var(--color-ink-muted);
 }
 
 .flag {
-  font-size: 0.85rem;
-  line-height: 1;
+  margin-right: 0.35rem;
 }
 
 .name {
-  font-size: 1.16rem;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--color-ink);
-  margin: 0 0 1rem;
-  letter-spacing: 0.005em;
+  font-family: var(--font-serif);
+  font-size: var(--text-serif-m);
+  font-weight: 400;
+  line-height: var(--text-serif-m--line-height);
+  letter-spacing: var(--text-serif-m--letter-spacing);
 }
 
-/* フレーバーノート: 色ドット + ラベル */
 .note-row {
-  list-style: none;
-  margin: 0 0 1rem;
-  padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 0.85rem;
+  gap: var(--spacing-xs) var(--spacing-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .note-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  line-height: 1.5;
+  gap: 0.4rem;
   color: var(--color-ink-muted);
+  font-size: var(--text-small);
 }
 
 .note-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--color-rule);
 
   /* 1 語に複数色ある場合は --color-note-bg に塗り分けグラデが入る */
   background: var(--color-note-bg, var(--color-note));
-  flex-shrink: 0;
 }
 
 .note-more {
-  font-size: 0.75rem;
-  color: var(--color-ink-faint);
   align-self: center;
+  color: var(--color-ink-faint);
+  font-size: var(--text-small);
 }
 
 /* 下部メタ（焙煎度 / 精製） */
 .card-foot {
-  margin-top: auto;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--color-line);
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  gap: var(--spacing-sm);
+  margin-top: auto;
   color: var(--color-ink-faint);
 }
 
 .foot-divider {
   width: 1px;
-  height: 0.7rem;
-  background: var(--color-line);
+  height: 0.8em;
+  background: var(--color-line-strong);
 }
 
-/* フレーバー色のスウォッチ帯（buildFlavorSwatch をここに流し込む）。
-   カード下 1/4 くらいのバンドとして敷く。 */
+/* マスの下端いっぱいに敷くフレーバーの帯 */
 .swatch {
-  position: relative;
-  flex: 0 0 25%;
-  min-height: 74px;
+  min-height: 3.5rem;
+  border-top: 1px solid var(--color-rule);
   background-size: 160% 160%;
-  transition: filter 0.35s ease;
-}
-
-/* 帯の上端をカード本体に馴染ませる薄いフェード */
-.swatch-edge {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 14px;
-  background: linear-gradient(to bottom, rgb(255 255 255 / 55%), transparent);
+  transition: filter var(--transition);
 }
 
 .card:hover .swatch {
   filter: saturate(1.12) brightness(1.02);
 }
 
-/* ---- modal ---- */
+/* ---- モーダル ---- */
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -247,8 +210,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
-  background: rgb(28 22 17 / 55%);
+  padding: var(--spacing-lg);
+  background: rgb(42 37 33 / 55%);
   animation: fade 0.22s ease;
 }
 
@@ -264,178 +227,142 @@
 
 .modal {
   position: relative;
-  width: min(620px, 100%);
+  width: min(44rem, 100%);
   max-height: 88vh;
   overflow-y: auto;
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  border: 1px solid var(--color-rule);
 }
 
 .close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0;
+  right: 0;
   z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-line);
-  background: var(--color-surface);
-  color: var(--color-ink-muted);
-  font-size: 1.05rem;
-  line-height: 1;
+  height: 3rem;
+  padding-inline: var(--spacing-cell);
+  background: var(--color-bg);
+  border: 0;
+  border-bottom: 1px solid var(--color-rule);
+  border-left: 1px solid var(--color-rule);
+  color: var(--color-ink);
+  font-family: inherit;
   cursor: pointer;
   transition:
-    background 0.18s ease,
-    color 0.18s ease;
+    background-color var(--transition),
+    color var(--transition);
 }
 
 .close:hover {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
 }
 
 .modal-inner {
-  padding: 2rem 2.1rem 1.9rem;
   display: flex;
   flex-direction: column;
-  gap: 1.9rem;
 }
 
 .modal-head {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-right: 2.2rem;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl) var(--spacing-cell) var(--spacing-cell);
+  padding-right: 7rem;
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .modal-head-main {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  min-width: 0;
+  gap: var(--spacing-md);
 }
 
 .modal-name {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--color-ink);
-  margin: 0;
-  line-height: 1.3;
-  letter-spacing: 0.005em;
+  font-family: var(--font-serif);
+  font-size: var(--text-serif-l);
+  font-weight: 400;
+  line-height: var(--text-serif-l--line-height);
+  letter-spacing: var(--text-serif-l--letter-spacing);
 }
 
 .genre {
-  flex-shrink: 0;
-  margin-top: 0.2rem;
-  font-size: 0.63rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-brown);
-  border: 1px solid var(--color-line-strong);
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  white-space: nowrap;
+  color: var(--color-accent);
 }
 
 .explanation {
-  font-size: 0.95rem;
-  line-height: 1.95;
+  padding: var(--spacing-cell);
+  border-bottom: 1px solid var(--color-rule);
   color: var(--color-ink-muted);
-  margin: 0;
+  font-size: var(--text-small);
+  line-height: var(--text-small--line-height);
 }
 
-/* セクション（Flavor / Spec） */
 .block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  padding: var(--spacing-cell);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .block-title {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-ink-faint);
+  margin-bottom: var(--spacing-md);
+  color: var(--color-accent);
 }
 
-/* フレーバー帯 */
 .hero {
-  height: 92px;
-  border-radius: 12px;
-  background-size: cover;
+  height: 4.5rem;
+  border: 1px solid var(--color-rule);
+  background-size: 160% 160%;
 }
 
 .note-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: var(--spacing-sm) var(--spacing-lg);
+  margin-top: var(--spacing-md);
 }
 
 .note-tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-ink-muted);
-  padding: 0.34rem 0.7rem;
-  border-radius: 999px;
-  background: var(--color-cream);
-  border: 1px solid var(--color-line);
+  gap: 0.45rem;
+  font-size: var(--text-small);
+  font-weight: 700;
 }
 
 .note-tag-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1px solid var(--color-rule);
   background: var(--color-note-bg, var(--color-note));
-  flex-shrink: 0;
 }
 
-/* スペックは定義リストで行組み */
 .specs {
   margin: 0;
-  display: flex;
-  flex-direction: column;
 }
 
 .spec-row {
   display: flex;
-  gap: 1rem;
-  padding: 0.65rem 0;
-  border-top: 1px solid var(--color-line);
-}
-
-.spec-row:last-child {
-  border-bottom: 1px solid var(--color-line);
+  align-items: baseline;
+  gap: var(--spacing-lg);
+  padding-block: var(--spacing-sm);
+  border-top: 1px solid var(--color-rule);
 }
 
 .spec-label {
-  flex: 0 0 5.5rem;
-  font-size: 0.68rem;
+  flex: 0 0 5rem;
+  color: var(--color-accent);
+  font-size: var(--text-label);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-faint);
-  padding-top: 0.12rem;
+  letter-spacing: 0.08em;
 }
 
 .spec-value {
   margin: 0;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--color-ink);
-  line-height: 1.6;
+  font-family: var(--font-serif);
+  font-size: var(--text-lead);
 }
 
-/* ---- roast logs（モーダル内の焙煎ログ） ---- */
 .log-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -443,72 +370,76 @@
 
 .log-link {
   display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 0.8rem;
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-sm);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 0.2s ease;
+  gap: var(--spacing-xs) var(--spacing-md);
+  padding-block: var(--spacing-sm);
+  border-top: 1px solid var(--color-line-strong);
+  transition: color var(--transition);
 }
 
 .log-link:hover {
-  border-color: var(--color-line-strong);
+  color: var(--color-accent-strong);
 }
 
 .log-id {
-  color: var(--color-accent-strong);
-  font-size: 0.82rem;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-serif);
+  font-size: var(--text-lead);
 }
 
 .log-meta {
   color: var(--color-ink-faint);
-  font-size: 0.75rem;
-  text-align: right;
+  font-size: var(--text-small);
 }
 
 .modal-foot {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  font-size: 0.72rem;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-cell);
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
   font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-faint);
 }
 
 .modal-foot[data-available="true"] {
-  color: var(--color-positive);
+  background: var(--color-positive);
+  color: var(--color-on-ink);
 }
 
-@media (width <= 640px) {
-  .modal-inner {
-    padding: 1.6rem 1.4rem 1.5rem;
-    gap: 1.5rem;
+.status-dot {
+  flex-shrink: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: currentcolor;
+}
+
+@media (width <= 48rem) {
+  .wrapper {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .modal-name {
-    font-size: 1.35rem;
+  .card {
+    grid-column: 1 / -1;
   }
 
-  /* 閉じるボタンと被らないよう、ジャンルは名前の下へ回す */
-  .modal-head {
+  .filler {
+    display: none;
+  }
+
+  .filters {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.7rem;
-    padding-right: 2.6rem;
   }
 
-  .genre {
-    margin-top: 0;
+  .modal-head {
+    padding-right: var(--spacing-cell);
+    padding-top: 3.5rem;
   }
 
   .spec-row {
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--spacing-xs);
   }
 
   .spec-label {

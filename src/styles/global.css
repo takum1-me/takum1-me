@@ -185,7 +185,7 @@
   }
 
   .page-header__aside a:hover {
-    color: var(--color-accent-strong);
+    color: var(--color-accent);
   }
 }
 
