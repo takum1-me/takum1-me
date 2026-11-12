@@ -15,7 +15,7 @@ Coffee, Programming, Design
 
 ## Experience
 
-• Ethiopian Coffee House（インターン）
+• [Ethiopian Coffee House](https://www.ethiobunahouse.com/) インターン（2026年8月〜）
 
 ## Interests
 

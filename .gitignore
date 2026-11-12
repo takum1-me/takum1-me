@@ -32,3 +32,12 @@ pnpm-debug.log*
 
 # 外部から持ってきた Claude スキル定義
 skills/
+
+# Coffee Character Wheel のポスター原本のうち、再生成に使わない閲覧用コピー
+# （抽出の入力は 7i4Hvu-*.svg と *.html の 2 つだけ）
+Coffee-Character-Wheel-Poster-PDF.pdf
+Coffee-Character-Wheel-Poster-PDF_files/
+
+# character-wheel:debug が吐くデバッグ用 SVG（public/ に置くと公開URLになる）
+public/character-wheel-debug*.svg
+public/coffee-character-wheel-reference.svg

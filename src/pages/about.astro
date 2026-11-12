@@ -4,8 +4,7 @@ import Container from "../components/shared/layout/Container.astro";
 import PageHeader from "../components/shared/page/PageHeader.astro";
 import SnsLinks from "../components/shared/sns-links/SnsLinks";
 import AboutInterests from "../components/features/about/AboutInterests.astro";
-import AboutOrganizations from "../components/features/about/AboutOrganizations.astro";
-import AboutExperience from "../components/features/about/AboutExperience.astro";
+import AboutEntryList from "../components/features/about/AboutEntryList.astro";
 import AboutQualifications from "../components/features/about/AboutQualifications.astro";
 import { getAllAbout, type AboutItem } from "../lib/microcms";
 import "../components/shared/sns-links/sns-links.css";
@@ -37,7 +36,6 @@ const organizations = aboutItems.filter((item) =>
 const certifications = aboutItems.filter((item) =>
   item.genre.includes("certification"),
 );
-// インターンなどの経験は、新しいものが上に来るように並べ替える
 const experiences = aboutItems
   .filter((item) => item.genre.includes("experience"))
   .sort((a, b) => (b.beginDate ?? "").localeCompare(a.beginDate ?? ""));
@@ -54,8 +52,8 @@ const experiences = aboutItems
         favoriteFlavors={favoriteFlavors}
         interests={interests}
       />
-      <AboutOrganizations organizations={organizations} />
-      {experiences.length > 0 && <AboutExperience experiences={experiences} />}
+      <AboutEntryList title="所属" items={organizations} />
+      <AboutEntryList title="経験" items={experiences} />
       <AboutQualifications certifications={certifications} />
     </div>
 
