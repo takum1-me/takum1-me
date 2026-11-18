@@ -10,10 +10,10 @@
 .toc__label {
   margin-bottom: 0.9rem;
   color: var(--color-accent);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: var(--text-eyebrow--letter-spacing);
-  text-transform: uppercase;
+  font-size: var(--text-label);
+  font-style: italic;
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
 }
 
 .toc__list {

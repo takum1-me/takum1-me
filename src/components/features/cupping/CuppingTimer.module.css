@@ -23,6 +23,7 @@
 .sound__label {
   color: var(--color-accent);
   font-size: var(--text-label);
+  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
@@ -245,6 +246,7 @@
   background: var(--color-bg);
   color: var(--color-ink);
   font-size: var(--text-label);
+  font-style: italic;
   font-weight: var(--text-label--font-weight);
   letter-spacing: var(--text-label--letter-spacing);
 }
@@ -274,7 +276,6 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  font-weight: 700;
   cursor: pointer;
 }
 

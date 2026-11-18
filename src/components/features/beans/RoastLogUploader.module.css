@@ -96,10 +96,10 @@
 
 .stat__label {
   color: var(--color-ink-faint);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: var(--text-eyebrow--letter-spacing);
-  text-transform: uppercase;
+  font-size: var(--text-label);
+  font-style: italic;
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
 }
 
 .stat__value {
@@ -127,10 +127,10 @@
 
 .field__label {
   color: var(--color-ink-faint);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: var(--text-eyebrow--letter-spacing);
-  text-transform: uppercase;
+  font-size: var(--text-label);
+  font-style: italic;
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
 }
 
 .field select,
@@ -276,10 +276,10 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   color: var(--color-ink-faint);
-  font-size: var(--text-eyebrow);
-  font-weight: 700;
-  letter-spacing: var(--text-eyebrow--letter-spacing);
-  text-transform: uppercase;
+  font-size: var(--text-label);
+  font-style: italic;
+  font-weight: var(--text-label--font-weight);
+  line-height: var(--text-label--line-height);
 }
 
 .saved__count {

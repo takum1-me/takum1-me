@@ -41,7 +41,7 @@
 }
 
 .prose strong {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .prose ul,
@@ -121,5 +121,5 @@
 
 .prose th {
   background: var(--color-bg-subtle);
-  font-weight: 700;
+  font-weight: 600;
 }

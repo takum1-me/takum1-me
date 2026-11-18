@@ -299,13 +299,13 @@ function style(): string {
 .roast-chart .line--mean { stroke: var(--color-accent); stroke-width: 1.2; }
 .roast-chart .line--target { stroke: var(--color-ink-faint); stroke-width: 1.2; stroke-dasharray: 5 4; }
 .roast-chart .line--ror { stroke: var(--color-roast-ror); stroke-width: 1.4; }
-.roast-chart text { font-family: var(--font-sans); fill: var(--color-ink-faint); }
-.roast-chart .tick { font-size: 11px; }
+.roast-chart text { font-family: var(--font-serif); font-style: italic; fill: var(--color-ink-faint); }
+.roast-chart .tick { font-size: 13px; }
 .roast-chart .tick--y { text-anchor: end; }
 .roast-chart .tick--x { text-anchor: middle; }
 .roast-chart .tick--ror { text-anchor: start; fill: var(--color-roast-ror); }
-.roast-chart .event-label { font-size: 11px; font-weight: 700; fill: var(--color-ink); }
-.roast-chart .legend { font-size: 11px; fill: var(--color-ink-muted); }
+.roast-chart .event-label { font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+.roast-chart .legend { font-size: 13px; fill: var(--color-ink-muted); }
 </style>`;
 }
 
