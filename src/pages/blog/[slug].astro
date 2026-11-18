@@ -97,8 +97,8 @@ const formatDate = (dateString: string) => {
     align-items: center;
     gap: 0.4rem;
     color: var(--color-ink-faint);
-    font-size: var(--text-small);
-    font-weight: 600;
+    font-size: var(--text-label);
+    font-style: italic;
     transition: color var(--transition);
   }
 
@@ -115,15 +115,14 @@ const formatDate = (dateString: string) => {
   .article__meta {
     margin-bottom: 0.85rem;
     color: var(--color-ink-faint);
-    font-size: var(--text-eyebrow);
-    font-weight: 700;
-    letter-spacing: var(--text-eyebrow--letter-spacing);
+    font-size: var(--text-label);
+    font-style: italic;
     font-variant-numeric: tabular-nums;
   }
 
   .article__title {
     font-size: var(--text-h1);
-    font-weight: 700;
+    font-weight: 600;
     line-height: var(--text-h1--line-height);
     letter-spacing: var(--text-h1--letter-spacing);
   }

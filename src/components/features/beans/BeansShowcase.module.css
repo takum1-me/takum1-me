@@ -20,10 +20,10 @@
 
 .label {
   font-size: var(--text-label);
+  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
-  text-transform: uppercase;
 }
 
 /* ---- 絞り込み ---- */
@@ -95,9 +95,8 @@
   padding: 0.25rem 0.6rem;
   border: 1px solid var(--color-rule);
   color: var(--color-ink);
-  font-size: var(--text-label);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: var(--text-small);
+  font-style: italic;
   white-space: nowrap;
 }
 
@@ -309,7 +308,7 @@
   align-items: center;
   gap: 0.45rem;
   font-size: var(--text-small);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .note-tag-dot {
@@ -335,8 +334,7 @@
   flex: 0 0 5rem;
   color: var(--color-accent);
   font-size: var(--text-label);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-style: italic;
 }
 
 .spec-value {
@@ -382,7 +380,7 @@
   padding: var(--spacing-md) var(--spacing-cell);
   color: var(--color-ink-muted);
   font-size: var(--text-small);
-  font-weight: 700;
+  font-style: italic;
 }
 
 .modal-foot[data-available="true"] {

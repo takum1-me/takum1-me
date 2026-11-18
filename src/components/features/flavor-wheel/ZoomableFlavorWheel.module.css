@@ -98,10 +98,7 @@
 }
 
 .segment-text {
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-serif);
   pointer-events: none;
   user-select: none;
 }

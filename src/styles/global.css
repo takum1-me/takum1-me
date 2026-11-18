@@ -1,31 +1,31 @@
 @import "tailwindcss";
-@import "@fontsource-variable/noto-sans-jp";
 @import "@fontsource/eb-garamond/400.css";
+@import "@fontsource/eb-garamond/400-italic.css";
+@import "@fontsource/eb-garamond/600.css";
+@import "@fontsource-variable/noto-serif-jp";
 
 @theme {
   /* --- Typefaces ---------------------------------------------------------
-     Latin headings render in EB Garamond; Japanese has no glyphs there
-     so it falls through to the platform mincho, which keeps headings
-     editorial without shipping a second CJK webfont. */
-  --font-sans:
-    "Noto Sans JP Variable", "Helvetica Neue", "Hiragino Kaku Gothic ProN",
-    arial, sans-serif;
+     サイトの文字は全てセリフで組む（2026-11-17、細く小さいゴシックを全廃）。
+     欧文は EB Garamond、和文はそこにグリフが無いので明朝に落ちる。Mac は
+     ヒラギノ明朝をそのまま使い、それ以外（Windows の游明朝は細すぎる）は
+     Noto Serif JP を読み込む。ゴシックの書体はもう持たない。
+     等幅はコードと計測値の表だけに使う。 */
   --font-serif:
-    "EB Garamond", "Hiragino Mincho ProN", "Yu Mincho", yumincho, serif;
+    "EB Garamond", "Hiragino Mincho ProN", "Noto Serif JP Variable", serif;
+  --font-mono: ui-monospace, "SFMono-Regular", menlo, consolas, monospace;
 
   /* --- Type scale --------------------------------------------------------
-     These are the only sizes the site uses. */
-  --text-eyebrow: 0.6875rem;
-  --text-eyebrow--line-height: 1.4;
-  --text-eyebrow--letter-spacing: 0.06em;
-  --text-eyebrow--font-weight: 700;
-  --text-small: 0.8125rem;
-  --text-small--line-height: 1.7;
-  --text-body: 0.9375rem;
-  --text-body--line-height: 1.85;
-  --text-lead: 1.0625rem;
-  --text-lead--line-height: 1.85;
-  --text-h3: 1.0625rem;
+     These are the only sizes the site uses. 一番小さい文字でも 15px を
+     下回らせない（Garamond は x ハイトが低いので、これでゴシックの
+     13px 程度に見える）。 */
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.75;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.9;
+  --text-lead: 1.1875rem;
+  --text-lead--line-height: 1.8;
+  --text-h3: 1.1875rem;
   --text-h3--line-height: 1.5;
   --text-h2: 1.375rem;
   --text-h2--line-height: 1.4;
@@ -56,10 +56,12 @@
   --text-statement--line-height: 1.55;
   --text-entry: clamp(1rem, 1.35vw, 1.1875rem);
   --text-entry--line-height: 1.5;
-  --text-label: 0.6875rem;
-  --text-label--line-height: 1.4;
-  --text-label--letter-spacing: 0.18em;
-  --text-label--font-weight: 700;
+
+  /* ラベルは小さな太字の大文字ではなく、Garamond のイタリックで添える */
+  --text-label: 1.0625rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.005em;
+  --text-label--font-weight: 400;
 
   /* --- Colour ------------------------------------------------------------
      One warm neutral axis plus a single accent. */
@@ -133,9 +135,9 @@
     min-height: 100vh;
     background: var(--color-bg);
     color: var(--color-ink);
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: var(--text-body);
-    line-height: 1.85;
+    line-height: var(--text-body--line-height);
     font-feature-settings: "palt" 1;
     text-rendering: optimizelegibility;
     -webkit-font-smoothing: antialiased;
@@ -147,8 +149,20 @@
   h4 {
     margin: 0;
     color: var(--color-ink);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.4;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  /* イタリックは欧文だけに掛ける。和文に斜体を合成させない */
+  :where(html) {
+    font-synthesis-style: none;
   }
 
   p {
@@ -334,9 +348,9 @@
   color: var(--color-ink);
   font-family: inherit;
   font-size: var(--text-label);
+  font-style: italic;
   font-weight: var(--text-label--font-weight);
   letter-spacing: var(--text-label--letter-spacing);
-  text-transform: uppercase;
   cursor: pointer;
   transition:
     background-color var(--transition),
@@ -361,10 +375,10 @@
 @layer components {
   .grid-label {
     font-size: var(--text-label);
+    font-style: italic;
     font-weight: var(--text-label--font-weight);
     line-height: var(--text-label--line-height);
     letter-spacing: var(--text-label--letter-spacing);
-    text-transform: uppercase;
   }
 
   .grid-label--accent {

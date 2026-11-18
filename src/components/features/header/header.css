@@ -51,10 +51,8 @@
   padding-inline: clamp(1rem, 1.6vw, 1.5rem);
   border-left: 1px solid var(--color-rule);
   color: var(--color-ink);
-  font-size: var(--text-label);
-  font-weight: var(--text-label--font-weight);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--text-lead);
+  line-height: 1;
   transition:
     background-color var(--transition),
     color var(--transition);
@@ -81,10 +79,8 @@
   border-left: 1px solid var(--color-rule);
   color: var(--color-ink);
   font-family: inherit;
-  font-size: var(--text-label);
-  font-weight: var(--text-label--font-weight);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--text-lead);
+  line-height: 1;
   cursor: pointer;
 }
 
@@ -133,9 +129,7 @@
   border-bottom: 1px solid var(--color-rule);
   font-family: var(--font-serif);
   font-size: var(--text-serif-m);
-  font-weight: 400;
   letter-spacing: var(--text-serif-m--letter-spacing);
-  text-transform: none;
 }
 
 .site-header__drawer-sns {
