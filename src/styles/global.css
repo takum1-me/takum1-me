@@ -208,9 +208,21 @@
    フッターとのあいだに空白を作らない。React の島（astro-island）は
    display: contents なので、その子を伸ばす。 */
 :where(.site-main) > .container--frame {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+/* 外枠の縦線をヘッダーの裏まで上に伸ばしておく。引っ張りスクロール
+   （バウンス）でヘッダーと本文のあいだが空いても、縦線が途切れない */
+:where(.site-main) > .container--frame::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 100%;
+  height: 100lvh;
+  border-inline: 1px solid var(--color-rule);
+  pointer-events: none;
 }
 
 :where(.site-main > .container--frame) > .grid:last-child,
