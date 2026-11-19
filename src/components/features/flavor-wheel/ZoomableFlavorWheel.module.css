@@ -98,7 +98,6 @@
 }
 
 .segment-text {
-  font-family: var(--font-serif);
   pointer-events: none;
   user-select: none;
 }

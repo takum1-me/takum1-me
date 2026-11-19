@@ -1,0 +1,28 @@
+---
+/**
+ * 豆のフレーバーを「文字に色」で並べる（トップの豆・About・豆の詳細）。
+ * 色の帯やホイールの代わりに、味の名前そのものを色のグラデーションで組む。
+ * 色の補正（地に沈まない明るさ）は flavorWordStyle() が受け持つ。
+ */
+import type { FlavorColor } from "../../../lib/utils/flavor-color";
+import { flavorWordStyle } from "../../../lib/utils/flavor-words";
+
+export interface Props {
+  notes: FlavorColor[];
+  class?: string;
+}
+
+const { notes, class: className, ...rest } = Astro.props;
+---
+
+{
+  notes.length > 0 && (
+    <p class:list={["flavor-words", className]} {...rest}>
+      {notes.map((note) => (
+        <span class="flavor-words__word" style={flavorWordStyle(note.colors)}>
+          {note.label}
+        </span>
+      ))}
+    </p>
+  )
+}

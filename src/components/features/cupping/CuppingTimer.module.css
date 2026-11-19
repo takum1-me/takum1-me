@@ -17,13 +17,12 @@
   background: var(--color-bg);
 }
 
-/* ラベルはグリッド共通の大文字ラベルに揃える */
+/* ラベルはグリッド共通の添え書き（.grid-label）に揃える */
 .elapsed__label,
 .mark__label,
 .sound__label {
-  color: var(--color-accent);
+  color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
@@ -34,7 +33,6 @@
 .mark__time,
 .mark__input,
 .mark__select {
-  font-family: var(--font-serif);
   font-variant-numeric: lining-nums tabular-nums;
 }
 
@@ -118,7 +116,6 @@
 
 .mark__target {
   color: var(--color-ink-faint);
-  font-family: var(--font-serif);
   font-size: var(--text-lead);
   font-variant-numeric: lining-nums tabular-nums;
 }
@@ -225,8 +222,7 @@
   padding: var(--spacing-lg) var(--spacing-cell);
   background: var(--color-accent);
   color: var(--color-ink);
-  font-family: var(--font-serif);
-  font-size: var(--text-serif-m);
+  font-size: var(--text-title-m);
   line-height: 1;
   text-align: left;
 }
@@ -246,7 +242,6 @@
   background: var(--color-bg);
   color: var(--color-ink);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   letter-spacing: var(--text-label--letter-spacing);
 }

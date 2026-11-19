@@ -20,7 +20,6 @@
 
 .label {
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
@@ -67,7 +66,7 @@
 
 .filler {
   grid-column: span 4;
-  background: var(--color-bg-subtle);
+  background: var(--color-bg);
 }
 
 .body {
@@ -78,37 +77,32 @@
   padding: var(--spacing-cell);
 }
 
-/* 右上の札と在庫の札が重ならないよう、右を空けておく */
-.card-top {
-  padding-right: var(--spacing-xl);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  color: var(--color-accent);
-}
-
-/* 在庫の札。焙煎できるときだけ緑のベタにする */
+/* 在庫は札やベタにせず、文字の色だけで示す（在庫ありは緑） */
 .status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.6rem;
-  border: 1px solid var(--color-rule);
-  color: var(--color-ink);
-  font-size: var(--text-small);
-  font-style: italic;
-  white-space: nowrap;
+  padding-right: var(--spacing-xl);
+  color: var(--color-ink-faint);
 }
 
 .status[data-available="true"] {
-  background: var(--color-positive);
-  border-color: var(--color-positive);
-  color: var(--color-on-ink);
+  color: var(--color-positive);
 }
 
-.country {
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
   margin-top: var(--spacing-md);
-  color: var(--color-ink-muted);
+}
+
+.country,
+.meta {
+  color: var(--color-ink-faint);
+}
+
+/* 味の名前はカードの下に寄せる */
+.flavors {
+  margin-top: auto;
+  font-size: clamp(1.75rem, 2.4vw, 2.25rem);
 }
 
 .flag {
@@ -116,71 +110,10 @@
 }
 
 .name {
-  font-family: var(--font-serif);
-  font-size: var(--text-serif-m);
-  font-weight: 400;
-  line-height: var(--text-serif-m--line-height);
-  letter-spacing: var(--text-serif-m--letter-spacing);
-}
-
-.note-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs) var(--spacing-md);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.note-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--color-ink-muted);
-  font-size: var(--text-small);
-}
-
-.note-dot {
-  flex-shrink: 0;
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 1px solid var(--color-rule);
-
-  /* 1 語に複数色ある場合は --color-note-bg に塗り分けグラデが入る */
-  background: var(--color-note-bg, var(--color-note));
-}
-
-.note-more {
-  align-self: center;
-  color: var(--color-ink-faint);
-  font-size: var(--text-small);
-}
-
-/* 下部メタ（焙煎度 / 精製） */
-.card-foot {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin-top: auto;
-  color: var(--color-ink-faint);
-}
-
-.foot-divider {
-  width: 1px;
-  height: 0.8em;
-  background: var(--color-line-strong);
-}
-
-/* マスの下端いっぱいに敷くフレーバーの帯 */
-.swatch {
-  min-height: 3.5rem;
-  border-top: 1px solid var(--color-rule);
-  background-size: 160% 160%;
-  transition: filter var(--transition);
-}
-
-.card:hover .swatch {
-  filter: saturate(1.12) brightness(1.02);
+  font-size: var(--text-title-m);
+  font-weight: 600;
+  line-height: var(--text-title-m--line-height);
+  letter-spacing: var(--text-title-m--letter-spacing);
 }
 
 /* ---- モーダル ---- */
@@ -236,8 +169,7 @@
 }
 
 .close:hover {
-  background: var(--color-ink);
-  color: var(--color-on-ink);
+  background: var(--color-bg-subtle);
 }
 
 .modal-inner {
@@ -261,15 +193,14 @@
 }
 
 .modal-name {
-  font-family: var(--font-serif);
-  font-size: var(--text-serif-l);
-  font-weight: 400;
-  line-height: var(--text-serif-l--line-height);
-  letter-spacing: var(--text-serif-l--letter-spacing);
+  font-size: var(--text-title-l);
+  font-weight: 600;
+  line-height: var(--text-title-l--line-height);
+  letter-spacing: var(--text-title-l--letter-spacing);
 }
 
 .genre {
-  color: var(--color-accent);
+  color: var(--color-ink-faint);
 }
 
 .explanation {
@@ -287,35 +218,6 @@
 
 .block-title {
   margin-bottom: var(--spacing-md);
-  color: var(--color-accent);
-}
-
-.hero {
-  height: 4.5rem;
-  border: 1px solid var(--color-rule);
-  background-size: 160% 160%;
-}
-
-.note-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm) var(--spacing-lg);
-  margin-top: var(--spacing-md);
-}
-
-.note-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: var(--text-small);
-  font-weight: 600;
-}
-
-.note-tag-dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border: 1px solid var(--color-rule);
-  background: var(--color-note-bg, var(--color-note));
 }
 
 .specs {
@@ -332,14 +234,12 @@
 
 .spec-label {
   flex: 0 0 5rem;
-  color: var(--color-accent);
+  color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
 }
 
 .spec-value {
   margin: 0;
-  font-family: var(--font-serif);
   font-size: var(--text-lead);
 }
 
@@ -355,7 +255,7 @@
   justify-content: space-between;
   gap: var(--spacing-xs) var(--spacing-md);
   padding-block: var(--spacing-sm);
-  border-top: 1px solid var(--color-line-strong);
+  border-top: 1px solid var(--color-rule);
   transition: color var(--transition);
 }
 
@@ -364,7 +264,6 @@
 }
 
 .log-id {
-  font-family: var(--font-serif);
   font-size: var(--text-lead);
 }
 
@@ -380,12 +279,10 @@
   padding: var(--spacing-md) var(--spacing-cell);
   color: var(--color-ink-muted);
   font-size: var(--text-small);
-  font-style: italic;
 }
 
 .modal-foot[data-available="true"] {
-  background: var(--color-positive);
-  color: var(--color-on-ink);
+  color: var(--color-positive);
 }
 
 .status-dot {

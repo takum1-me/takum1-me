@@ -2,7 +2,9 @@
 /**
  * 全ページ共通のページ見出し（A-1 グリッド）。
  * 左の大きなマスに英単語（word）を巨大に組み、右のマスに導入文を置く。
- * aside スロットは導入文の下に墨のマスとして出す（関連ページへのリンクなど）。
+ * aside スロットは導入文の下のマスに出す（関連ページへのリンクなど）。
+ * title（和文）は画面には出さない。巨大な英単語と導入文で足り、和文の添え書きは
+ * テンションが浮くため（2026-11-19）。見出しの読み上げにだけ使う。
  *
  * ルート自体が Grid なので、<Container size="frame"> の中で本文の Grid と
  * 並べると、境目の罫線は 1 本にまとまる。
@@ -11,7 +13,7 @@ import Grid from "../grid/Grid.astro";
 import Cell from "../grid/Cell.astro";
 
 export interface Props {
-  /** 日本語の見出し。word があるときはその上のラベルになる */
+  /** 日本語の見出し。word があるときは画面に出さず、h1 の読み上げに添える */
   title: string;
   /** マスいっぱいに組む英単語（"Works" など）。無いときは title を見出しにする */
   word?: string;
@@ -31,37 +33,30 @@ const hasSide = Boolean(lead) || hasAside;
   <Cell
     col={hasSide ? "1 / 9" : "1 / 13"}
     row={hasAside ? "span 2" : "auto"}
-    spread
     fit={Boolean(word)}
     class:list={["page-header__main", { "is-compact": compact }]}
   >
     {
       word ? (
-        <>
-          <p class="grid-label grid-label--accent">{title}</p>
-          <h1
-            class:list={[
-              "grid-giant",
-              "page-header__word",
-              { "has-descender": hasDescender },
-            ]}
-          >
-            {word}
-          </h1>
-        </>
+        <h1
+          class:list={[
+            "grid-giant",
+            "page-header__word",
+            { "has-descender": hasDescender },
+          ]}
+        >
+          {word}
+          <span class="sr-only">（{title}）</span>
+        </h1>
       ) : (
-        <>
-          <span class="grid-label grid-label--accent">Page</span>
-          <h1 class="grid-serif-l">{title}</h1>
-        </>
+        <h1 class="grid-title-l">{title}</h1>
       )
     }
   </Cell>
 
   {
     lead && (
-      <Cell col="9 / 13" spread>
-        <span class="grid-label grid-label--accent">Intro</span>
+      <Cell col="9 / 13">
         <p class="grid-statement">{lead}</p>
       </Cell>
     )
@@ -69,7 +64,7 @@ const hasSide = Boolean(lead) || hasAside;
 
   {
     hasAside && (
-      <Cell col="9 / 13" tone="ink" class="page-header__aside">
+      <Cell col="9 / 13" class="page-header__aside">
         <slot name="aside" />
       </Cell>
     )
@@ -77,7 +72,9 @@ const hasSide = Boolean(lead) || hasAside;
 </Grid>
 
 <style>
+  /* 巨大な英単語はマスの下端（罫線）に乗せる */
   .page-header__main {
+    justify-content: flex-end;
     min-height: clamp(12rem, 22vw, 20rem);
   }
 
@@ -98,10 +95,8 @@ const hasSide = Boolean(lead) || hasAside;
   }
 
   .page-header__aside {
-    justify-content: center;
+    justify-content: flex-end;
     gap: var(--spacing-sm);
-    font-size: var(--text-small);
-    line-height: var(--text-small--line-height);
   }
 
   @media (width <= 48rem) {

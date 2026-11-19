@@ -8,8 +8,6 @@ import Cell from "../../shared/grid/Cell.astro";
 import { fetchThumbnailFromOGP } from "../../../lib/ogp";
 
 interface Props {
-  index: number;
-  label: string;
   title: string;
   subtitle?: string;
   url: string;
@@ -19,8 +17,7 @@ interface Props {
   col: string;
 }
 
-const { index, label, title, subtitle, url, githubUrl, genre, photos, col } =
-  Astro.props;
+const { title, subtitle, url, githubUrl, genre, photos, col } = Astro.props;
 
 const isExternal = /^https?:\/\//.test(url);
 
@@ -38,9 +35,6 @@ if (genre === "design" && photos && photos.length > 0) {
   class:list={["work", "is-link", { "is-external": isExternal }]}
 >
   <div class="grid-tag">
-    <span class="grid-label grid-label--accent">
-      {label} — W{String(index).padStart(2, "0")}
-    </span>
     {
       githubUrl && (
         <a
@@ -67,7 +61,7 @@ if (genre === "design" && photos && photos.length > 0) {
 
   <div>
     <a
-      class="grid-serif-m work__link"
+      class="grid-title-m work__link"
       href={url}
       {...isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {}}
     >

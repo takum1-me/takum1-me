@@ -20,8 +20,7 @@ import { fetchNoteRSS, type NoteArticle } from "../lib/note-rss";
 import { loadSongsData } from "../lib/songs-loader";
 import { flavorColors } from "../lib/utils/flavor-color";
 import { processLabel, roastLabel } from "../data/bean-meta";
-import { SNS_LINKS } from "../data/site-links";
-import SnsIcon from "../components/shared/sns-links/SnsIcon";
+import FlavorWords from "../components/shared/flavor/FlavorWords.astro";
 
 // --- データ ---------------------------------------------------------------
 // どれか 1 つの取得に失敗しても、残りのマスは出せるようにしておく
@@ -66,7 +65,8 @@ const works = worksResponse.contents
     href: work.link as string,
   }));
 
-const tracks = songs.slice(0, 8);
+// 載せる量を絞る（2026-11-19）。曲は 3 曲、ジャケットは出さない
+const tracks = songs.slice(0, 3);
 const [leadPhoto, ...morePhotos] = photos;
 // 2 枚目以降が無いときは、続きのマスを出さずに写真を下まで伸ばす
 const hasMorePhotos = morePhotos.length > 0;
@@ -78,51 +78,19 @@ const photoSrc = (url: string, width: number) =>
   <Container size="frame">
     <Grid>
       <!-- 名前 -->
-      <Cell col="1 / 9" row="1 / 5" spread fit class="top-name">
-        <div class="grid-tag">
-          <span class="grid-label grid-label--accent">Coffee · Programming</span
-          >
-          <span class="grid-label grid-label--faint">Tsukuba, JP</span>
-        </div>
+      <Cell col="1 / 9" row="1 / 5" fit class="top-name">
         <h1 class="grid-giant top-name__word">takum1</h1>
       </Cell>
 
       <!-- 焙煎中の豆 -->
       {
         roasting && (
-          <Cell
-            col="9 / 13"
-            row="1 / 4"
-            tone="accent"
-            spread
-            href={beanPath(roasting)}
-          >
-            <div class="grid-tag">
-              <span class="grid-label">Now Roasting</span>
-              <span class="grid-label">
-                {roasting.isAvailable ? "焙煎できます" : "生豆切れ"}
-              </span>
-            </div>
+          <Cell col="9 / 13" row="1 / 4" spread href={beanPath(roasting)}>
             <div>
-              <p class="grid-serif-l">{roasting.name}</p>
-              {roastingMeta && (
-                <p class="grid-label top-roast__meta">{roastingMeta}</p>
-              )}
+              <p class="grid-title-l">{roasting.name}</p>
+              {roastingMeta && <p class="top-roast__meta">{roastingMeta}</p>}
             </div>
-            {roastingNotes.length > 0 && (
-              <div>
-                <div class="top-roast__band">
-                  {roastingNotes.map((note) => (
-                    <span style={`background: ${note.color}`} />
-                  ))}
-                </div>
-                <div class="grid-tag top-roast__notes">
-                  {roastingNotes.map((note) => (
-                    <span class="grid-label">{note.label}</span>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FlavorWords notes={roastingNotes} />
           </Cell>
         )
       }
@@ -130,41 +98,25 @@ const photoSrc = (url: string, width: number) =>
       <Cell
         col="9 / 13"
         row={roasting ? "4 / 5" : "1 / 5"}
-        tone="ink"
         href="/beans"
         class="top-cta"
       >
-        <span class="grid-serif-l">Beans</span>
+        <span class="grid-title-l">Beans</span>
       </Cell>
 
       <!-- プロフィール -->
-      <Cell col="1 / 5" row="5 / 7" spread class="top-intro">
-        <span class="grid-label grid-label--accent">Profile</span>
+      <Cell col="1 / 5" row="5 / 7" class="top-intro">
         <p class="grid-statement">
-          大学でプログラミングをしています。<br />
-          コーヒーが好きで、最近は焙煎も始めました。
+          Undergraduate / Brewer.<br />
+          大学で情報科学を学びながら、<br />
+          コーヒーを焙煎しています。
         </p>
-        <div class="top-intro__sns">
-          {
-            SNS_LINKS.map((sns) => (
-              <a
-                href={sns.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={sns.name}
-              >
-                <SnsIcon variant={sns.variant} size={20} />
-              </a>
-            ))
-          }
-        </div>
       </Cell>
 
       <!-- 書いたもの -->
       <Cell col="5 / 11" row="5 / 8">
         <div class="grid-tag top-rule">
-          <span class="grid-label grid-label--accent">Writing — 書いたもの</span
-          >
+          <h2 class="grid-heading">Writing</h2>
           <a class="grid-label text-link" href="/blog">All</a>
         </div>
         <ul class="top-posts">
@@ -207,23 +159,14 @@ const photoSrc = (url: string, width: number) =>
                 height={leadPhoto.photo.height}
                 loading="lazy"
               />
-              <figcaption class="top-photo__caption">
-                {leadPhoto.place}
-                <br />
-                {formatDotDate(leadPhoto.date)}
-              </figcaption>
             </>
           )
         }
       </Cell>
 
       <!-- よく聴いているもの -->
-      <Cell col="1 / 5" row="7 / 11">
-        <div class="grid-tag top-rule">
-          <span class="grid-label grid-label--accent"
-            >Playlist — よく聴いているもの</span
-          >
-        </div>
+      <Cell col="1 / 5" row="7 / 11" class="top-playlist">
+        <h2 class="grid-heading">Playlist</h2>
         <ol class="top-tracks">
           {
             tracks.map((track, i) => (
@@ -235,18 +178,6 @@ const photoSrc = (url: string, width: number) =>
                   rel="noopener noreferrer"
                 >
                   <span class="grid-number top-track__no">{i + 1}</span>
-                  {track.artworkUrl ? (
-                    <img
-                      class="top-track__art"
-                      src={track.artworkUrl}
-                      alt=""
-                      width="36"
-                      height="36"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <span class="top-track__art" />
-                  )}
                   <span class="top-track__text">
                     <span class="top-track__title">{track.title}</span>
                     <span class="top-track__artist">{track.artist}</span>
@@ -265,17 +196,13 @@ const photoSrc = (url: string, width: number) =>
             col={["5 / 7", "7 / 9", "9 / 11"][i]}
             row="8 / 11"
             sp={i === 2 ? "span 2" : "span 1"}
-            tone={i === 1 ? "ink" : "base"}
-            spread
             href={work.href}
             target="_blank"
             rel="noopener noreferrer"
+            class="top-work"
           >
-            <div class="grid-tag">
-              <span class="grid-label grid-label--accent">W—0{i + 1}</span>
-            </div>
             <div>
-              <p class="grid-serif-m">{work.title}</p>
+              <p class="grid-title-m">{work.title}</p>
               {work.outline && <p class="top-work__outline">{work.outline}</p>}
             </div>
           </Cell>
@@ -286,9 +213,7 @@ const photoSrc = (url: string, width: number) =>
       {
         hasMorePhotos && (
           <Cell col="11 / 13" row="9 / 11" spread class="top-photos">
-            <span class="grid-label grid-label--accent">
-              Photo — 日々の記録
-            </span>
+            <h2 class="grid-heading">Photos</h2>
             <div class="top-photos__thumbs">
               {morePhotos.slice(0, 4).map((photo) => (
                 <img
@@ -310,12 +235,13 @@ const photoSrc = (url: string, width: number) =>
 <style>
   /* --- 名前 ------------------------------------------------------------- */
 
+  /* 字面の下端をマスの罫線に寄せる（中身が 1 つなので下に揃える） */
   .top-name {
+    justify-content: flex-end;
     min-height: clamp(18rem, 34vw, 30rem);
     padding-bottom: 0;
   }
 
-  /* 字面の下端をマスの罫線に寄せる */
   .top-name__word {
     margin-left: -0.04em;
     margin-bottom: -0.02em;
@@ -323,22 +249,14 @@ const photoSrc = (url: string, width: number) =>
 
   /* --- 焙煎中の豆 ------------------------------------------------------- */
 
+  /* 精製・焙煎度は豆の名前の 3 行目として、半分強の大きさ・薄い墨で続ける */
   .top-roast__meta {
-    margin-top: var(--spacing-md);
-  }
-
-  .top-roast__band {
-    display: flex;
-    height: 1.75rem;
-    border: 1px solid var(--color-rule);
-  }
-
-  .top-roast__band span {
-    flex: 1;
-  }
-
-  .top-roast__notes {
     margin-top: var(--spacing-sm);
+    color: var(--color-ink-faint);
+    font-size: calc(var(--text-title-l) * 0.58);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   .top-cta {
@@ -348,32 +266,6 @@ const photoSrc = (url: string, width: number) =>
   }
 
   /* --- プロフィール ----------------------------------------------------- */
-
-  .top-intro__sns {
-    display: flex;
-    margin: 0 calc(var(--spacing-cell) * -1) calc(var(--spacing-cell) * -1);
-    border-top: 1px solid var(--color-rule);
-  }
-
-  .top-intro__sns a {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    padding-block: var(--spacing-md);
-    border-right: 1px solid var(--color-rule);
-    transition:
-      background-color var(--transition),
-      color var(--transition);
-  }
-
-  .top-intro__sns a:last-child {
-    border-right: 0;
-  }
-
-  .top-intro__sns a:hover {
-    background: var(--color-ink);
-    color: var(--color-on-ink);
-  }
 
   /* --- 書いたもの・よく聴いているもの ----------------------------------- */
 
@@ -410,8 +302,10 @@ const photoSrc = (url: string, width: number) =>
     width: 6.5rem;
   }
 
-  .top-tracks li + li {
-    border-top: 1px solid var(--color-line-strong);
+  /* 曲は見出しを上、一覧を下に寄せる。区切り線は引かない */
+  .top-playlist {
+    justify-content: space-between;
+    gap: var(--spacing-lg);
   }
 
   .top-track {
@@ -424,16 +318,7 @@ const photoSrc = (url: string, width: number) =>
   .top-track__no {
     flex: none;
     width: 1.5rem;
-    color: var(--color-accent);
-  }
-
-  .top-track__art {
-    flex: none;
-    width: 2.25rem;
-    height: 2.25rem;
-    object-fit: cover;
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-rule);
+    color: var(--color-ink-faint);
   }
 
   .top-track__text {
@@ -454,7 +339,6 @@ const photoSrc = (url: string, width: number) =>
   .top-track__artist {
     color: var(--color-ink-faint);
     font-size: var(--text-small);
-    font-style: italic;
     line-height: 1.4;
   }
 
@@ -475,15 +359,6 @@ const photoSrc = (url: string, width: number) =>
     object-fit: cover;
   }
 
-  .top-photo__caption {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-top: 1px solid var(--color-rule);
-    background: var(--color-bg);
-    font-size: var(--text-small);
-    font-style: italic;
-    line-height: 1.5;
-  }
-
   .top-photos__thumbs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -500,11 +375,15 @@ const photoSrc = (url: string, width: number) =>
 
   /* --- つくったもの ----------------------------------------------------- */
 
+  .top-work {
+    justify-content: flex-end;
+  }
+
   .top-work__outline {
     margin-top: var(--spacing-sm);
+    color: var(--color-ink-faint);
     font-size: var(--text-small);
     line-height: 1.6;
-    opacity: 85%;
   }
 
   @media (width <= 48rem) {

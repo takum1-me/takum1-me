@@ -115,7 +115,7 @@ const groups = [
     <PageHeader
       word="Works"
       title="つくったもの"
-      lead="作ったものを置いています。"
+      lead="個人でつくったツールとサイトです。"
     />
 
     {
@@ -123,18 +123,14 @@ const groups = [
         <Grid as="section" class="works-grid">
           <Cell col="1 / 13" class="works-heading">
             <div class="grid-tag">
-              <h2 class="grid-label grid-label--accent">
-                {group.label} — {group.title}
-              </h2>
-              <span class="grid-label">
+              <h2 class="grid-heading">{group.label}</h2>
+              <span class="grid-label grid-label--faint">
                 {String(group.works.length).padStart(2, "0")}
               </span>
             </div>
           </Cell>
           {group.works.map((work, i) => (
             <WorkCell
-              index={i + 1}
-              label={group.label}
               col={i % 2 === 0 ? "1 / 7" : "7 / 13"}
               title={work.title}
               subtitle={work.subtitle}
@@ -145,7 +141,7 @@ const groups = [
             />
           ))}
           {group.works.length % 2 === 1 && (
-            <Cell col="7 / 13" tone="subtle" class="works-filler" />
+            <Cell col="7 / 13" class="works-filler" />
           )}
         </Grid>
       ))
@@ -240,9 +236,5 @@ const groups = [
     color: var(--color-ink-faint);
     font-size: var(--text-small);
     line-height: 1.7;
-  }
-
-  .wheel-attribution em {
-    font-style: italic;
   }
 </style>

@@ -4,14 +4,12 @@
  *
  * col / row は PC（12 カラム）での grid-column / grid-row、
  * sp はスマホ（2 カラム）での grid-column。既定は全幅（span 2）。
- * tone でマスの地色を変える: base（生成り）/ subtle（一段濃い生成り）/
- * ink（墨のベタ）/ accent（銅色のベタ）。
+ * マスの地は全て同じ色（2026-11-19 にベタ面の tone をやめた）。
  */
 export interface Props {
   col?: string;
   row?: string;
   sp?: string;
-  tone?: "base" | "subtle" | "ink" | "accent";
   /** 上下に要素を振り分ける（ラベルを上、本文を下に置くマス向け） */
   spread?: boolean;
   /** 余白なしで中身を端まで敷く（写真など） */
@@ -29,7 +27,6 @@ const {
   col = "1 / -1",
   row = "auto",
   sp = "span 2",
-  tone = "base",
   spread = false,
   bleed = false,
   fit = false,
@@ -48,7 +45,6 @@ const placement = `--cell-col: ${col}; --cell-row: ${row}; --cell-sp: ${sp};`;
 <Tag
   class:list={[
     "cell",
-    `cell--${tone}`,
     {
       "is-spread": spread,
       "is-bleed": bleed,
@@ -80,20 +76,6 @@ const placement = `--cell-col: ${col}; --cell-row: ${row}; --cell-sp: ${sp};`;
     grid-row: var(--cell-row);
   }
 
-  .cell--subtle {
-    background: var(--color-bg-subtle);
-  }
-
-  .cell--ink {
-    background: var(--color-ink);
-    color: var(--color-on-ink);
-  }
-
-  .cell--accent {
-    background: var(--color-accent);
-    color: var(--color-ink);
-  }
-
   .is-spread {
     justify-content: space-between;
     gap: var(--spacing-lg);
@@ -111,12 +93,8 @@ const placement = `--cell-col: ${col}; --cell-row: ${row}; --cell-sp: ${sp};`;
     transition: background-color var(--transition);
   }
 
-  .cell--base.is-link:hover {
+  .is-link:hover {
     background: var(--color-bg-subtle);
-  }
-
-  .cell--ink.is-link:hover {
-    background: var(--color-accent-strong);
   }
 
   @media (width <= 48rem) {
