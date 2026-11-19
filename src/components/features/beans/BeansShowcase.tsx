@@ -30,28 +30,44 @@ function formatLogDate(iso: string | undefined): string {
 
 /**
  * 味の名前を 1 語ずつ色で組む（global.css の .flavor-words）。
- * 色の帯やドットの代わりに、名前そのものに色を入れる。
+ * 色の帯やドットの代わりに、名前そのものに色を入れる。質感・酸の印象の語
+ * （kind = "texture"）は色を付けず、味の下に薄い墨で添える。
+ * Astro 側の FlavorWords.astro と同じ組み方。
  */
 function FlavorWords({
   notes,
+  max,
   className,
 }: {
   notes: FlavorColor[];
+  /** 色を付ける味の語の上限（質感の語は数えない） */
+  max?: number;
   className?: string;
 }) {
-  if (notes.length === 0) return null;
+  const flavors = notes.filter((n) => n.kind === "flavor").slice(0, max);
+  const textures = notes.filter((n) => n.kind === "texture");
+  if (flavors.length === 0 && textures.length === 0) return null;
   return (
-    <p className={`flavor-words${className ? ` ${className}` : ""}`}>
-      {notes.map((n, i) => (
-        <span
-          key={`${n.label}-${i}`}
-          className="flavor-words__word"
-          style={flavorWordColors(n.colors) as React.CSSProperties}
-        >
-          {n.label}
-        </span>
-      ))}
-    </p>
+    <div className={`flavor-notes${className ? ` ${className}` : ""}`}>
+      {flavors.length > 0 && (
+        <p className="flavor-words">
+          {flavors.map((n, i) => (
+            <span
+              key={`${n.label}-${i}`}
+              className="flavor-words__word"
+              style={flavorWordColors(n.colors) as React.CSSProperties}
+            >
+              {n.label}
+            </span>
+          ))}
+        </p>
+      )}
+      {textures.length > 0 && (
+        <p className="flavor-textures">
+          {textures.map((n) => n.label).join(" · ")}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -222,8 +238,6 @@ function BeanModal({
 
 function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
   const { bean, notes } = view;
-  // カードでは味を 3 つまで。残りは豆を開くと全部見られる
-  const visibleNotes = notes.slice(0, 3);
   const meta = [...view.processes, ...view.roasts].join(" · ");
 
   // リンクとして扱えるように <a>。通常クリックはモーダルを開き、
@@ -261,7 +275,8 @@ function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
           )}
         </div>
 
-        <FlavorWords notes={visibleNotes} className={styles.flavors} />
+        {/* カードでは味を 3 つまで。残りは豆を開くと全部見られる */}
+        <FlavorWords notes={notes} max={3} className={styles.flavors} />
       </div>
     </a>
   );

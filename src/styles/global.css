@@ -494,6 +494,20 @@
      色の帯やホイールの代わりに、味の名前そのものを色で組む。
      1 語ずつ --color-flavor-* に色を渡す（flavorWordStyle() が輝度を補正した値を作る）。
      ライトは地より十分暗く、ダークは十分明るい 2 組を持ち、モードで切り替える */
+  .flavor-notes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  /* 質感・酸の印象（Juicy · Clean …）。色を付けず、味の下に薄い墨で添える */
+  .flavor-textures {
+    color: var(--color-ink-faint);
+    font-size: var(--text-lead);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
   .flavor-words {
     display: flex;
     flex-wrap: wrap;
