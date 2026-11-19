@@ -9,9 +9,8 @@
 
 .toc__label {
   margin-bottom: 0.9rem;
-  color: var(--color-accent);
+  color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
 }

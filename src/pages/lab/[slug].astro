@@ -51,7 +51,7 @@ const content = article.content.replace(
       </Cell>
       <Cell col="4 / 13">
         <div class="grid-tag">
-          <span class="grid-label grid-label--accent">
+          <span class="grid-label grid-label--faint">
             {(article.category ?? []).map((tag) => `#${tag}`).join(" ")}
           </span>
           <time class="grid-number" datetime={article.publishedAt}>
@@ -61,7 +61,7 @@ const content = article.content.replace(
       </Cell>
 
       <Cell col={article.eyecatch ? "1 / 9" : "1 / 13"} class="article-title">
-        <h1 class="grid-serif-l">{article.title}</h1>
+        <h1 class="grid-title-l">{article.title}</h1>
       </Cell>
       {
         article.eyecatch && (
@@ -75,7 +75,7 @@ const content = article.content.replace(
         toc.length > 0 && (
           <Cell col="1 / 4" class="article-toc">
             <nav class="article-toc__inner" aria-label="目次">
-              <p class="grid-label grid-label--accent">Contents</p>
+              <h2 class="grid-heading">Contents</h2>
               <ol class="article-toc__list">
                 {toc.map((item, i) => (
                   <li>
@@ -155,7 +155,7 @@ const content = article.content.replace(
 
   .article-toc__no {
     flex: none;
-    color: var(--color-accent);
+    color: var(--color-ink-faint);
     font-size: var(--text-small);
   }
 

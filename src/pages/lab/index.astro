@@ -39,7 +39,7 @@ const tagCounts = [
     <PageHeader
       word="Lab"
       title="試したこと"
-      lead="コーヒーまわりで試したことの記録です。抽出用の水のレシピや、3D プリンターで作った道具のデータ、焙煎プロファイルを置いています。"
+      lead="コーヒーの実験と道具づくりの記録です。カスタムウォーターのレシピ、3D プリンターで作った道具のモデル、焙煎プロファイルを公開します。"
     />
 
     <Grid>
@@ -59,7 +59,6 @@ const tagCounts = [
         featured && (
           <Cell
             col={tagCounts.length > 0 ? "1 / 9" : "1 / 13"}
-            tone="accent"
             spread
             href={`/lab/${featured.id}`}
             class="lab-featured"
@@ -72,7 +71,7 @@ const tagCounts = [
                 {formatDotDate(featured.publishedAt)}
               </time>
             </div>
-            <h2 class="grid-serif-l lab-featured__title">{featured.title}</h2>
+            <h2 class="grid-title-l lab-featured__title">{featured.title}</h2>
           </Cell>
         )
       }
@@ -80,7 +79,7 @@ const tagCounts = [
       {
         tagCounts.length > 0 && (
           <Cell col="9 / 13">
-            <p class="grid-label grid-label--accent">Tags</p>
+            <h2 class="grid-heading">Tags</h2>
             <ul class="lab-tags">
               {tagCounts.map(([tag, count]) => (
                 <li class="lab-tags__row">
@@ -97,7 +96,7 @@ const tagCounts = [
         rest.map((article) => (
           <Cell col="span 6" spread href={`/lab/${article.id}`}>
             <div class="grid-tag">
-              <span class="grid-label grid-label--accent">
+              <span class="grid-label grid-label--faint">
                 {(article.category ?? []).map((tag) => `#${tag}`).join(" ")}
               </span>
               <time class="grid-number" datetime={article.publishedAt}>
@@ -122,8 +121,7 @@ const tagCounts = [
   }
 
   .lab-featured:hover {
-    background: var(--color-accent-strong);
-    color: var(--color-on-ink);
+    background: var(--color-bg-subtle);
   }
 
   .lab-featured__title {
@@ -150,6 +148,6 @@ const tagCounts = [
   }
 
   .lab-tags__count {
-    color: var(--color-accent);
+    color: var(--color-ink-faint);
   }
 </style>
