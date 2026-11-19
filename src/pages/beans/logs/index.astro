@@ -67,11 +67,11 @@ const beanFilters = [...beanCounts.entries()]
     <PageHeader
       word="Logs"
       title="焙煎ログ"
-      lead="Kaffelogic nano 7 の焙煎ログです。バッチを開くと温度と RoR の記録が見られます。"
+      lead="Kaffelogic Nano 7 の焙煎ログです。バッチごとの温度と RoR の推移を残しています。"
     >
       <p slot="aside">
-        ID は「焙煎機のログ番号 - 焙煎日」です。<br />
-        <a href="/beans">← 焙煎豆リスト</a>
+        ID は「ログ番号-焙煎日」です。<br />
+        <a href="/beans">← Beans</a>
       </p>
     </PageHeader>
 
@@ -79,7 +79,7 @@ const beanFilters = [...beanCounts.entries()]
       {
         beanFilters.length > 1 && (
           <Cell col="1 / 9" class="beans" id="bean-filters">
-            <span class="grid-label grid-label--accent">Bean — 豆で絞る</span>
+            <h2 class="grid-heading">Filter</h2>
             <div class="chips">
               <button
                 type="button"
@@ -108,12 +108,11 @@ const beanFilters = [...beanCounts.entries()]
 
       <Cell
         col={beanFilters.length > 1 ? "9 / 13" : "1 / 13"}
-        tone="ink"
         spread
         class="tools"
       >
         <label class="search">
-          <span class="grid-label">Search — 検索</span>
+          <span class="grid-heading">Search</span>
           <input
             type="search"
             id="log-search"
@@ -126,9 +125,9 @@ const beanFilters = [...beanCounts.entries()]
 
       <Cell col="1 / 13" class="logs-cell">
         <div class="logs-head" aria-hidden="true">
-          <span class="grid-label grid-label--accent">ID</span>
-          <span class="grid-label grid-label--accent">豆 / 日時</span>
-          <span class="grid-label grid-label--accent logs-head__stats">
+          <span class="grid-label grid-label--faint">ID</span>
+          <span class="grid-label grid-label--faint">豆 / 日時</span>
+          <span class="grid-label grid-label--faint logs-head__stats">
             1ハゼ · 合計 · DTR · 煎り上げ
           </span>
         </div>
@@ -273,7 +272,6 @@ const beanFilters = [...beanCounts.entries()]
     color: var(--color-ink);
     font-family: inherit;
     font-size: var(--text-small);
-    font-style: italic;
     cursor: pointer;
     transition:
       background-color var(--transition),
@@ -285,17 +283,17 @@ const beanFilters = [...beanCounts.entries()]
   }
 
   .chip[aria-pressed="true"] {
-    background: var(--color-ink);
-    color: var(--color-on-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
   }
 
   .chip__count {
-    font-family: var(--font-serif);
     font-weight: 400;
     opacity: 70%;
   }
 
-  /* --- 検索（墨のマス）--------------------------------------------------- */
+  /* --- 検索 ------------------------------------------------------------- */
 
   .search {
     display: flex;
@@ -305,16 +303,17 @@ const beanFilters = [...beanCounts.entries()]
 
   .search input {
     width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm) 0;
     background: transparent;
-    border: 1px solid var(--color-ink-muted);
-    color: var(--color-on-ink);
+    border: 0;
+    border-bottom: 1px solid var(--color-rule);
+    color: var(--color-ink);
     font: inherit;
-    font-size: var(--text-small);
+    font-size: var(--text-body);
   }
 
   .search input::placeholder {
-    color: var(--color-line-strong);
+    color: var(--color-ink-faint);
   }
 
   .search input:focus-visible {
@@ -361,7 +360,6 @@ const beanFilters = [...beanCounts.entries()]
   }
 
   .logs__id {
-    font-family: var(--font-serif);
     font-size: var(--text-lead);
   }
 
@@ -395,11 +393,9 @@ const beanFilters = [...beanCounts.entries()]
   .stat__label {
     color: var(--color-ink-faint);
     font-size: var(--text-label);
-    font-style: italic;
   }
 
   .stat__value {
-    font-family: var(--font-serif);
     font-size: var(--text-lead);
   }
 

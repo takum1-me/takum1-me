@@ -3,10 +3,9 @@ import type { Bean } from "../../../lib/microcms/beans-list";
 import { toArray, beanPath } from "../../../lib/microcms/beans-list";
 import {
   flavorColors,
-  buildFlavorSwatch,
-  noteDotBackground,
   type FlavorColor,
 } from "../../../lib/utils/flavor-color";
+import { flavorWordColors } from "../../../lib/utils/flavor-words";
 import {
   countryLabel,
   roastLabel,
@@ -29,11 +28,41 @@ function formatLogDate(iso: string | undefined): string {
   });
 }
 
+/**
+ * 味の名前を 1 語ずつ色で組む（global.css の .flavor-words）。
+ * 色の帯やドットの代わりに、名前そのものに色を入れる。
+ */
+function FlavorWords({
+  notes,
+  className,
+}: {
+  notes: FlavorColor[];
+  className?: string;
+}) {
+  if (notes.length === 0) return null;
+  return (
+    <p className={`flavor-words${className ? ` ${className}` : ""}`}>
+      {notes.map((n, i) => (
+        <span
+          key={`${n.label}-${i}`}
+          className="flavor-words__word"
+          style={flavorWordColors(n.colors) as React.CSSProperties}
+        >
+          {n.label}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+/** 在庫の表示。緑のベタにはせず、文字の色で示す */
+const stockLabel = (available: boolean) =>
+  available ? "在庫あり" : "在庫切れ";
+
 /** カード表示に必要な派生データをまとめた型 */
 interface BeanView {
   bean: Bean;
   notes: FlavorColor[];
-  background: string;
   countries: { label: string; flag: string }[];
   roasts: string[];
   processes: string[];
@@ -48,11 +77,6 @@ function toView(bean: Bean): BeanView {
   return {
     bean,
     notes,
-    background: buildFlavorSwatch(
-      // 1 語に複数色ある場合はすべてスウォッチに参加させる
-      notes.flatMap((n) => n.colors),
-      roastIds[0],
-    ),
     countries: toArray(bean.country).map(countryLabel),
     roasts: roastIds.map(roastLabel),
     processes: toArray(bean.process).map(processLabel),
@@ -135,38 +159,16 @@ function BeanModal({
 
           {notes.length > 0 && (
             <section className={styles.block}>
-              <h3 className={`${styles["block-title"]} ${styles.label}`}>
-                Flavor — フレーバー
+              <h3 className={`${styles["block-title"]} grid-heading`}>
+                Flavor
               </h3>
-              <div
-                className={styles.hero}
-                style={{ background: view.background }}
-              />
-              <div className={styles["note-list"]}>
-                {notes.map((n, i) => (
-                  <span
-                    key={`${n.label}-${i}`}
-                    className={styles["note-tag"]}
-                    style={
-                      {
-                        "--color-note": n.color,
-                        "--color-note-bg": noteDotBackground(n.colors),
-                      } as React.CSSProperties
-                    }
-                  >
-                    <span className={styles["note-tag-dot"]} />
-                    {n.label}
-                  </span>
-                ))}
-              </div>
+              <FlavorWords notes={notes} />
             </section>
           )}
 
           {specs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={`${styles["block-title"]} ${styles.label}`}>
-                Spec — 豆のこと
-              </h3>
+              <h3 className={`${styles["block-title"]} grid-heading`}>Spec</h3>
               <dl className={styles.specs}>
                 {specs.map((s) => (
                   <div key={s.label} className={styles["spec-row"]}>
@@ -180,8 +182,8 @@ function BeanModal({
 
           {logs.length > 0 && (
             <section className={styles.block}>
-              <h3 className={`${styles["block-title"]} ${styles.label}`}>
-                Roast logs — 焙煎ログ
+              <h3 className={`${styles["block-title"]} grid-heading`}>
+                Roast logs
               </h3>
               <ul className={styles["log-list"]}>
                 {logs.map((log) => (
@@ -210,9 +212,7 @@ function BeanModal({
             data-available={bean.isAvailable}
           >
             <span className={styles["status-dot"]} />
-            {bean.isAvailable
-              ? "生豆があるので焙煎できます"
-              : "生豆が切れています"}
+            {stockLabel(bean.isAvailable)}
           </div>
         </div>
       </div>
@@ -220,18 +220,11 @@ function BeanModal({
   );
 }
 
-function BeanCard({
-  view,
-  index,
-  onOpen,
-}: {
-  view: BeanView;
-  index: number;
-  onOpen: () => void;
-}) {
+function BeanCard({ view, onOpen }: { view: BeanView; onOpen: () => void }) {
   const { bean, notes } = view;
-  const visibleNotes = notes.slice(0, 4);
-  const rest = notes.length - visibleNotes.length;
+  // カードでは味を 3 つまで。残りは豆を開くと全部見られる
+  const visibleNotes = notes.slice(0, 3);
+  const meta = [...view.processes, ...view.roasts].join(" · ");
 
   // リンクとして扱えるように <a>。通常クリックはモーダルを開き、
   // 修飾キー・中クリックはブラウザに任せて別タブで開けるようにする。
@@ -249,51 +242,27 @@ function BeanCard({
       onClick={onClick}
     >
       <div className={styles.body}>
-        <div className={styles["card-top"]}>
-          <span className={styles.label}>
-            No. {String(index).padStart(2, "0")}
-          </span>
-          <span className={styles.status} data-available={bean.isAvailable}>
-            {bean.isAvailable ? "焙煎できます" : "生豆切れ"}
-          </span>
+        <span
+          className={`${styles.status} ${styles.label}`}
+          data-available={bean.isAvailable}
+        >
+          {stockLabel(bean.isAvailable)}
+        </span>
+
+        <div className={styles.heading}>
+          {view.countries.length > 0 && (
+            <span className={`${styles.country} ${styles.label}`}>
+              {view.countries.map((c) => c.label).join(" / ")}
+            </span>
+          )}
+          <h3 className={styles.name}>{bean.name}</h3>
+          {meta && (
+            <span className={`${styles.meta} ${styles.label}`}>{meta}</span>
+          )}
         </div>
 
-        {view.countries.length > 0 && (
-          <span className={`${styles.country} ${styles.label}`}>
-            {view.countries.map((c) => c.label).join(" / ")}
-          </span>
-        )}
-
-        <h3 className={styles.name}>{bean.name}</h3>
-
-        {visibleNotes.length > 0 && (
-          <ul className={styles["note-row"]}>
-            {visibleNotes.map((n, i) => (
-              <li key={`${n.label}-${i}`} className={styles["note-item"]}>
-                <span
-                  className={styles["note-dot"]}
-                  style={
-                    {
-                      "--color-note": n.color,
-                      "--color-note-bg": noteDotBackground(n.colors),
-                    } as React.CSSProperties
-                  }
-                />
-                {n.label}
-              </li>
-            ))}
-            {rest > 0 && <li className={styles["note-more"]}>+{rest}</li>}
-          </ul>
-        )}
-
-        <div className={`${styles["card-foot"]} ${styles.label}`}>
-          <span>{view.roasts.join(" / ") || "—"}</span>
-          <span className={styles["foot-divider"]} />
-          <span>{view.processes.join(" / ") || "—"}</span>
-        </div>
+        <FlavorWords notes={visibleNotes} className={styles.flavors} />
       </div>
-
-      <div className={styles.swatch} style={{ background: view.background }} />
     </a>
   );
 }
@@ -373,7 +342,7 @@ export default function BeansShowcase({
   return (
     <div className={styles.wrapper}>
       <div className={`${styles.cell} ${styles.filters}`}>
-        <span className={styles.label}>Filter</span>
+        <h2 className="grid-heading">Filter</h2>
         <div className={styles["filter-buttons"]}>
           <button
             className="box-button"
@@ -389,22 +358,21 @@ export default function BeansShowcase({
             onClick={() => setFilter("available")}
             type="button"
           >
-            焙煎できる豆 ({availableCount})
+            在庫あり ({availableCount})
           </button>
         </div>
       </div>
 
       {filtered.length === 0 ? (
         <p className={`${styles.cell} ${styles.empty}`}>
-          いま焙煎できる豆はありません。
+          いま在庫のある豆はありません。
         </p>
       ) : (
         <>
-          {filtered.map((view, i) => (
+          {filtered.map((view) => (
             <BeanCard
               key={view.bean.id}
               view={view}
-              index={i + 1}
               onOpen={() => open(view.bean.id)}
             />
           ))}

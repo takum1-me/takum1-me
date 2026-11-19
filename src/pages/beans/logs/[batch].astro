@@ -99,7 +99,7 @@ const description = [
   <Container size="frame">
     <PageHeader title={record.batchId} lead={description}>
       <p slot="aside">
-        <a href="/beans/logs">← 焙煎ログ一覧</a>
+        <a href="/beans/logs">← Roast logs</a>
         {
           bean && (
             <>
@@ -114,8 +114,8 @@ const description = [
     <Grid class="batch-grid">
       {
         record.note && (
-          <Cell col="1 / 13" tone="subtle">
-            <p class="grid-label grid-label--accent">Note — メモ</p>
+          <Cell col="1 / 13">
+            <h2 class="grid-heading">Note</h2>
             <p class="note">{record.note}</p>
           </Cell>
         )
@@ -123,8 +123,8 @@ const description = [
 
       <Cell col="1 / 13" as="figure" class="chart">
         <div class="grid-tag">
-          <span class="grid-label grid-label--accent">Curve — 温度と RoR</span>
-          <span class="grid-label">{record.batchId}</span>
+          <h2 class="grid-heading">Curve</h2>
+          <span class="grid-label grid-label--faint">{record.batchId}</span>
         </div>
         <Fragment set:html={chart} />
         <figcaption>
@@ -135,12 +135,12 @@ const description = [
 
       {
         [
-          ["Log — 焙煎ログ", metricRows],
-          ["Phase — フェーズ", phaseRows],
-          ["Record — 焙煎の記録", recordRows],
+          ["Log", metricRows],
+          ["Phase", phaseRows],
+          ["Record", recordRows],
         ].map(([title, rows], i) => (
           <Cell col={`${1 + i * 4} / ${5 + i * 4}`} as="section">
-            <h2 class="grid-label grid-label--accent">{title as string}</h2>
+            <h2 class="grid-heading">{title as string}</h2>
             <dl class="rows">
               {(rows as [string, string][]).map(([label, value]) => (
                 <div class="row">
@@ -200,7 +200,6 @@ const description = [
   }
 
   .row dd {
-    font-family: var(--font-serif);
     font-size: var(--text-lead);
     font-variant-numeric: tabular-nums;
     text-align: right;

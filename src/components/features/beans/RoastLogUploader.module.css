@@ -97,7 +97,6 @@
 .stat__label {
   color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
 }
@@ -128,7 +127,6 @@
 .field__label {
   color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
 }
@@ -226,9 +224,8 @@
 .dialog__title {
   margin-bottom: var(--spacing-sm);
   color: var(--color-ink);
-  font-family: var(--font-serif);
   font-size: var(--text-h2);
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .dialog__lead {
@@ -277,7 +274,6 @@
   margin-bottom: var(--spacing-md);
   color: var(--color-ink-faint);
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
 }

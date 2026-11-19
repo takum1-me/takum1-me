@@ -47,7 +47,11 @@ const [latest, ...rest] = noteArticles;
 
 <Layout title="Blog">
   <Container size="frame">
-    <PageHeader word="Blog" title="書いたもの" lead="note に書いた記事です。" />
+    <PageHeader
+      word="Blog"
+      title="書いたもの"
+      lead="note に書いた記事です。コーヒー、つくったもの、日々のことを書いています。"
+    />
 
     {
       noteArticles.length === 0 ? (
@@ -63,14 +67,13 @@ const [latest, ...rest] = noteArticles;
               <Cell
                 col={latest.thumbnail ? "1 / 9" : "1 / 13"}
                 row="span 2"
-                tone="ink"
                 spread
                 href={latest.link}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <div class="grid-tag">
-                  <span class="grid-label">Latest — note</span>
+                  <span class="grid-label">Latest</span>
                   <span class="grid-number">
                     {formatDotDate(latest.pubDate)}
                   </span>
@@ -146,7 +149,6 @@ const [latest, ...rest] = noteArticles;
   }
 
   .blog-latest__title {
-    font-family: var(--font-serif);
     font-size: var(--text-h1);
     font-weight: 600;
     line-height: 1.4;
@@ -170,7 +172,7 @@ const [latest, ...rest] = noteArticles;
   }
 
   .blog-card__date {
-    color: var(--color-accent);
+    color: var(--color-ink-faint);
   }
 
   .blog-card__thumb {

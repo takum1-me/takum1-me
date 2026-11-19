@@ -1,28 +1,30 @@
 @import "tailwindcss";
 @import "@fontsource/eb-garamond/400.css";
-@import "@fontsource/eb-garamond/400-italic.css";
-@import "@fontsource/eb-garamond/600.css";
-@import "@fontsource-variable/noto-serif-jp";
+@import "@fontsource-variable/schibsted-grotesk/wght.css";
+@import "@fontsource/zen-kaku-gothic-new/500.css";
+@import "@fontsource/zen-kaku-gothic-new/700.css";
 
 @theme {
   /* --- Typefaces ---------------------------------------------------------
-     サイトの文字は全てセリフで組む（2026-11-17、細く小さいゴシックを全廃）。
-     欧文は EB Garamond、和文はそこにグリフが無いので明朝に落ちる。Mac は
-     ヒラギノ明朝をそのまま使い、それ以外（Windows の游明朝は細すぎる）は
-     Noto Serif JP を読み込む。ゴシックの書体はもう持たない。
+     2026-11-19 確定（Figma「Pages — Final」）。文字は硬質なグロテスク
+     （欧文 Schibsted Grotesk・和文 Zen Kaku Gothic New）で組み、EB Garamond は
+     ワードマークとページの巨大な英単語（.grid-giant）だけに残す。
+     嫌われたのは「細く小さい大文字のゴシック」なので、太さとサイズで補う：
+     見出しは 600、本文は欧文 400／和文 500、15px 未満の文字は置かない。
      等幅はコードと計測値の表だけに使う。 */
-  --font-serif:
-    "EB Garamond", "Hiragino Mincho ProN", "Noto Serif JP Variable", serif;
+  --font-sans:
+    "Schibsted Grotesk Variable", "Zen Kaku Gothic New", "Hiragino Sans",
+    sans-serif;
+  --font-serif: "EB Garamond", serif;
   --font-mono: ui-monospace, "SFMono-Regular", menlo, consolas, monospace;
 
   /* --- Type scale --------------------------------------------------------
      These are the only sizes the site uses. 一番小さい文字でも 15px を
-     下回らせない（Garamond は x ハイトが低いので、これでゴシックの
-     13px 程度に見える）。 */
+     下回らせない。 */
   --text-small: 0.9375rem;
-  --text-small--line-height: 1.75;
-  --text-body: 1.0625rem;
-  --text-body--line-height: 1.9;
+  --text-small--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.8;
   --text-lead: 1.1875rem;
   --text-lead--line-height: 1.8;
   --text-h3: 1.1875rem;
@@ -44,24 +46,35 @@
   --text-giant: 33cqi;
   --text-giant--line-height: 0.78;
   --text-giant--letter-spacing: -0.05em;
-  --text-serif-l: clamp(2.25rem, 3.9vw, 3.5rem);
-  --text-serif-l--line-height: 0.95;
-  --text-serif-l--letter-spacing: -0.02em;
-  --text-serif-m: clamp(1.625rem, 2.4vw, 2.125rem);
-  --text-serif-m--line-height: 0.98;
-  --text-serif-m--letter-spacing: -0.02em;
-  --text-number: 1.25rem;
-  --text-number--line-height: 1.2;
+  --text-title-l: clamp(1.9375rem, 3.35vw, 3rem);
+  --text-title-l--line-height: 1.02;
+  --text-title-l--letter-spacing: -0.03em;
+  --text-title-m: clamp(1.4rem, 2.05vw, 1.8125rem);
+  --text-title-m--line-height: 1.05;
+  --text-title-m--letter-spacing: -0.03em;
+  --text-number: 1.0625rem;
+  --text-number--line-height: 1.3;
   --text-statement: clamp(1.1875rem, 1.7vw, 1.5rem);
   --text-statement--line-height: 1.55;
+  --text-statement--letter-spacing: -0.01em;
   --text-entry: clamp(1rem, 1.35vw, 1.1875rem);
   --text-entry--line-height: 1.5;
 
-  /* ラベルは小さな太字の大文字ではなく、Garamond のイタリックで添える */
-  --text-label: 1.0625rem;
-  --text-label--line-height: 1.3;
-  --text-label--letter-spacing: 0.005em;
-  --text-label--font-weight: 400;
+  /* マスの中の見出し（「Writing」「Gear」など）。英語の名詞 1 語で組む */
+  --text-heading: clamp(1.5rem, 2vw, 1.8125rem);
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.03em;
+
+  /* 情報としての小さな添え書き。大文字・字間・イタリックにしない */
+  --text-label: 1rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0;
+  --text-label--font-weight: 500;
+
+  /* 豆のフレーバー名。1 語ずつ色のグラデーションで組む（.flavor-words） */
+  --text-flavor: clamp(2rem, 3vw, 2.75rem);
+  --text-flavor--line-height: 1.05;
+  --text-flavor--letter-spacing: -0.025em;
 
   /* --- Colour ------------------------------------------------------------
      One warm neutral axis plus a single accent. */
@@ -96,7 +109,7 @@
 
   /* 罫線グリッドの外枠。左右のガターを持たず、画面端まで罫線を通す */
   --container-frame: 90rem;
-  --spacing-cell: clamp(1.125rem, 1.7vw, 1.5rem);
+  --spacing-cell: clamp(1.25rem, 2.8vw, 2.5rem);
   --spacing-row: 7.5rem;
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
@@ -122,6 +135,29 @@
   --shadow-modal: 0 1.5rem 4rem rgb(42 37 33 / 18%);
 }
 
+/* --- ダークモード（Figma の Color コレクション「Dark」）-------------------
+   墨の地に生成りの文字。ダークではアクセントの茶も使わず、矢印も生成りにする。
+   色の名前はライトと同じなので、ページ側は何も切り替えなくてよい。 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #161514;
+    --color-bg-subtle: #1f1d1b;
+    --color-surface: #1f1d1b;
+    --color-line: #2f2c29;
+    --color-line-strong: #4a4743;
+    --color-ink: #efece6;
+    --color-ink-muted: #9a958d;
+    --color-ink-faint: #9a958d;
+    --color-accent: #efece6;
+    --color-accent-strong: #efece6;
+    --color-accent-soft: rgb(239 236 230 / 12%);
+    --color-rule: #4a4743;
+    --color-on-ink: #161514;
+
+    color-scheme: dark;
+  }
+}
+
 @layer base {
   html {
     text-size-adjust: 100%;
@@ -135,7 +171,7 @@
     min-height: 100vh;
     background: var(--color-bg);
     color: var(--color-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
     font-feature-settings: "palt" 1;
@@ -208,9 +244,21 @@
    フッターとのあいだに空白を作らない。React の島（astro-island）は
    display: contents なので、その子を伸ばす。 */
 :where(.site-main) > .container--frame {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+/* 外枠の縦線をヘッダーの裏まで上に伸ばしておく。引っ張りスクロール
+   （バウンス）でヘッダーと本文のあいだが空いても、縦線が途切れない */
+:where(.site-main) > .container--frame::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 100%;
+  height: 100lvh;
+  border-inline: 1px solid var(--color-rule);
+  pointer-events: none;
 }
 
 :where(.site-main > .container--frame) > .grid:last-child,
@@ -218,14 +266,22 @@
   flex: 1;
 }
 
+/* 最初のグリッドの上枠はヘッダーの下線と重なるので消す。残すと、
+   スクロールやバウンスで罫線が 2 本に分かれて見える。
+   Grid の scoped style（.grid[data-astro-cid-*]）に勝つよう詳細度を持たせる */
+:where(.site-main) > .container--frame > .grid:first-child {
+  border-top: 0;
+}
+
 /* --- 押せる場所の目印 ----------------------------------------------------
    罫線グリッドでは、押せるマスと押せないマスが同じ形をしている。見分けが
    つくよう、押せるものには次の目印を必ず付ける（押せないものには付けない）。
-   - マス全体がリンク: 右上の角に罫線で囲った矢印の札（サイト内 → / 外部 ↗）
+   - マス全体がリンク: 右上の角に矢印（サイト内 → / 外部 ↗ / 戻る ←）
    - 一覧の行のリンク: 行の右端の矢印（.link-row）
    - 文中のリンク: 銅色の下線（.text-link）
    - ボタン: 罫線で囲った箱（.box-button）
-   札はカーソルを乗せると墨のベタに反転する。
+   矢印は枠で囲まず、アクセント色の文字だけで置く（2026-11-19、ベタ面と
+   箱の枠をなくした）。カーソルを乗せると矢印が進む方向へ少し動く。
    Cell の scoped style より後に効かせるため、ここはレイヤーに入れない。 */
 :where(.cell.is-link, .link-card) {
   cursor: pointer;
@@ -234,22 +290,13 @@
 :where(.cell.is-link, .link-card)::after {
   content: "→";
   position: absolute;
-  top: 0;
-  right: 0;
+  top: var(--spacing-cell);
+  right: var(--spacing-cell);
   z-index: 1;
-  display: grid;
-  place-items: center;
-  width: var(--spacing-2xl);
-  height: var(--spacing-2xl);
-  border-bottom: 1px solid var(--color-rule);
-  border-left: 1px solid var(--color-rule);
-  background: var(--color-bg);
-  color: var(--color-ink);
+  color: var(--color-accent);
   font-size: var(--text-lead);
   line-height: 1;
-  transition:
-    background-color var(--transition),
-    color var(--transition);
+  transition: transform var(--transition);
 }
 
 :where(.cell.is-external, .link-card.is-external)::after {
@@ -260,35 +307,22 @@
   content: "←";
 }
 
-/* 墨のマスでは札を銅色に、銅色のマスでは墨にして、地と札を分ける */
-:where(.cell--ink.is-link)::after {
-  background: var(--color-accent);
-  color: var(--color-ink);
-}
-
-:where(.cell--accent.is-link)::after {
-  background: var(--color-ink);
-  color: var(--color-on-ink);
-}
-
 :where(.cell.is-link, .link-card):hover::after,
 :where(.cell.is-link, .link-card):focus-visible::after {
-  background: var(--color-ink);
-  color: var(--color-on-ink);
+  transform: translateX(0.2rem);
 }
 
-:where(.cell--ink.is-link, .cell--accent.is-link):hover::after {
-  background: var(--color-bg);
-  color: var(--color-ink);
+:where(.cell.is-external, .link-card.is-external):hover::after {
+  transform: translate(0.15rem, -0.15rem);
 }
 
-.cell--accent.is-link:hover {
-  background: var(--color-accent-strong);
+:where(.cell.is-back):hover::after {
+  transform: translateX(-0.2rem);
 }
 
-/* 札と重ならないよう、マスの 1 行目（ラベルの行）は右を空けておく */
+/* 矢印と重ならないよう、マスの 1 行目（ラベルの行）は右を空けておく */
 :where(.cell.is-link, .link-card) > :where(.grid-tag:first-child) {
-  padding-right: var(--spacing-2xl);
+  padding-right: var(--spacing-xl);
 }
 
 /* 一覧の行のリンク */
@@ -348,7 +382,6 @@
   color: var(--color-ink);
   font-family: inherit;
   font-size: var(--text-label);
-  font-style: italic;
   font-weight: var(--text-label--font-weight);
   letter-spacing: var(--text-label--letter-spacing);
   cursor: pointer;
@@ -363,19 +396,34 @@
   cursor: default;
 }
 
-.box-button:hover:not(:disabled),
+/* 押している状態はベタにせず、太字と下線で示す */
+.box-button:hover:not(:disabled) {
+  background: var(--color-bg-subtle);
+}
+
 .box-button[aria-pressed="true"] {
-  background: var(--color-ink);
-  color: var(--color-on-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
 }
 
 /* --- 罫線グリッドの文字（A-1）-------------------------------------------
    Cell の中身はページ側のマークアップなので、全ページ共通の型はここに置く。
-   色は親のマス（tone）から継ぐので、ここでは色を持たせない。 */
+   色はマスの地から継ぐので、ここでは色を持たせない。
+   書体は全てグロテスクで、Garamond は巨大な英単語（.grid-giant）だけ。 */
 @layer components {
+  /* マスの見出し。英語の名詞 1 語（Writing / Gear / Spec …）で組む。
+     和文の添え書き（「— 書いたもの」）は付けない */
+  .grid-heading {
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: var(--text-heading--line-height);
+    letter-spacing: var(--text-heading--letter-spacing);
+  }
+
+  /* 情報としての添え書き（日付・状態・表の見出しなど）。飾りのラベルには使わない */
   .grid-label {
     font-size: var(--text-label);
-    font-style: italic;
     font-weight: var(--text-label--font-weight);
     line-height: var(--text-label--line-height);
     letter-spacing: var(--text-label--letter-spacing);
@@ -397,50 +445,84 @@
     letter-spacing: var(--text-giant--letter-spacing);
   }
 
-  .grid-serif-l,
-  .grid-serif-m {
-    font-family: var(--font-serif);
-    font-weight: 400;
+  .grid-title-l,
+  .grid-title-m {
+    font-weight: 600;
   }
 
-  .grid-serif-l {
-    font-size: var(--text-serif-l);
-    line-height: var(--text-serif-l--line-height);
-    letter-spacing: var(--text-serif-l--letter-spacing);
+  .grid-title-l {
+    font-size: var(--text-title-l);
+    line-height: var(--text-title-l--line-height);
+    letter-spacing: var(--text-title-l--letter-spacing);
   }
 
-  .grid-serif-m {
-    font-size: var(--text-serif-m);
-    line-height: var(--text-serif-m--line-height);
-    letter-spacing: var(--text-serif-m--letter-spacing);
+  .grid-title-m {
+    font-size: var(--text-title-m);
+    line-height: var(--text-title-m--line-height);
+    letter-spacing: var(--text-title-m--letter-spacing);
   }
 
   .grid-number {
-    font-family: var(--font-serif);
     font-size: var(--text-number);
+    font-weight: 500;
     line-height: var(--text-number--line-height);
+    font-variant-numeric: tabular-nums;
   }
 
   .grid-statement {
-    font-family: var(--font-serif);
     font-size: var(--text-statement);
     font-weight: 600;
     line-height: var(--text-statement--line-height);
+    letter-spacing: var(--text-statement--letter-spacing);
   }
 
   .grid-entry {
-    font-family: var(--font-serif);
     font-size: var(--text-entry);
     font-weight: 600;
     line-height: var(--text-entry--line-height);
   }
 
-  /* ラベルを左右に振り分ける行（「Writing — 書いたもの」と「note ↗」など） */
+  /* 見出しとリンクを左右に振り分ける行（「Writing」と「note ↗」など） */
   .grid-tag {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: var(--spacing-md);
+  }
+
+  /* --- 豆のフレーバー名 ---------------------------------------------------
+     色の帯やホイールの代わりに、味の名前そのものを色で組む。
+     1 語ずつ --color-flavor-* に色を渡す（flavorWordStyle() が輝度を補正した値を作る）。
+     ライトは地より十分暗く、ダークは十分明るい 2 組を持ち、モードで切り替える */
+  .flavor-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.05em 0.42em;
+    font-size: var(--text-flavor);
+    font-weight: 600;
+    line-height: var(--text-flavor--line-height);
+    letter-spacing: var(--text-flavor--letter-spacing);
+  }
+
+  .flavor-words__word {
+    background: linear-gradient(
+      90deg,
+      var(--color-flavor-from),
+      var(--color-flavor-to)
+    );
+    background-clip: text;
+    color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .flavor-words__word {
+      background: linear-gradient(
+        90deg,
+        var(--color-flavor-dark-from),
+        var(--color-flavor-dark-to)
+      );
+      background-clip: text;
+    }
   }
 }
 
