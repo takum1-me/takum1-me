@@ -45,7 +45,7 @@ const [beans, articles, worksResponse, songs, photos] = await Promise.all([
 // 焙煎中の豆: 焙煎できる豆を優先した並びの先頭
 const roasting = sortBeansForDisplay(beans)[0];
 const roastingNotes = roasting
-  ? flavorColors(roasting.flavorNote, roasting.flavorColors).slice(0, 3)
+  ? flavorColors(roasting.flavorNote, roasting.flavorColors)
   : [];
 const roastingMeta = roasting
   ? [
@@ -90,7 +90,7 @@ const photoSrc = (url: string, width: number) =>
               <p class="grid-title-l">{roasting.name}</p>
               {roastingMeta && <p class="top-roast__meta">{roastingMeta}</p>}
             </div>
-            <FlavorWords notes={roastingNotes} />
+            <FlavorWords notes={roastingNotes} max={3} />
           </Cell>
         )
       }

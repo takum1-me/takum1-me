@@ -3,26 +3,45 @@
  * 豆のフレーバーを「文字に色」で並べる（トップの豆・About・豆の詳細）。
  * 色の帯やホイールの代わりに、味の名前そのものを色のグラデーションで組む。
  * 色の補正（地に沈まない明るさ）は flavorWordStyle() が受け持つ。
+ *
+ * 質感・酸の印象の語（Juicy, Clean など。kind = "texture"）は色を付けず、
+ * 味の下に薄い墨で添える。「色の付いた語＝感じた味」と読めるようにするため。
  */
 import type { FlavorColor } from "../../../lib/utils/flavor-color";
 import { flavorWordStyle } from "../../../lib/utils/flavor-words";
 
 export interface Props {
   notes: FlavorColor[];
+  /** 色を付ける味の語の上限（質感の語は数えない） */
+  max?: number;
   class?: string;
 }
 
-const { notes, class: className, ...rest } = Astro.props;
+const { notes, max, class: className, ...rest } = Astro.props;
+const flavors = notes.filter((n) => n.kind === "flavor").slice(0, max);
+const textures = notes.filter((n) => n.kind === "texture");
 ---
 
 {
-  notes.length > 0 && (
-    <p class:list={["flavor-words", className]} {...rest}>
-      {notes.map((note) => (
-        <span class="flavor-words__word" style={flavorWordStyle(note.colors)}>
-          {note.label}
-        </span>
-      ))}
-    </p>
+  (flavors.length > 0 || textures.length > 0) && (
+    <div class:list={["flavor-notes", className]} {...rest}>
+      {flavors.length > 0 && (
+        <p class="flavor-words">
+          {flavors.map((note) => (
+            <span
+              class="flavor-words__word"
+              style={flavorWordStyle(note.colors)}
+            >
+              {note.label}
+            </span>
+          ))}
+        </p>
+      )}
+      {textures.length > 0 && (
+        <p class="flavor-textures">
+          {textures.map((note) => note.label).join(" · ")}
+        </p>
+      )}
+    </div>
   )
 }

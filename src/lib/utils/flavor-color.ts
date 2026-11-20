@@ -14,6 +14,71 @@ export interface FlavorColor {
   colors: string[];
   /** マッチしたキーワード（デバッグ・並び替え用） */
   matched?: string;
+  /**
+   * flavor = 味（色を付ける） / texture = 質感や酸の印象（Juicy, Clean など。色を付けない）。
+   * 「色の付いた語＝感じた味」と読めるように、質感の語は分けて薄い墨で添える
+   */
+  kind: "flavor" | "texture";
+}
+
+/**
+ * 味ではなく、質感・酸・余韻の印象を表す語。ノートの語が全部ここに入っていたら
+ * texture とみなす（"High acidity" "Juicy" など）。"Sweet spices" のように味の語を
+ * 含むものは flavor のまま。
+ */
+const TEXTURE_WORDS = new Set([
+  "juicy",
+  "bright",
+  "clean",
+  "complex",
+  "round",
+  "rounded",
+  "creamy",
+  "silky",
+  "velvety",
+  "smooth",
+  "soft",
+  "mellow",
+  "thick",
+  "heavy",
+  "full",
+  "light",
+  "body",
+  "bodied",
+  "mouthfeel",
+  "syrupy",
+  "refine",
+  "refined",
+  "elegant",
+  "delicate",
+  "balanced",
+  "structured",
+  "fizzy",
+  "sparkling",
+  "crisp",
+  "vibrant",
+  "lively",
+  "transparent",
+  "long",
+  "short",
+  "lingering",
+  "finish",
+  "aftertaste",
+  "high",
+  "medium",
+  "low",
+  "acidity",
+  "acidic",
+  "acid",
+]);
+
+/** ノート 1 語が質感・印象の語か（"Juicy" / "High acidity" / "Full-bodied"） */
+export function isTextureNote(note: string): boolean {
+  const words = note
+    .toLowerCase()
+    .split(/[\s\-/]+/)
+    .filter(Boolean);
+  return words.length > 0 && words.every((w) => TEXTURE_WORDS.has(w));
 }
 
 /** "bright, tomato, high acidity" → ["bright", "tomato", "high acidity"] */
@@ -76,6 +141,18 @@ const KEYWORD_COLORS: [string, string][] = [
   ["grape", "#8F1B53"],
   ["apple", "#4EB947"],
   ["peach", "#F68A5C"],
+  ["mandarin", "#F28A1E"],
+  ["tangerine", "#F28A1E"],
+  ["yuzu", "#F2C230"],
+  ["kiwi", "#8DB33A"],
+  ["lychee", "#E9A0B0"],
+  ["mango", "#F4A71D"],
+  ["passion", "#B0457F"],
+  ["melon", "#A8C85A"],
+  ["plum", "#7B2D5E"],
+  ["cassis", "#4A1236"],
+  ["currant", "#5A1A3A"],
+  ["fig", "#6E3B5C"],
   ["apricot", "#F79A3E"],
   ["pear", "#BAA635"],
   ["lemon", "#FDE402"],
@@ -89,7 +166,12 @@ const KEYWORD_COLORS: [string, string][] = [
   ["prune", "#A5446F"],
   ["fruit", "#F2684C"],
   // floral / tea
-  ["jasmine", "#E0A9C0"],
+  // "jasmin" は Jasmine と綴り違いの Jasmin の両方に当たる
+  ["jasmin", "#E0A9C0"],
+  ["hibiscus", "#C2185B"],
+  ["bergamot", "#C9B83A"],
+  ["lavender", "#9A7BC4"],
+  ["elderflower", "#E8DFA0"],
   ["rose", "#EF5A78"],
   ["chamomile", "#F0C04A"],
   ["floral", "#DA0D68"],
@@ -97,6 +179,9 @@ const KEYWORD_COLORS: [string, string][] = [
   ["tea", "#9E7C86"],
   // sweet
   ["brown sugar", "#B36A3B"],
+  ["butterscotch", "#C98A3A"],
+  ["toffee", "#A8652C"],
+  ["candy", "#E9579A"],
   ["caramel", "#C97B2C"],
   ["molasses", "#5A2A1E"],
   ["maple", "#AE341F"],
@@ -109,6 +194,7 @@ const KEYWORD_COLORS: [string, string][] = [
   ["dark chocolate", "#3E1108"],
   ["chocolate", "#692A19"],
   ["cocoa", "#8A4B2C"],
+  ["cacao", "#6B3A22"],
   ["hazelnut", "#9D5433"],
   ["almond", "#C89F83"],
   ["peanut", "#C79A2E"],
@@ -138,6 +224,8 @@ const KEYWORD_COLORS: [string, string][] = [
   // fermented / boozy
   ["winey", "#8F1B53"],
   ["wine", "#8F1B53"],
+  ["liqueur", "#8E3B2E"],
+  ["brandy", "#8A3A22"],
   ["boozy", "#8B4A2E"],
   ["rum", "#7A3A1E"],
   ["whiskey", "#9A4A2E"],
@@ -214,7 +302,13 @@ function matchKeywords(lower: string): { keyword: string; color: string }[] {
 
 /** 1 色だけの FlavorColor を組む */
 function single(label: string, color: string, matched?: string): FlavorColor {
-  return { label, color, colors: [color], matched };
+  return {
+    label,
+    color,
+    colors: [color],
+    matched,
+    kind: isTextureNote(label) ? "texture" : "flavor",
+  };
 }
 
 /** フレーバーノート 1 語を色に変換する */
@@ -235,6 +329,7 @@ export function matchFlavorColor(note: string): FlavorColor {
       color: hits[0].color,
       colors: hits.map((h) => h.color),
       matched: hits.map((h) => h.keyword).join("+"),
+      kind: isTextureNote(label) ? "texture" : "flavor",
     };
   }
 
@@ -265,6 +360,7 @@ export function flavorColors(
         color: hexes[0],
         colors: hexes,
         matched: "override",
+        kind: isTextureNote(note) ? "texture" : "flavor",
       };
     return matchFlavorColor(note);
   });
