@@ -1,4 +1,4 @@
-import type { MicroCMSResponse } from "./api-base";
+import { memoizeForBuild, type MicroCMSResponse } from "./api-base";
 
 /** `lab` API はコーヒー用 microCMS サービスから取得する。 */
 export interface LabArticle {
@@ -32,7 +32,11 @@ function coffeeFetch(path: string) {
   });
 }
 
-export async function getAllLabArticles(): Promise<LabArticle[]> {
+/** 一覧と各記事の getStaticPaths が両方読むので、ビルド中は 1 回だけ取得する */
+export const getAllLabArticles: () => Promise<LabArticle[]> =
+  memoizeForBuild(fetchAllLabArticles);
+
+async function fetchAllLabArticles(): Promise<LabArticle[]> {
   const firstResponse = await coffeeFetch("lab?limit=1");
   if (!firstResponse.ok) {
     throw new Error(`lab の取得に失敗しました: ${firstResponse.status}`);

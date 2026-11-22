@@ -1,3 +1,18 @@
+/**
+ * 一覧の取得をビルド中だけ 1 回に絞る。
+ * 同じ一覧（豆・works・lab）を何ページもが読むので、2 枚目以降は最初の取得を使い回す。
+ * dev サーバーでは保存した内容をすぐ見たいので、毎回取り直す。
+ * 返り値は全ページで共有するので、受け取った側で配列を書き換えないこと。
+ */
+export function memoizeForBuild<T>(load: () => Promise<T>): () => Promise<T> {
+  let cached: Promise<T> | undefined;
+  return () => {
+    if (import.meta.env.DEV) return load();
+    cached ??= load();
+    return cached;
+  };
+}
+
 export function fetchWithAuth(path: string) {
   const url = `${import.meta.env.MICROCMS_API_URL}${path}`;
   const headers = {

@@ -1,4 +1,4 @@
-import type { MicroCMSResponse } from "./api-base";
+import { memoizeForBuild, type MicroCMSResponse } from "./api-base";
 
 /**
  * 販売できる/所有しているコーヒー豆のリスト。
@@ -109,8 +109,14 @@ const SAMPLE_BEANS: Bean[] = [
   },
 ];
 
-/** beans-list を全件取得する（未設定・失敗時は空配列でフォールバック） */
-export async function getAllBeans(): Promise<Bean[]> {
+/**
+ * beans-list を全件取得する（未設定・失敗時は空配列でフォールバック）。
+ * トップ・豆・焙煎ログなど 7 ページが読むので、ビルド中は 1 回だけ取得する
+ */
+export const getAllBeans: () => Promise<Bean[]> =
+  memoizeForBuild(fetchAllBeans);
+
+async function fetchAllBeans(): Promise<Bean[]> {
   const hasCreds =
     import.meta.env.MICROCMS_COFFEE_API_URL &&
     import.meta.env.MICROCMS_COFFEE_API_KEY;
