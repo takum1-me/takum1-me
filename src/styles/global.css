@@ -137,25 +137,25 @@
 
 /* --- ダークモード（Figma の Color コレクション「Dark」）-------------------
    墨の地に生成りの文字。ダークではアクセントの茶も使わず、矢印も生成りにする。
-   色の名前はライトと同じなので、ページ側は何も切り替えなくてよい。 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #161514;
-    --color-bg-subtle: #1f1d1b;
-    --color-surface: #1f1d1b;
-    --color-line: #2f2c29;
-    --color-line-strong: #4a4743;
-    --color-ink: #efece6;
-    --color-ink-muted: #9a958d;
-    --color-ink-faint: #9a958d;
-    --color-accent: #efece6;
-    --color-accent-strong: #efece6;
-    --color-accent-soft: rgb(239 236 230 / 12%);
-    --color-rule: #4a4743;
-    --color-on-ink: #161514;
+   色の名前はライトと同じなので、ページ側は何も切り替えなくてよい。
+   どちらを使うかは Layout の head で <html data-theme> に決めておく
+   （保存した選択があればそれ、なければ OS の設定）。 */
+:root[data-theme="dark"] {
+  --color-bg: #161514;
+  --color-bg-subtle: #1f1d1b;
+  --color-surface: #1f1d1b;
+  --color-line: #2f2c29;
+  --color-line-strong: #4a4743;
+  --color-ink: #efece6;
+  --color-ink-muted: #9a958d;
+  --color-ink-faint: #9a958d;
+  --color-accent: #efece6;
+  --color-accent-strong: #efece6;
+  --color-accent-soft: rgb(239 236 230 / 12%);
+  --color-rule: #4a4743;
+  --color-on-ink: #161514;
 
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 @layer base {
@@ -528,15 +528,13 @@
     color: transparent;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .flavor-words__word {
-      background: linear-gradient(
-        90deg,
-        var(--color-flavor-dark-from),
-        var(--color-flavor-dark-to)
-      );
-      background-clip: text;
-    }
+  :root[data-theme="dark"] .flavor-words__word {
+    background: linear-gradient(
+      90deg,
+      var(--color-flavor-dark-from),
+      var(--color-flavor-dark-to)
+    );
+    background-clip: text;
   }
 }
 

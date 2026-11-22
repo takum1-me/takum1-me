@@ -92,6 +92,30 @@ const jsonldStringfy = JSON.stringify({
     <meta property="twitter:site" content={metadata.og.twitter.site} />
     <meta property="twitter:creator" content={metadata.og.twitter.creator} />
     <script type="application/ld+json" is:inline set:html={jsonldStringfy} />
+    <!-- 描画前に配色を決めて、ダークで一瞬白く光らないようにする。
+         ヘッダーの切り替えで保存した選択があればそれ、なければ OS の設定に従う -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const query = window.matchMedia("(prefers-color-scheme: dark)");
+        const apply = () => {
+          let saved = null;
+          try {
+            saved = localStorage.getItem("theme");
+          } catch {
+            // 読めない環境では OS の設定に従う
+          }
+          root.dataset.theme =
+            saved === "light" || saved === "dark"
+              ? saved
+              : query.matches
+                ? "dark"
+                : "light";
+        };
+        apply();
+        query.addEventListener("change", apply);
+      })();
+    </script>
 
     <style>
       body {
