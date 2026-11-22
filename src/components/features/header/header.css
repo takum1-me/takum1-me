@@ -43,6 +43,33 @@
 
 .site-header__nav {
   display: flex;
+
+  /* ブランドから離して、右端の操作ボタンの隣に寄せる */
+  margin-left: auto;
+}
+
+.site-header__actions {
+  display: flex;
+}
+
+/* --- 配色の切り替え ---------------------------------------------------- */
+
+.site-header__theme {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--header-height);
+  padding: 0;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--color-rule);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.site-header__theme:hover {
+  background: var(--color-bg-subtle);
 }
 
 .header-link {
