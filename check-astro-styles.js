@@ -3,23 +3,20 @@
 /**
  * .astroファイル内の<style>タグをチェックするスクリプト
  * Stylelintは.astro内のCSSをチェックできないため、手動で抽出してチェックする
+ *
+ * ファイルごとに `npx stylelint` を起動すると 1 回あたり 0.5 秒ほどかかり、
+ * 全体で 15 秒を超えていた。stylelint の Node API を 1 プロセスで呼び回す。
  */
 
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { execSync } from "child_process";
+import stylelint from "stylelint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const srcDir = path.join(__dirname, "src");
-const tempDir = path.join(__dirname, ".temp-astro-styles");
-
-// 一時ディレクトリを作成
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
-}
 
 // .astroファイルを再帰的に検索
 function findAstroFiles(dir) {
@@ -60,36 +57,26 @@ for (const file of astroFiles) {
   const content = fs.readFileSync(file, "utf-8");
   const styles = extractStyles(content);
 
-  if (styles.trim()) {
-    const relativePath = path.relative(__dirname, file);
-    const tempCssFile = path.join(
-      tempDir,
-      `${path.basename(file, ".astro")}.css`,
-    );
+  if (!styles.trim()) continue;
 
-    fs.writeFileSync(tempCssFile, styles);
+  const relativePath = path.relative(__dirname, file);
 
-    try {
-      execSync(`npx stylelint "${tempCssFile}"`, {
-        stdio: "pipe",
-        encoding: "utf-8",
-      });
-      console.log(`✅ ${relativePath}`);
-    } catch (error) {
-      hasErrors = true;
-      console.log(`\n❌ ${relativePath}`);
-      if (error.stdout) {
-        console.log(error.stdout.toString());
-      }
-      if (error.stderr) {
-        console.log(error.stderr.toString());
-      }
-    }
+  // 拡張子だけ .css にした名前で渡し、.css ファイルと同じ設定で検査させる
+  const { errored, report } = await stylelint.lint({
+    code: styles,
+    codeFilename: file.replace(/\.astro$/, ".css"),
+    cwd: __dirname,
+    formatter: "string",
+  });
+
+  if (errored) {
+    hasErrors = true;
+    console.log(`\n❌ ${relativePath}`);
+    console.log(report);
+  } else {
+    console.log(`✅ ${relativePath}`);
   }
 }
-
-// 一時ディレクトリを削除
-fs.rmSync(tempDir, { recursive: true, force: true });
 
 console.log("\n" + "=".repeat(50));
 if (hasErrors) {

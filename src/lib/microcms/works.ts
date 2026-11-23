@@ -1,4 +1,4 @@
-import { fetchAll } from "./api-base";
+import { fetchAll, memoizeForBuild } from "./api-base";
 
 export interface Work {
   createdAt: string;
@@ -27,9 +27,10 @@ export interface WorkResponse {
   limit: number;
 }
 
-export async function getAllWorks(): Promise<WorkResponse> {
-  return fetchAll<Work>("works");
-}
+/** トップと works が両方読むので、ビルド中は 1 回だけ取得する */
+export const getAllWorks: () => Promise<WorkResponse> = memoizeForBuild(() =>
+  fetchAll<Work>("works"),
+);
 
 export async function getWorksByOwner(
   owner: "personal" | "organization",
